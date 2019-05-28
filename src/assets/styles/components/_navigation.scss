@@ -1,0 +1,13 @@
+
+#navigation-component {
+    border: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    padding: 20px 0;
+
+    &:hover {
+        overflow-y: auto;
+    }
+}

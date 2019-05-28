@@ -1,0 +1,21 @@
+
+#extra-options-desktop-components {
+    margin: 5px 13px 5px 5px;
+    display: flex;
+    align-items: center;
+
+    .config {
+        svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+            font-weight: lighter;
+            transition-duration: 300ms;
+
+            &:hover {
+                color: $palette-primary;
+                transition-duration: 300ms;
+            }
+        }
+    }
+}

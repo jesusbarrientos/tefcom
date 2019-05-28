@@ -1,0 +1,35 @@
+{
+    "defaultSelectedKeys": ["dashboard"],
+
+    "menu": [
+        {
+            "key": "dashboard",
+            "label": "Dashboard",
+            "url": "dashboard",
+            "icon": "dashboard",
+            "menu": []
+        },
+        {
+            "key": "recursos_humanos",
+            "label": "Recursos Humanos",
+            "url": "",
+            "icon": "team",
+            "menu": [
+                {
+                    "key": "empleados",
+                    "label": "Empleados",
+                    "url": "systems",
+                    "icon": "user",
+                    "menu": []
+                },
+                {
+                    "key": "asistencia",
+                    "label": "Asistencia",
+                    "url": "systems",
+                    "icon": "solution",
+                    "menu": []
+                }
+            ]
+        }
+    ]
+}

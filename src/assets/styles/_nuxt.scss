@@ -1,0 +1,36 @@
+/*
+ * Mixins
+ */
+@mixin nuxt_expand {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+}
+
+@mixin nuxt_position {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+
+/*
+ * Nuxt Configuration.
+ */
+#__nuxt {
+    @include nuxt_position;
+
+    #__layout {
+        @include nuxt_position;
+
+        & > .layout {
+            @include nuxt_expand;
+
+            & > div {
+                @include nuxt_expand;
+            }
+        }
+    }
+}

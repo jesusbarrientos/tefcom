@@ -1,0 +1,365 @@
+/*
+ * Global imports
+ */
+body {
+  font-size: 0.875rem;
+  user-select: none;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
+}
+
+/*
+ * Mixins
+ */
+/*
+ * Nuxt Configuration.
+ */
+#__nuxt {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+#__nuxt #__layout {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+#__nuxt #__layout > .layout {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+#__nuxt #__layout > .layout > div {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+/*
+ * Palette
+ */
+/*
+ * Backgrounds
+ */
+/*
+ * Font colors
+ */
+/*
+ * Layout
+ */
+/*
+ * Components
+ */
+/*
+ * Authentication mode
+ */
+#authentication-layout #desktop {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  display: grid;
+  justify-content: stretch;
+  align-content: stretch;
+  grid-template-columns: auto;
+  grid-template-rows: [content-start] 1fr [content-end] auto [footer-end];
+  grid-template-areas: "content" "footer";
+}
+#authentication-layout #desktop > #content-desktop {
+  grid-area: content;
+  background-color: #f0f2f5;
+  padding: 1.25rem;
+}
+#authentication-layout #desktop > #footer-desktop {
+  grid-area: footer;
+  background-color: white;
+  text-align: center;
+  padding: 1.25rem;
+}
+#authentication-layout #mobile {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  display: grid;
+  justify-content: stretch;
+  align-content: stretch;
+  grid-template-columns: auto;
+  grid-template-rows: [content-start] 1fr [content-end];
+  grid-template-areas: "content";
+}
+#authentication-layout #mobile > #content-mobile {
+  grid-area: content;
+}
+#authentication-layout #mobile > #content-mobile > div {
+  height: 100%;
+}
+#authentication-layout #mobile > #content-mobile > div > div {
+  height: 100%;
+}
+
+/*
+ * Portal mode
+ */
+#default-layout #desktop {
+  position: absolute;
+  top: 4.375rem;
+  right: 0;
+  bottom: 0;
+  left: 256px;
+  display: grid;
+  justify-content: stretch;
+  align-content: stretch;
+  grid-template-columns: auto;
+  grid-template-rows: 1fr;
+}
+#default-layout #desktop > #header-desktop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  background-color: white;
+}
+#default-layout #desktop > #sider-desktop {
+  position: fixed;
+  top: 4.375rem;
+  bottom: 0;
+  left: 0;
+  width: 256px;
+  border-right: solid 1px #00CDFF;
+}
+#default-layout #desktop > #content-desktop {
+  display: grid;
+  justify-content: stretch;
+  align-content: stretch;
+  grid-template-columns: auto;
+  grid-template-rows: [content-start] 1fr [content-end] auto [footer-end];
+  grid-template-areas: "page-content" "footer";
+}
+#default-layout #desktop > #content-desktop > #page-content {
+  grid-area: page-content;
+  background-color: #f0f2f5;
+  padding: 1.25rem;
+}
+#default-layout #desktop > #content-desktop > #footer-desktop {
+  grid-area: footer;
+  background-color: white;
+  text-align: center;
+  padding: 1.25rem;
+}
+#default-layout #mobile {
+  position: absolute;
+  top: 3.125rem;
+  bottom: 3.75rem;
+  width: 100%;
+  background-color: #f0f2f5;
+}
+#default-layout #mobile > #header-mobile {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+#default-layout #mobile > #content-mobile {
+  margin-bottom: 3.75rem;
+  padding: 20px;
+  background-color: #f0f2f5;
+}
+
+/*
+ * Components
+ */
+.input-icon {
+  color: rgba(0, 0, 0, 0.25);
+}
+
+#header-desktop-component {
+  height: 4.375rem;
+  border-bottom: solid 1.5px #00CDFF;
+  box-sizing: border-box;
+  display: grid;
+  justify-content: stretch;
+  align-content: center;
+  grid-template-columns: auto 1fr auto auto;
+  grid-template-rows: auto;
+  grid-template-areas: "logo space user extra";
+}
+#header-desktop-component > .logo {
+  grid-area: logo;
+  box-sizing: border-box;
+  min-width: 256px;
+  text-align: center;
+}
+#header-desktop-component > .logo img {
+  height: 3.125rem;
+  max-height: 3.125rem;
+}
+#header-desktop-component > .user {
+  grid-area: user;
+  display: flex;
+  align-items: center;
+}
+#header-desktop-component > .user .divider {
+  height: 1.25rem;
+  width: 1.5px;
+  margin-top: 3px;
+}
+#header-desktop-component > .extra {
+  grid-area: extra;
+  display: flex;
+  align-items: center;
+}
+
+#header-mobile-component {
+  border-bottom: solid 1.5px #00CDFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.125rem;
+  background-color: white;
+}
+#header-mobile-component > h3 {
+  margin: 0;
+}
+
+#user-desktop-component {
+  margin: 0 5px;
+}
+#user-desktop-component .user-image {
+  margin-right: 5px;
+}
+#user-desktop-component .user-image > span {
+  width: 3.125rem;
+  height: 3.125rem;
+  line-height: 3.125rem;
+  font-size: 1.563rem;
+}
+#user-desktop-component .user-name {
+  font-weight: bold;
+}
+
+#extra-options-desktop-components {
+  margin: 5px 13px 5px 5px;
+  display: flex;
+  align-items: center;
+}
+#extra-options-desktop-components .config svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  font-weight: lighter;
+  transition-duration: 300ms;
+}
+#extra-options-desktop-components .config svg:hover {
+  color: #00CDFF;
+  transition-duration: 300ms;
+}
+
+#navigation-component {
+  border: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+  padding: 20px 0;
+}
+#navigation-component:hover {
+  overflow-y: auto;
+}
+
+#footer-navbar-component {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3.75rem;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#navbar-icon-component a {
+  display: flex;
+  flex-direction: column;
+  color: rgba(0, 0, 0, 0.85);
+}
+#navbar-icon-component a:active {
+  color: rgba(0, 0, 0, 0.35);
+}
+#navbar-icon-component a.focus {
+  color: #00CDFF;
+  text-decoration: none;
+}
+#navbar-icon-component svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/*
+ * Pages
+ */
+/*
+ * Login
+ */
+#login-page-desktop .logo {
+  max-width: 21.875rem;
+  margin-top: 3.125rem;
+  margin-bottom: 1.875rem;
+}
+#login-page-desktop .card {
+  max-width: 21.875rem;
+}
+#login-page-desktop .form .item-forgot {
+  float: right;
+}
+#login-page-desktop .form .button-submit {
+  width: 100%;
+}
+#login-page-desktop .form .item-remember {
+  float: left;
+}
+#login-page-mobile {
+  height: 100%;
+  min-height: 100%;
+  background: linear-gradient(#00c4ff, #2073d9);
+  padding: 1.25rem;
+}
+#login-page-mobile > .content {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  display: grid;
+  justify-content: stretch;
+  align-content: start;
+  grid-template-columns: auto;
+  grid-template-rows: [logo-start] 1fr [logo-end] auto [form-end];
+  grid-template-areas: "logo" "form";
+}
+#login-page-mobile > .content > .logo-container {
+  margin: 3.125rem auto;
+}
+#login-page-mobile > .content > .logo-container img {
+  width: 100%;
+  max-width: 25rem;
+  padding: 0 1.875rem;
+}
+#login-page-mobile > .content > .form {
+  text-align: center;
+}
+#login-page-mobile > .content > .form .button-submit {
+  width: 100%;
+}
+#login-page-mobile > .content > .form .item-forgot {
+  margin: 20px;
+}
+#login-page-mobile > .content > .form .item-forgot a {
+  color: rgba(255, 255, 255, 0.7);
+}
+#login-page-mobile > .content > .form .item-forgot a:active {
+  color: white;
+}
+
+/*# sourceMappingURL=app.css.map */

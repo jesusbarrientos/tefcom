@@ -1,0 +1,9 @@
+# ignore layouts
+
+# ignore pages
+src/pages/authentication/login/mobile/*.vue
+src/pages/authentication/login/desktop/*.vue
+
+# ignore stores
+
+# ignore middlewares

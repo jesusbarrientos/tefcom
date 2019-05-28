@@ -1,0 +1,139 @@
+
+/*
+ * Authentication mode
+ */
+#authentication-layout {
+
+    #desktop {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        display: grid;
+        justify-content: stretch;
+        align-content: stretch;
+        grid-template-columns: auto;
+        grid-template-rows: [content-start] 1fr [content-end] auto [footer-end];
+        grid-template-areas:
+            "content"
+            "footer";
+
+        & > #content-desktop {
+            grid-area: content;
+            background-color: $background-content-layout;
+            padding: 1.25rem;
+        }
+
+        & > #footer-desktop {
+            grid-area: footer;
+            background-color: $background-footer-layout;
+            text-align: center;
+            padding: 1.25rem;
+        }
+    }
+
+    #mobile {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        display: grid;
+        justify-content: stretch;
+        align-content: stretch;
+        grid-template-columns: auto;
+        grid-template-rows: [content-start] 1fr [content-end];
+        grid-template-areas: "content";
+
+        & > #content-mobile {
+            grid-area: content;
+
+            & > div {
+                height: 100%;
+
+                & > div {
+                    height: 100%;
+                }
+            }
+        }
+    }
+}
+
+/*
+ * Portal mode
+ */
+#default-layout {
+
+    #desktop {
+        position: absolute;
+        top: $size-layout-header-height;
+        right: 0;
+        bottom: 0;
+        left: $size-layout-sider-width;
+        display: grid;
+        justify-content: stretch;
+        align-content: stretch;
+        grid-template-columns: auto;
+        grid-template-rows: 1fr;
+
+        & > #header-desktop {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            background-color: $background-header-layout;
+        }
+
+        & > #sider-desktop {
+            position: fixed;
+            top: $size-layout-header-height;
+            bottom: 0;
+            left: 0;
+            width: $size-layout-sider-width;
+            border-right: solid 1px $palette-primary;
+        }
+
+        & > #content-desktop {
+            display: grid;
+            justify-content: stretch;
+            align-content: stretch;
+            grid-template-columns: auto;
+            grid-template-rows: [content-start] 1fr [content-end] auto [footer-end];
+            grid-template-areas:
+                "page-content"
+                "footer";
+
+
+            & > #page-content {
+                grid-area: page-content;
+                background-color: $background-content-layout;
+                padding: 1.25rem;
+            }
+
+            & > #footer-desktop {
+                grid-area: footer;
+                background-color: $background-footer-layout;
+                text-align: center;
+                padding: 1.25rem;
+            }
+        }
+    }
+
+    #mobile {
+        position: absolute;
+        top: $size-header-mobile-height;
+        bottom: $size-footer-navbar-height;
+        width: 100%;
+        background-color: $background-content-layout;
+
+        & > #header-mobile {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+        }
+
+        & > #content-mobile {
+            margin-bottom: $size-footer-navbar-height;
+            padding: 20px;
+            background-color: $background-content-layout;
+        }
+    }
+}

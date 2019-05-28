@@ -1,0 +1,23 @@
+
+#navbar-icon-component {
+
+    a {
+        display: flex;
+        flex-direction: column;
+        color: $color-text-dark;
+
+        &:active {
+            color: $color-text-dark-hover;
+        }
+
+        &.focus {
+            color: $palette-primary;
+            text-decoration: none;
+        }
+    }
+
+    svg {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+}

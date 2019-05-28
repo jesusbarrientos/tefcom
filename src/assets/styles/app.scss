@@ -1,0 +1,26 @@
+/*
+ * Global imports
+ */
+@import "body";
+@import "nuxt";
+@import "colors";
+@import "fonts";
+@import "sizes";
+@import "layouts";
+@import "transition";
+
+/*
+ * Components
+ */
+@import "components/inputs";
+@import "components/header";
+@import "components/user";
+@import "components/extras";
+@import "components/navigation";
+@import "components/footer";
+@import "components/navbar-icon";
+
+/*
+ * Pages
+ */
+@import "pages";
