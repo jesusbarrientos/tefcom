@@ -38,7 +38,7 @@
                                                         size="small"
                                                         icon="minus"
                                                         class="delete-material-button"
-                                                        @click="deleteSupplier(index)"
+                                                        @click="deleteSupplier(index, newMaterial.suppliers)"
                                                     />
 
                                                     <a-col :span="4">
@@ -53,7 +53,7 @@
                                                         </a-select>
                                                     </a-col>
 
-                                                    <a-col :span="3">
+                                                    <a-col :span="4">
                                                         <a-tooltip>
                                                             <template slot="title">
                                                                 Precio del material.
@@ -156,52 +156,52 @@
             <a-row type="flex" justify="center">
                 <a-col :span="24">
                     <a-divider orientation="left">
-                        Datos Personales
+                        Datos Generales
                     </a-divider>
 
                     <div style="display: grid">
                         <span>
-                            <b>Rut:</b>
-                            <label>{{ infoDrawer.record.rut }}</label>
+                            <b>Descripción:</b>
+                            <label>{{ infoDrawer.record.description }}</label>
                         </span>
 
                         <span>
-                            <b>Nombre:</b>
-                            <label>{{ infoDrawer.record.name }} {{ infoDrawer.record.lastName }}</label>
-                        </span>
-
-                        <span>
-                            <b>Ocupación:</b>
-                            <label>{{ infoDrawer.record.occupation }}</label>
+                            <b>Categoría:</b>
+                            <label>{{ infoDrawer.record.category }}</label>
                         </span>
                     </div>
 
                     <a-divider orientation="left">
-                        Contacto
+                        Proveedores
                     </a-divider>
 
-                    <div style="display: grid">
-                        <span>
-                            <b>Teléfono:</b>
-                            <label>{{ infoDrawer.record.phone }}</label>
-                        </span>
+                    <a-table
+                        :columns="infoDrawer.table.columns"
+                        :data-source="infoDrawer.record.suppliers"
+                        :bordered="infoDrawer.table.bordered"
+                        :pagination="infoDrawer.table.pagination"
+                        :loading="infoDrawer.table.loading"
+                    >
+                        <template slot="quality" slot-scope="record">
+                            <label>{{ getQualityLabel(record) }}</label>
+                        </template>
 
-                        <span>
-                            <b>Correo Electrónico:</b>
-                            <label>{{ infoDrawer.record.email }}</label>
-                        </span>
-                    </div>
+                        <template slot="price" slot-scope="record">
+                            <label>${{ record.price }}</label>
+                        </template>
 
-                    <a-divider orientation="left">
-                        Otros
-                    </a-divider>
+                        <template slot="includeIva" slot-scope="record">
+                            <label>{{ includeIva(record) }}</label>
+                        </template>
 
-                    <div style="display: grid">
-                        <span>
-                            <b>Valor Hora Hombre:</b>
-                            <label>${{ infoDrawer.record.price }}</label>
-                        </span>
-                    </div>
+                        <template slot="utility" slot-scope="record">
+                            <label>{{ record.utilityPercentaje }}%</label>
+                        </template>
+
+                        <template slot="total" slot-scope="record">
+                            <label>${{ calculateTotal(record) }}</label>
+                        </template>
+                    </a-table>
                 </a-col>
             </a-row>
         </a-drawer>
@@ -220,60 +220,115 @@
                 <a-col :span="24">
                     <a-form :form="formEdit" layout="vertical">
                         <a-row :gutter="10">
-                            <a-col :span="8">
+                            <a-col :span="12">
                                 <a-form-item>
-                                    <a-input v-model="editDrawer.record.rut" placeholder="Rut" />
+                                    <a-input placeholder="Descripción" />
                                 </a-form-item>
                             </a-col>
 
-                            <a-col :span="8">
+                            <a-col :span="12">
                                 <a-form-item>
-                                    <a-input v-model="editDrawer.record.name" placeholder="Nombre" />
-                                </a-form-item>
-                            </a-col>
-
-                            <a-col :span="8">
-                                <a-form-item>
-                                    <a-input v-model="editDrawer.record.lastName" placeholder="Apellido" />
+                                    <a-input placeholder="Categoría" />
                                 </a-form-item>
                             </a-col>
                         </a-row>
 
                         <a-row>
-                            <a-col :span="24">
-                                <a-form-item>
-                                    <a-input v-model="editDrawer.record.occupation" placeholder="Ocupación" />
-                                </a-form-item>
-                            </a-col>
+                            <a-collapse>
+                                <a-collapse-panel header="Proveedores">
+
+                                    <a-row>
+                                        <a-col>
+                                            <p><a-icon type="info-circle" /> Todo precio debe ser expresado en Pesos Chilenos (CLP).</p>
+
+                                            <a-row v-for="(supplier, index) of editDrawer.record.suppliers" :gutter="10" type="flex" align="middle">
+                                                <a-button
+                                                    type="danger"
+                                                    shape="circle"
+                                                    size="small"
+                                                    icon="minus"
+                                                    class="delete-material-button"
+                                                    @click="deleteSupplier(index, editDrawer.record.suppliers)"
+                                                />
+
+                                                <a-col :span="4">
+                                                    <a-input v-model="supplier.name" placeholder="Nombre Proveedor" />
+                                                </a-col>
+
+                                                <a-col :span="4">
+                                                    <a-select v-model="supplier.quality" :default-value="materials.options[0].value">
+                                                        <a-select-option v-for="option of materials.options" :value="option.value">
+                                                            {{ option.label }}
+                                                        </a-select-option>
+                                                    </a-select>
+                                                </a-col>
+
+                                                <a-col :span="4">
+                                                    <a-tooltip>
+                                                        <template slot="title">
+                                                            Precio del material.
+                                                        </template>
+                                                        <a-input-number
+                                                            v-model="supplier.price"
+                                                            :default-value="0"
+                                                            :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                                            :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                                        />
+                                                    </a-tooltip>
+                                                </a-col>
+
+                                                <a-tooltip>
+                                                    <template slot="title">
+                                                        IVA Incluido. Esto cambia el valor total del material.
+                                                    </template>
+                                                    <a-checkbox @change="changeIva($event, supplier)">
+                                                        IVA
+                                                    </a-checkbox>
+                                                </a-tooltip>
+
+                                                <a-col :span="3">
+                                                    <a-tooltip>
+                                                        <template slot="title">
+                                                            Porcentaje de utilidad sobre el precio del material.
+                                                        </template>
+                                                        <a-input-number
+                                                            v-model="supplier.utilityPercentaje"
+                                                            :default-value="100"
+                                                            :min="0"
+                                                            :formatter="value => `${value}%`"
+                                                            :parser="value => value.replace('%', '')"
+                                                        />
+                                                    </a-tooltip>
+                                                </a-col>
+
+                                                <a-col :span="5">
+                                                    <label>Total: ${{ calculateTotal(supplier) }}</label>
+                                                </a-col>
+                                            </a-row>
+
+                                            <a-row type="flex" justify="center">
+                                                <a-button type="primary" class="add-material-button" @click="addSupplier">
+                                                    Agregar Proveedor
+                                                </a-button>
+                                            </a-row>
+                                        </a-col>
+                                    </a-row>
+
+                                </a-collapse-panel>
+                            </a-collapse>
                         </a-row>
 
-                        <a-row :gutter="10">
-                            <a-col :span="8">
-                                <a-form-item>
-                                    <a-input v-model="editDrawer.record.phone" placeholder="Teléfono" />
-                                </a-form-item>
-                            </a-col>
-
-                            <a-col :span="8">
-                                <a-form-item>
-                                    <a-input v-model="editDrawer.record.email" type="email" placeholder="Correo Electrónico" />
-                                </a-form-item>
-                            </a-col>
-
-                            <a-col :span="8">
-                                <a-form-item>
-                                    <a-input v-model="editDrawer.record.price" placeholder="Valor Hora/Hombre" />
-                                </a-form-item>
-                            </a-col>
+                        <a-row>
+                            <a-button type="primary" block>
+                                Registrar
+                            </a-button>
                         </a-row>
 
-                        <a-button type="primary" block>
-                            Registrar
-                        </a-button>
-
-                        <a-button type="danger" block>
-                            Cancelar
-                        </a-button>
+                        <a-row>
+                            <a-button type="danger" class="delete-material-button" @click="onCloseEditDrawer" block>
+                                Cancelar
+                            </a-button>
+                        </a-row>
                     </a-form>
                 </a-col>
             </a-row>
@@ -284,11 +339,88 @@
 <script>
     import AFormItem from 'ant-design-vue/es/form/FormItem'
 
+    const materialDesktop = {
+        name: 'MaterialDesktop',
+        components: { AFormItem },
+        data() {
+            return {
+                materials,
+                newMaterial,
+                infoDrawer,
+                editDrawer
+            }
+        },
+        beforeCreate() {
+            this.formAdd = this.$form.createForm(this)
+            this.formEdit = this.$form.createForm(this)
+        },
+        methods: {
+            addSupplier() {
+                this.newMaterial.suppliers.push({ name: '', quality: this.materials.options[0].value, price: 0, includeIva: false, utilityPercentaje: 100 })
+            },
+            deleteSupplier(index, suppliers) {
+                suppliers.splice(index, 1)
+            },
+            changeIva($event, supplier) {
+                supplier.includeIva = $event.target.checked
+            },
+            calculateTotal(supplier) {
+                if (supplier.includeIva)
+                    return supplier.price + (supplier.price * (supplier.utilityPercentaje / 100))
+                else
+                    return (supplier.price * 1.19) + ((supplier.price * 1.19) * (supplier.utilityPercentaje / 100))
+            },
+            includeIva(supplier) {
+                if (supplier.includeIva)
+                    return 'Si'
+                else
+                    return 'No'
+            },
+            getQualityLabel(supplier) {
+                return materials.options.find(option => option.value === supplier.quality).label
+            },
+            getQualityFilters() {
+                const filters = []
+
+                materials.options.forEach((option) => {
+                    filters.push({ text: option.label, value: option.value })
+                })
+
+                return filters
+            },
+            onShowMore(record) {
+                this.infoDrawer.record = record
+                this.infoDrawer.visible = true
+            },
+            onEdit(record) {
+                this.editDrawer.record = JSON.parse(JSON.stringify(record))
+                this.editDrawer.visible = true
+            },
+            onDelete(record) {
+                const data = [...this.materials.data]
+                this.materials.data = data.filter(item => item.key !== record.key)
+            },
+            onCloseInfoDrawer() {
+                this.infoDrawer.visible = false
+                this.infoDrawer.record = {}
+            },
+            onCloseEditDrawer() {
+                this.editDrawer.visible = false
+                this.editDrawer.record = {}
+            }
+        }
+    }
+
     const materials = {
         data: [{
             'key': 1,
             'description': 'Broken',
-            'category': 'Horror|Thriller'
+            'category': 'Horror|Thriller',
+            suppliers: [
+                { name: 'Hola', quality: 'BUENA', price: 1, includeIva: true, utilityPercentaje: 200 },
+                { name: 'Chao', quality: 'ECONÓMICO', price: 100, includeIva: false, utilityPercentaje: 100 },
+                { name: 'Alo', quality: 'RESISTENTE', price: 3580, includeIva: true, utilityPercentaje: 75 }
+            ]
         }, {
             'key': 2,
             'description': 'Breakaway (Speedy Singhs)',
@@ -734,7 +866,54 @@
         closable: true,
         placement: 'right',
         width: 660,
-        record: {}
+        record: {},
+        table: {
+            bordered: true,
+            loading: false,
+            scroll: { x: '100%' },
+            pagination: { pageSize: 7 },
+            size: 'default',
+            columns: [
+                {
+                    title: 'Nombre',
+                    key: 'name',
+                    dataIndex: 'name',
+                    sorter: (a, b) => a.name.localeCompare(b.name)
+                },
+                {
+                    title: 'Calidad',
+                    key: 'quality',
+                    sorter: (a, b) => a.quality.localeCompare(b.quality),
+                    filters: materialDesktop.methods.getQualityFilters(),
+                    onFilter: (value, record) => record.quality.indexOf(value) === 0,
+                    scopedSlots: { customRender: 'quality' }
+                },
+                {
+                    title: 'Precio',
+                    key: 'price',
+                    sorter: (a, b) => a.price - b.price,
+                    scopedSlots: { customRender: 'price' }
+                },
+                {
+                    title: 'IVA',
+                    key: 'includeIva',
+                    align: 'center',
+                    scopedSlots: { customRender: 'includeIva' }
+                },
+                {
+                    title: '% Utilidad',
+                    key: 'utilityPercentaje',
+                    align: 'center',
+                    scopedSlots: { customRender: 'utility' }
+                },
+                {
+                    title: 'Total',
+                    key: 'total',
+                    sorter: (a, b) => materialDesktop.methods.calculateTotal(a) - materialDesktop.methods.calculateTotal(b),
+                    scopedSlots: { customRender: 'total' }
+                }
+            ]
+        }
     }
     const editDrawer = {
         title: 'Editar Material',
@@ -746,59 +925,7 @@
         record: {}
     }
 
-    export default {
-        name: 'MaterialDesktop',
-        components: { AFormItem },
-        data() {
-            return {
-                materials,
-                newMaterial,
-                infoDrawer,
-                editDrawer
-            }
-        },
-        beforeCreate() {
-            this.formAdd = this.$form.createForm(this)
-            this.formEdit = this.$form.createForm(this)
-        },
-        methods: {
-            addSupplier() {
-                this.newMaterial.suppliers.push({ name: '', quality: this.materials.options[0].value, price: 0, includeIva: false, utilityPercentaje: 100 })
-            },
-            deleteSupplier(index) {
-                this.newMaterial.suppliers.splice(index, 1)
-            },
-            changeIva($event, supplier) {
-                supplier.includeIva = $event.target.checked
-            },
-            calculateTotal(supplier) {
-                if (supplier.includeIva)
-                    return supplier.price + (supplier.price * (supplier.utilityPercentaje / 100))
-                else
-                    return (supplier.price * 1.19) + ((supplier.price * 1.19) * (supplier.utilityPercentaje / 100))
-            },
-            onShowMore(record) {
-                this.infoDrawer.record = record
-                this.infoDrawer.visible = true
-            },
-            onEdit(record) {
-                this.editDrawer.record = JSON.parse(JSON.stringify(record))
-                this.editDrawer.visible = true
-            },
-            onDelete(record) {
-                const data = [...this.materials.data]
-                this.materials.data = data.filter(item => item.key !== record.key)
-            },
-            onCloseInfoDrawer() {
-                this.infoDrawer.visible = false
-                this.infoDrawer.record = {}
-            },
-            onCloseEditDrawer() {
-                this.editDrawer.visible = false
-                this.editDrawer.record = {}
-            }
-        }
-    }
+    export default materialDesktop
 </script>
 
 <style scoped>
