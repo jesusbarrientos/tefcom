@@ -21,6 +21,7 @@ module.exports = {
         "no-trailing-spaces": ["error", {
             "skipBlankLines": true
         }],
+        "curly": ["error", "multi-or-nest"],
 
         // Vue
         "vue/script-indent": ["error", 4, {
@@ -44,6 +45,10 @@ module.exports = {
 
         "vue/no-use-v-if-with-v-for": ["error", {
             "allowUsingIterationVar": true
-        }]
+        }],
+
+        "vue/require-v-for-key": "off",
+
+        "vue/valid-v-for": "off"
     }
 }

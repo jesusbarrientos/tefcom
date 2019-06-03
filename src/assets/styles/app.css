@@ -46,6 +46,9 @@ body {
  * Backgrounds
  */
 /*
+ * Borders
+ */
+/*
  * Font colors
  */
 /*
@@ -120,6 +123,7 @@ body {
   top: 0;
   right: 0;
   left: 0;
+  z-index: 1;
   background-color: white;
 }
 #default-layout #desktop > #sider-desktop {
@@ -128,6 +132,7 @@ body {
   bottom: 0;
   left: 0;
   width: 256px;
+  z-index: 1;
   border-right: solid 1px #00CDFF;
 }
 #default-layout #desktop > #content-desktop {
@@ -360,6 +365,80 @@ body {
 }
 #login-page-mobile > .content > .form .item-forgot a:active {
   color: white;
+}
+
+/*
+ * Modules
+ */
+#modules-page .module-button {
+  margin: 5px 0;
+}
+
+/*
+ * Employees
+ */
+#employee-page-desktop .new-employee {
+  padding: 1rem;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #e6e6e6;
+}
+#employee-page-desktop .new-employee .ant-row {
+  margin-bottom: 0;
+}
+
+.employee-page-desktop-drawer-edit form .ant-row {
+  margin-bottom: 0;
+}
+.employee-page-desktop-drawer-edit form .ant-btn {
+  margin-bottom: 8px;
+}
+
+/*
+ * Materials
+ */
+#material-page-desktop .new-material {
+  padding: 1rem;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #e6e6e6;
+}
+#material-page-desktop .new-material .ant-row {
+  margin-bottom: 0;
+}
+#material-page-desktop .new-material .ant-collapse-content {
+  max-height: 300px;
+  overflow-y: auto;
+}
+#material-page-desktop .new-material .ant-collapse-content .ant-row-flex {
+  margin-bottom: 5px;
+  padding: 0 5px;
+}
+#material-page-desktop .new-material .ant-collapse-content .ant-input-number {
+  width: 100%;
+}
+#material-page-desktop .new-material .ant-collapse-content .delete-material-button {
+  margin: 0 3px 0 0;
+  width: 1.375rem;
+  height: 1.375rem;
+}
+#material-page-desktop .new-material .ant-collapse-content .delete-material-button i,
+#material-page-desktop .new-material .ant-collapse-content .delete-material-button svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+#material-page-desktop .new-material .ant-collapse-content .add-material-button {
+  margin-top: 15px;
+}
+#material-page-desktop .new-material .ant-btn {
+  margin-top: 8px;
+}
+
+.material-page-desktop-drawer-edit form .ant-row {
+  margin-bottom: 0;
+}
+.material-page-desktop-drawer-edit form .ant-btn {
+  margin-bottom: 8px;
 }
 
 /*# sourceMappingURL=app.css.map */

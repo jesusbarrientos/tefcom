@@ -18,15 +18,45 @@
                 {
                     "key": "empleados",
                     "label": "Empleados",
-                    "url": "systems",
-                    "icon": "user",
+                    "url": "human_resources/employee",
+                    "icon": "",
                     "menu": []
                 },
                 {
                     "key": "asistencia",
                     "label": "Asistencia",
-                    "url": "systems",
-                    "icon": "solution",
+                    "url": "asistencia",
+                    "icon": "",
+                    "menu": []
+                }
+            ]
+        },
+        {
+            "key": "insumos",
+            "label": "Insumos",
+            "url": "",
+            "icon": "experiment",
+            "menu": [
+                {
+                    "key": "materiales",
+                    "label": "Materiales",
+                    "url": "material",
+                    "icon": "",
+                    "menu": []
+                }
+            ]
+        },
+        {
+            "key": "documentos",
+            "label": "Documentos",
+            "url": "",
+            "icon": "file-text",
+            "menu": [
+                {
+                    "key": "cotizaciones",
+                    "label": "Cotizaciones",
+                    "url": "cotizaciones",
+                    "icon": "",
                     "menu": []
                 }
             ]

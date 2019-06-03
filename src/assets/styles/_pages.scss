@@ -85,3 +85,113 @@
         }
     }
 }
+
+/*
+ * Modules
+ */
+#modules-page {
+
+    .module-button {
+        margin: 5px 0;
+    }
+}
+
+/*
+ * Employees
+ */
+#employee-page-desktop {
+
+    .new-employee {
+        padding: 1rem;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        background-color: $background-form;
+
+        .ant-row {
+            margin-bottom: 0;
+        }
+    }
+
+
+}
+
+.employee-page-desktop-drawer {
+    &-edit {
+        form {
+            .ant-row {
+                margin-bottom: 0;
+            }
+
+            .ant-btn {
+                margin-bottom: 8px;
+            }
+        }
+    }
+}
+
+/*
+ * Materials
+ */
+#material-page-desktop {
+
+    .new-material {
+        padding: 1rem;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        background-color: $background-form;
+
+        .ant-row {
+            margin-bottom: 0;
+        }
+
+        .ant-collapse-content {
+            max-height: 300px;
+            overflow-y: auto;
+
+            .ant-row-flex {
+                margin-bottom: 5px;
+                padding: 0 5px;
+            }
+
+            .ant-input-number {
+                width: 100%;
+            }
+
+            .delete-material-button {
+                margin: 0 3px 0 0;
+                width: 1.375rem;
+                height: 1.375rem;
+
+                i,
+                svg {
+                    width: 0.75rem;
+                    height: 0.75rem;
+                }
+            }
+
+            .add-material-button {
+                margin-top: 15px;
+            }
+        }
+
+        .ant-btn {
+            margin-top: 8px;
+        }
+    }
+
+
+}
+
+.material-page-desktop-drawer {
+    &-edit {
+        form {
+            .ant-row {
+                margin-bottom: 0;
+            }
+
+            .ant-btn {
+                margin-bottom: 8px;
+            }
+        }
+    }
+}

@@ -10,11 +10,18 @@ $background-content-layout: #f0f2f5;
 $background-footer-layout: white;
 $background-login-mobile: linear-gradient(rgba(0,196,255,1), rgba(32,115,217,1));
 $background-header-layout: white;
+$background-form: #e6e6e6;
+
+/*
+ * Borders
+ */
+$border-module: rgba(0,0,0,.15);
 
 /*
  * Font colors
  */
 $color-input-icon: rgba(0,0,0,.25);
+$color-input-icon-danger: #ff353d;
 $color-text-white: white;
 $color-text-dark: rgba(0, 0, 0, 0.85);
 $color-text-dark-hover: rgba(0, 0, 0, 0.35);
