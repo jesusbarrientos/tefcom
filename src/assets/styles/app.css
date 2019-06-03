@@ -438,7 +438,31 @@ body {
   margin-bottom: 0;
 }
 .material-page-desktop-drawer-edit form .ant-btn {
-  margin-bottom: 8px;
+  margin-top: 8px;
+}
+.material-page-desktop-drawer-edit form .ant-collapse-content {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.material-page-desktop-drawer-edit form .ant-collapse-content .ant-row-flex {
+  margin-bottom: 5px;
+  padding: 0 5px;
+}
+.material-page-desktop-drawer-edit form .ant-collapse-content .ant-input-number {
+  width: 100%;
+}
+.material-page-desktop-drawer-edit form .ant-collapse-content .delete-material-button {
+  margin: 0 3px 0 0;
+  width: 1.375rem;
+  height: 1.375rem;
+}
+.material-page-desktop-drawer-edit form .ant-collapse-content .delete-material-button i,
+.material-page-desktop-drawer-edit form .ant-collapse-content .delete-material-button svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+.material-page-desktop-drawer-edit form .ant-collapse-content .add-material-button {
+  margin-top: 15px;
 }
 
 /*# sourceMappingURL=app.css.map */
