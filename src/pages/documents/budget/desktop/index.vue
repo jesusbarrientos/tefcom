@@ -8,7 +8,7 @@
                         <a-button size="small" type="primary">
                             Cargar
                         </a-button>
-                        <a-button size="small" type="primary">
+                        <a-button size="small" type="primary" @click="exportToJsonFile">
                             Guardar
                         </a-button>
                         <a-button size="small" type="primary">
@@ -33,8 +33,13 @@
                         </a-col>
 
                         <a-col :span="5">
-                            <label for="badget-duration">Duración Estimada</label>
-                            <a-input-number id="badget-duration" v-model="budget.duration" :min="1" style="width: 100%" />
+                            <a-tooltip>
+                                <template slot="title">
+                                    Duración en días
+                                </template>
+                                <label for="badget-duration">Duración Estimada</label>
+                                <a-input-number id="badget-duration" v-model="budget.duration" :min="1" style="width: 100%" />
+                            </a-tooltip>
                         </a-col>
 
                         <a-col :span="5" :offset="4">
@@ -44,6 +49,7 @@
                                 :value="calculateTotal()"
                                 :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                 :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                :precision="2"
                                 style="width: 100%; color: black"
                                 disabled
                             />
@@ -124,7 +130,7 @@
                             <a-row v-for="(e, index) of budget.employees" type="flex" justify="space-between">
                                 <a-col :span="20">
                                     <a-row type="flex" :gutter="10">
-                                        <a-col :span="19">
+                                        <a-col :span="14">
                                             <a-select
                                                 v-model="e.id"
                                                 show-search
@@ -132,6 +138,7 @@
                                                 option-filter-prop="children"
                                                 :filter-option="filterOption"
                                                 style="width: 100%"
+                                                @change="selectEmployee(e)"
                                             >
                                                 <a-select-option v-for="employee of data.employees" :value="employee.id">
                                                     {{ employee.name }} {{ employee.lastName }}
@@ -145,6 +152,21 @@
                                                     Horas Estimadas
                                                 </template>
                                                 <a-input-number v-model="e.hours" :min="1" style="width: 100%" />
+                                            </a-tooltip>
+                                        </a-col>
+
+                                        <a-col :span="5">
+                                            <a-tooltip>
+                                                <template slot="title">
+                                                    Precio en el momento. Sirve para llevar registro del valor en el momento en que se hizo la cotización.
+                                                </template>
+                                                <a-input-number
+                                                    :value="e.price"
+                                                    :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                                    :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                                    style="width: 100%; color: black"
+                                                    disabled
+                                                />
                                             </a-tooltip>
                                         </a-col>
                                     </a-row>
@@ -168,7 +190,7 @@
                                     />
                                 </a-col>
 
-                                <a-button type="primary" v-model="budget" @click="addEmployee()">
+                                <a-button v-model="budget" type="primary" @click="addEmployee()">
                                     Agregar Empleado
                                 </a-button>
                             </a-row>
@@ -179,7 +201,7 @@
                             <a-row v-for="(e, index) of budget.materials" type="flex" justify="space-between">
                                 <a-col :span="20">
                                     <a-row type="flex" :gutter="10">
-                                        <a-col :span="19">
+                                        <a-col :span="14">
                                             <a-select
                                                 v-model="e.id"
                                                 show-search
@@ -187,6 +209,7 @@
                                                 option-filter-prop="children"
                                                 :filter-option="filterOption"
                                                 style="width: 100%"
+                                                @change="selectMaterial(e)"
                                             >
                                                 <a-select-option v-for="material of data.materials" :value="material.id">
                                                     {{ material.description }}
@@ -200,6 +223,21 @@
                                                     Cantidad
                                                 </template>
                                                 <a-input-number v-model="e.count" :min="1" style="width: 100%" />
+                                            </a-tooltip>
+                                        </a-col>
+
+                                        <a-col :span="5">
+                                            <a-tooltip>
+                                                <template slot="title">
+                                                    Precio en el momento. Sirve para llevar registro del valor en el momento en que se hizo la cotización.
+                                                </template>
+                                                <a-input-number
+                                                    :value="e.price"
+                                                    :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                                    :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                                    style="width: 100%; color: black"
+                                                    disabled
+                                                />
                                             </a-tooltip>
                                         </a-col>
                                     </a-row>
@@ -231,6 +269,59 @@
 
                         <!--OTHERS-->
                         <a-collapse-panel key="3" header="Otros">
+                            <a-row v-for="(e, index) of budget.others" type="flex" justify="space-between">
+                                <a-col :span="20">
+                                    <a-row type="flex" align="middle" :gutter="10">
+                                        <a-col :span="13">
+                                            <a-tooltip>
+                                                <template slot="title">
+                                                    Descripción
+                                                </template>
+                                                <a-input v-model="e.description" placeholder="Descripción" />
+                                            </a-tooltip>
+                                        </a-col>
+
+                                        <a-col :span="4">
+                                            <a-tooltip>
+                                                <template slot="title">
+                                                    Precio
+                                                </template>
+                                                <a-input-number
+                                                    v-model="e.price"
+                                                    :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                                    :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                                    style="width: 100%"
+                                                />
+                                            </a-tooltip>
+                                        </a-col>
+
+                                        <a-col :span="4">
+                                            <a-tooltip>
+                                                <template slot="title">
+                                                    Cantidad
+                                                </template>
+                                                <a-input-number v-model="e.count" :min="1" style="width: 100%" />
+                                            </a-tooltip>
+                                        </a-col>
+
+                                        <a-col :span="3">
+                                            <a-tooltip>
+                                                <template slot="title">
+                                                    El precio incluye IVA
+                                                </template>
+                                                <a-checkbox @change="onChangeIva($event, e)">
+                                                    IVA
+                                                </a-checkbox>
+                                            </a-tooltip>
+                                        </a-col>
+                                    </a-row>
+                                </a-col>
+
+                                <a-button type="danger" @click="removeElement(index, budget.others)">
+                                    Eliminar
+                                </a-button>
+                            </a-row>
+
                             <a-row type="flex" justify="space-between" align="middle">
                                 <a-col :span="5">
                                     <label for="total-other">Subtotal</label>
@@ -244,7 +335,7 @@
                                     />
                                 </a-col>
 
-                                <a-button type="primary">
+                                <a-button type="primary" @click="addOther()">
                                     Agregar Concepto
                                 </a-button>
                             </a-row>
@@ -260,20 +351,112 @@
     import moment from 'moment'
 
     const data = {
-        employees: [
-            { id: 1, name: 'Jesus', lastName: 'Barrientos', price: 5000 },
-            { id: 2, name: 'Dani', lastName: 'Zubicueta', price: 2000 },
-            { id: 3, name: 'Matias', lastName: 'Barrientos', price: 1300 }
-        ],
-        materials: [
-            { id: 1, description: 'A', price: 1000 },
-            { id: 2, description: 'B', price: 100 },
-            { id: 3, description: 'C', price: 5 }
-        ]
+        employees: [{
+            'id': 1,
+            'name': 'Darryl',
+            'lastName': 'Pires',
+            'price': 4809
+        }, {
+            'id': 2,
+            'name': 'Wileen',
+            'lastName': 'Labbe',
+            'price': 3712
+        }, {
+            'id': 3,
+            'name': 'Shayla',
+            'lastName': 'Smitham',
+            'price': 6187
+        }, {
+            'id': 4,
+            'name': 'Emma',
+            'lastName': 'Valente',
+            'price': 3406
+        }, {
+            'id': 5,
+            'name': 'Malena',
+            'lastName': 'Olivet',
+            'price': 2697
+        }, {
+            'id': 6,
+            'name': 'Sybilla',
+            'lastName': "D'Agostino",
+            'price': 2741
+        }, {
+            'id': 7,
+            'name': 'Susy',
+            'lastName': 'Tinniswood',
+            'price': 2554
+        }, {
+            'id': 8,
+            'name': 'Cherrita',
+            'lastName': 'Raye',
+            'price': 4802
+        }],
+        materials: [{
+            'id': 1,
+            'description': 'Oilfield Services/Equipment',
+            'price': 8127
+        }, {
+            'id': 2,
+            'description': 'Savings Institutions',
+            'price': 9318
+        }, {
+            'id': 3,
+            'description': 'Oil & Gas Production',
+            'price': 2268
+        }, {
+            'id': 4,
+            'description': 'Oilfield Services/Equipment',
+            'price': 2236
+        }, {
+            'id': 5,
+            'description': 'Agricultural Chemicals',
+            'price': 4627
+        }, {
+            'id': 10,
+            'description': 'Medical Specialities',
+            'price': 3902
+        }, {
+            'id': 11,
+            'description': 'Major Banks',
+            'price': 1186
+        }, {
+            'id': 12,
+            'description': 'Investment Bankers/Brokers/Service',
+            'price': 3596
+        }, {
+            'id': 13,
+            'description': 'Business Services',
+            'price': 8871
+        }, {
+            'id': 15,
+            'description': 'Computer Communications Equipment',
+            'price': 6824
+        }, {
+            'id': 16,
+            'description': 'Integrated oil Companies',
+            'price': 9426
+        }, {
+            'id': 17,
+            'description': 'Oil & Gas Production',
+            'price': 8043
+        }, {
+            'id': 18,
+            'description': 'Specialty Chemicals',
+            'price': 5102
+        }, {
+            'id': 19,
+            'description': 'Major Banks',
+            'price': 2349
+        }, {
+            'id': 20,
+            'description': 'Telecommunications Equipment',
+            'price': 6576
+        }]
     }
 
     const budget = {
-        number: 0,
+        number: 1,
         date: moment(new Date()),
         duration: 1,
         subtotal: {
@@ -281,6 +464,7 @@
             materials: 0,
             others: 0
         },
+        total: 0,
         client: {
             company: '',
             rut: '',
@@ -351,19 +535,54 @@
                 return total
             },
             calculateTotal() {
-                return budget.subtotal.employees + budget.subtotal.materials + budget.subtotal.others
+                const subtotal = budget.subtotal.employees + budget.subtotal.materials + budget.subtotal.others
+                const total = subtotal * (1 - budget.client.discount / 100)
+                budget.total = total
+                return total
             },
             filterOption(input, option) {
                 return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
             },
             addEmployee() {
-                budget.employees.push({ id: data.employees[0].id, hours: 1 })
+                budget.employees.push({ id: data.employees[0].id, price: data.employees[0].price, hours: 1 })
             },
             addMaterial() {
-                budget.materials.push({ id: data.materials[0].id, count: 1 })
+                budget.materials.push({ id: data.materials[0].id, price: data.materials[0].price, count: 1 })
+            },
+            addOther() {
+                budget.others.push({ description: '', price: 0, count: 1, includeIva: false })
             },
             removeElement(index, list) {
                 list.splice(index, 1)
+            },
+            onChangeIva($event, other) {
+                other.includeIva = $event.target.checked
+            },
+            selectEmployee(e) {
+                e.price = this.getEmployeePrice(e.id)
+            },
+            selectMaterial(e) {
+                e.price = this.getMaterialPrice(e.id)
+            },
+            exportToJsonFile() {
+                const dataStr = JSON.stringify(budget)
+                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+
+                const now = new Date()
+                const date = new Date(budget.date)
+                const day = date.getDate()
+                const month = date.getMonth() + 1
+                const year = date.getFullYear()
+                const hour = now.getHours()
+                const min = now.getMinutes()
+
+                const exportFileDefaultName = `cot_${day}${month}${year}_${hour}${min}.json`
+
+                const linkElement = document.createElement('a')
+                linkElement.setAttribute('href', dataUri)
+                linkElement.setAttribute('download', exportFileDefaultName)
+                linkElement.click()
+                linkElement.remove()
             }
         }
     }
