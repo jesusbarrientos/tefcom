@@ -78,7 +78,7 @@
             top: 0;
             right: 0;
             left: 0;
-            z-index: 1;
+            z-index: 901;
             background-color: $background-header-layout;
         }
 
@@ -88,7 +88,7 @@
             bottom: 0;
             left: 0;
             width: $size-layout-sider-width;
-            z-index: 1;
+            z-index: 900;
             border-right: solid 1px $palette-primary;
         }
 
