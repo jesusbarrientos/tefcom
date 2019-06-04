@@ -26,7 +26,8 @@
         "cross-env": "^5.2.0",
         "express": "^4.16.4",
         "nuxt": "^2.4.0",
-        "vue-mq": "^1.0.1"
+        "vue-mq": "^1.0.1",
+        "moment": "latest"
     },
     "devDependencies": {
         "@nuxtjs/eslint-config": "^0.0.1",
