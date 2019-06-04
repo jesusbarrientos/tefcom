@@ -1,7 +1,7 @@
 <template>
     <div id="material-page-desktop">
         <!--REGISTER & LIST MATERIALS-->
-        <a-row type="flex" justify="center" :gutter="16">
+        <a-row type="flex" justify="center">
             <a-col :span="16">
                 <a-card title="Materiales" :bordered="false" class="materials-card">
                     <div class="new-material">
@@ -325,7 +325,7 @@
                         </a-row>
 
                         <a-row>
-                            <a-button type="danger" class="delete-material-button" @click="onCloseEditDrawer" block>
+                            <a-button type="danger" class="delete-material-button" block @click="onCloseEditDrawer">
                                 Cancelar
                             </a-button>
                         </a-row>

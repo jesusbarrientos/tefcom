@@ -5,7 +5,7 @@
         {
             "key": "dashboard",
             "label": "Dashboard",
-            "url": "dashboard",
+            "url": "/dashboard",
             "icon": "dashboard",
             "menu": []
         },
@@ -18,14 +18,14 @@
                 {
                     "key": "empleados",
                     "label": "Empleados",
-                    "url": "human_resources/employee",
+                    "url": "/human_resources/employee",
                     "icon": "",
                     "menu": []
                 },
                 {
                     "key": "asistencia",
                     "label": "Asistencia",
-                    "url": "asistencia",
+                    "url": "/asistencia",
                     "icon": "",
                     "menu": []
                 }
@@ -40,7 +40,7 @@
                 {
                     "key": "materiales",
                     "label": "Materiales",
-                    "url": "material",
+                    "url": "/material",
                     "icon": "",
                     "menu": []
                 }
@@ -55,7 +55,7 @@
                 {
                     "key": "cotizaciones",
                     "label": "Cotizaciones",
-                    "url": "cotizaciones",
+                    "url": "/documents/budget",
                     "icon": "",
                     "menu": []
                 }
