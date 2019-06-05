@@ -1,5 +1,7 @@
 <template>
     <div id="budget-page-desktop">
+        <a-back-top />
+        
         <a-row type="flex" justify="center">
             <a-col :span="20">
                 <a-card title="Generar Cotización" :bordered="false">
@@ -140,8 +142,8 @@
                                                 style="width: 100%"
                                                 @change="selectEmployee(e)"
                                             >
-                                                <a-select-option v-for="employee of data.employees" :value="employee.id">
-                                                    {{ employee.name }} {{ employee.lastName }}
+                                                <a-select-option v-for="employee of getEmployeeFilteredList(e.id)" :value="employee.id">
+                                                    {{ getEmployeeFullName(employee.id) }}
                                                 </a-select-option>
                                             </a-select>
                                         </a-col>
@@ -211,7 +213,7 @@
                                                 style="width: 100%"
                                                 @change="selectMaterial(e)"
                                             >
-                                                <a-select-option v-for="material of data.materials" :value="material.id">
+                                                <a-select-option v-for="material of getMaterialFilteredList(e.id)" :value="material.id">
                                                     {{ material.description }}
                                                 </a-select-option>
                                             </a-select>
@@ -511,6 +513,10 @@
                 const employee = this.data.employees.find(e => e.id === id)
                 return employee ? employee.price : 0
             },
+            getEmployeeFullName(id) {
+                const e = data.employees.find(e => e.id === id)
+                return `${e.name} ${e.lastName}`
+            },
             calculateTotalMaterials() {
                 let total = 0
                 budget.materials.forEach((m) => {
@@ -543,11 +549,59 @@
             filterOption(input, option) {
                 return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
             },
+            getFirstEmployeeOFFilteredList() {
+                let employee = null
+                let flag = false
+
+                while (!flag) {
+                    data.employees.every((e) => {
+                        if (!this.existEmployeeInList(e.id)) {
+                            employee = e
+                            flag = true
+                            return false
+                        } else
+                            return true
+                    })
+
+                    flag = true
+                }
+
+                return employee
+            },
+            getFirstElementOfFilteredList(list, budgetList) {
+                let element = null
+                let flag = false
+
+                while (!flag) {
+                    list.every((e) => {
+                        if (!this.existElementInList(e.id, budgetList)) {
+                            element = e
+                            flag = true
+                            return false
+                        } else
+                            return true
+                    })
+
+                    flag = true
+                }
+
+                return element
+            },
+            existElementInList(id, budgetList) {
+                const e = budgetList.find(e => e.id === id)
+                return !!e
+            },
             addEmployee() {
-                budget.employees.push({ id: data.employees[0].id, price: data.employees[0].price, hours: 1 })
+                const employee = this.getFirstEmployeeOFFilteredList()
+
+                if (employee)
+                    budget.employees.push({ id: employee.id, price: employee.price, hours: 1 })
             },
             addMaterial() {
-                budget.materials.push({ id: data.materials[0].id, price: data.materials[0].price, count: 1 })
+                const material = this.getFirstElementOfFilteredList(data.materials, budget.materials)
+
+                if (material)
+                    budget.materials.push({ id: material.id, price: material.price, count: 1 })
             },
             addOther() {
                 budget.others.push({ description: '', price: 0, count: 1, includeIva: false })
@@ -563,6 +617,26 @@
             },
             selectMaterial(e) {
                 e.price = this.getMaterialPrice(e.id)
+            },
+            existEmployeeInList(id) {
+                const e = budget.employees.find(e => e.id === id)
+                return !!e
+            },
+            getEmployeeFilteredList(id) {
+                return data.employees.filter((e) => {
+                    if (e.id !== id)
+                        return !this.existEmployeeInList(e.id)
+                    else
+                        return true
+                })
+            },
+            getMaterialFilteredList(id) {
+                return data.materials.filter((e) => {
+                    if (e.id !== id)
+                        return !this.existElementInList(e.id, budget.materials)
+                    else
+                        return true
+                })
             },
             exportToJsonFile() {
                 const dataStr = JSON.stringify(budget)
