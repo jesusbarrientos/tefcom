@@ -58,6 +58,9 @@ body {
  * Components
  */
 /*
+ * Padding
+ */
+/*
  * Authentication mode
  */
 #authentication-layout #desktop {
@@ -169,7 +172,6 @@ body {
 }
 #default-layout #mobile > #content-mobile {
   margin-bottom: 3.75rem;
-  padding: 20px;
   background-color: #f0f2f5;
 }
 
@@ -370,6 +372,9 @@ body {
 /*
  * Modules
  */
+#modules-page {
+  padding: 20px;
+}
 #modules-page .module-button {
   margin: 5px 0;
 }
@@ -385,6 +390,28 @@ body {
 }
 #employee-page-desktop .new-employee .ant-row {
   margin-bottom: 0;
+}
+#employee-page-desktop .new-employee .ant-input-number {
+  width: 100%;
+}
+#employee-page-mobile {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+#employee-page-mobile .content-area {
+  padding: 20px;
+  overflow-y: auto;
+}
+#employee-page-mobile .new-employee {
+  padding: 1.25rem;
+  background-color: white;
+  position: sticky;
+  bottom: 3.75rem;
 }
 
 .employee-page-desktop-drawer-edit form .ant-row {

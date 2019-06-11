@@ -25,9 +25,10 @@
         "ant-design-vue": "^1.1.10",
         "cross-env": "^5.2.0",
         "express": "^4.16.4",
+        "moment": "latest",
         "nuxt": "^2.4.0",
-        "vue-mq": "^1.0.1",
-        "moment": "latest"
+        "vue-infinite-loading": "^2.4.4",
+        "vue-mq": "^1.0.1"
     },
     "devDependencies": {
         "@nuxtjs/eslint-config": "^0.0.1",

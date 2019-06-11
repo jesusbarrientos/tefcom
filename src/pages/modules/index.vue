@@ -27,7 +27,7 @@
         computed: {
             modules: function () {
                 return this.navigation.menu.filter((item) => {
-                    return item.key !== this.navigation.defaultSelectedKeys[0]
+                    return (item.responsive.includes(this.$mq)) && (item.key !== this.navigation.defaultSelectedKeys[0])
                 })
             }
         },

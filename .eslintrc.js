@@ -22,6 +22,7 @@ module.exports = {
             "skipBlankLines": true
         }],
         "curly": ["error", "multi-or-nest"],
+        "dot-notation": "off",
 
         // Vue
         "vue/script-indent": ["error", 4, {
@@ -49,6 +50,8 @@ module.exports = {
 
         "vue/require-v-for-key": "off",
 
-        "vue/valid-v-for": "off"
+        "vue/valid-v-for": "off",
+
+        "vue/require-prop-types": "off"
     }
 }
