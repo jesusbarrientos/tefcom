@@ -8,6 +8,7 @@
 
 <script>
     import NavbarIcon from '../navbar-icon/NavbarIcon'
+
     export default {
         name: 'FooterNavbar',
         components: { NavbarIcon }

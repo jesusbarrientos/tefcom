@@ -1,7 +1,7 @@
 <template>
     <div id="budget-page-desktop">
         <a-back-top />
-        
+
         <a-row type="flex" justify="center">
             <a-col :span="20">
                 <a-card title="Generar Cotización" :bordered="false">

@@ -90,6 +90,7 @@
  * Modules
  */
 #modules-page {
+    padding: $default-mobile-padding;
 
     .module-button {
         margin: 5px 0;
@@ -99,20 +100,46 @@
 /*
  * Employees
  */
-#employee-page-desktop {
+#employee-page {
 
-    .new-employee {
-        padding: 1rem;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        background-color: $background-form;
+    &-desktop {
+        .new-employee {
+            padding: 1rem;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: $background-form;
 
-        .ant-row {
-            margin-bottom: 0;
+            .ant-row {
+                margin-bottom: 0;
+            }
+
+            .ant-input-number {
+                width: 100%;
+            }
         }
     }
 
+    &-mobile {
+        display: grid;
+        grid-template-rows: 1fr auto;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
 
+        .content-area {
+            padding: $default-mobile-padding;
+            overflow-y: auto;
+        }
+
+        .new-employee {
+            padding: 1.25rem;
+            background-color: $background-footer-layout;
+            position: sticky;
+            bottom: $size-footer-navbar-height;
+        }
+    }
 }
 
 .employee-page-desktop-drawer {
