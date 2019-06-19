@@ -37,6 +37,7 @@ module.exports = {
     plugins: [
         '@@/plugins/antd-ui',
         '@@/plugins/scroll',
+        '@@/plugins/mask',
         { src: '@@/plugins/mq', ssr: true }
     ],
 
@@ -53,6 +54,13 @@ module.exports = {
     */
     axios: {
         // See https://github.com/nuxt-community/axios-module#options
+    },
+
+    /*
+    ** Environment variables
+    */
+    env: {
+        apiBaseUrl: 'https://pzgpr1vjzg.execute-api.us-east-2.amazonaws.com/beta'
     },
 
     /*

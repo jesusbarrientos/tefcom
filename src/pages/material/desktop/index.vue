@@ -4,123 +4,125 @@
         <a-row type="flex" justify="center">
             <a-col :span="16">
                 <a-card title="Materiales" :bordered="false" class="materials-card">
-                    <div class="new-material">
+                    <a-spin tip="Registrando..." :spinning="visibleSpin">
+                        <div class="new-material">
 
-                        <h3>Nuevo Material</h3>
+                            <h3>Nuevo Material</h3>
 
-                        <a-form :form="formAdd" layout="vertical">
-                            <a-row :gutter="10">
-                                <a-col :span="12">
-                                    <a-form-item>
-                                        <a-input placeholder="Descripción" />
-                                    </a-form-item>
-                                </a-col>
+                            <a-form :form="formAdd" layout="vertical" @submit="addMaterial">
+                                <a-row :gutter="10">
+                                    <a-col :span="12">
+                                        <a-form-item :label="fields.description.label" :extra="fields.description.extra" :required="fields.description.required">
+                                            <a-input v-decorator="fields.description.decorator" :placeholder="fields.description.placeholder" />
+                                        </a-form-item>
+                                    </a-col>
 
-                                <a-col :span="12">
-                                    <a-form-item>
-                                        <a-input placeholder="Categoría" />
-                                    </a-form-item>
-                                </a-col>
-                            </a-row>
+                                    <a-col :span="12">
+                                        <a-form-item :label="fields.category.label" :extra="fields.category.extra" :required="fields.category.required">
+                                            <a-input v-decorator="fields.category.decorator" :placeholder="fields.category.placeholder" />
+                                        </a-form-item>
+                                    </a-col>
+                                </a-row>
 
-                            <a-row>
-                                <a-collapse>
-                                    <a-collapse-panel header="Proveedores">
+                                <a-row>
+                                    <a-collapse>
+                                        <a-collapse-panel header="Proveedores">
 
-                                        <a-row>
-                                            <a-col>
-                                                <p><a-icon type="info-circle" /> Todo precio debe ser expresado en Pesos Chilenos (CLP).</p>
+                                            <a-row>
+                                                <a-col>
+                                                    <p><a-icon type="info-circle" /> Todo precio debe ser expresado en Pesos Chilenos (CLP).</p>
 
-                                                <a-row v-for="(supplier, index) of newMaterial.suppliers" :gutter="10" type="flex" align="middle">
-                                                    <a-button
-                                                        type="danger"
-                                                        shape="circle"
-                                                        size="small"
-                                                        icon="minus"
-                                                        class="delete-material-button"
-                                                        @click="deleteSupplier(index, newMaterial.suppliers)"
-                                                    />
+                                                    <a-row v-for="(supplier, index) of newMaterial.suppliers" :gutter="10" type="flex" align="middle">
+                                                        <a-button
+                                                            type="danger"
+                                                            shape="circle"
+                                                            size="small"
+                                                            icon="minus"
+                                                            class="delete-material-button"
+                                                            @click="deleteSupplier(index, newMaterial.suppliers)"
+                                                        />
 
-                                                    <a-col :span="4">
-                                                        <a-input v-model="supplier.name" placeholder="Nombre Proveedor" />
-                                                    </a-col>
+                                                        <a-col :span="4">
+                                                            <a-input v-model="supplier.name" placeholder="Nombre Proveedor" />
+                                                        </a-col>
 
-                                                    <a-col :span="4">
-                                                        <a-select v-model="supplier.quality" :default-value="materials.options[0].value">
-                                                            <a-select-option v-for="option of materials.options" :value="option.value">
-                                                                {{ option.label }}
-                                                            </a-select-option>
-                                                        </a-select>
-                                                    </a-col>
+                                                        <a-col :span="4">
+                                                            <a-select v-model="supplier.quality" :default-value="materials.options[0].value">
+                                                                <a-select-option v-for="option of materials.options" :value="option.value">
+                                                                    {{ option.label }}
+                                                                </a-select-option>
+                                                            </a-select>
+                                                        </a-col>
 
-                                                    <a-col :span="4">
+                                                        <a-col :span="4">
+                                                            <a-tooltip>
+                                                                <template slot="title">
+                                                                    Precio del material.
+                                                                </template>
+                                                                <a-input-number
+                                                                    v-model="supplier.price"
+                                                                    :default-value="0"
+                                                                    :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                                                    :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                                                />
+                                                            </a-tooltip>
+                                                        </a-col>
+
                                                         <a-tooltip>
                                                             <template slot="title">
-                                                                Precio del material.
+                                                                IVA Incluido. Esto cambia el valor total del material.
                                                             </template>
-                                                            <a-input-number
-                                                                v-model="supplier.price"
-                                                                :default-value="0"
-                                                                :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                                                                :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                                                            />
+                                                            <a-checkbox @change="changeIva($event, supplier)">
+                                                                IVA
+                                                            </a-checkbox>
                                                         </a-tooltip>
-                                                    </a-col>
 
-                                                    <a-tooltip>
-                                                        <template slot="title">
-                                                            IVA Incluido. Esto cambia el valor total del material.
-                                                        </template>
-                                                        <a-checkbox @change="changeIva($event, supplier)">
-                                                            IVA
-                                                        </a-checkbox>
-                                                    </a-tooltip>
+                                                        <a-col :span="3">
+                                                            <a-tooltip>
+                                                                <template slot="title">
+                                                                    Porcentaje de utilidad sobre el precio del material.
+                                                                </template>
+                                                                <a-input-number
+                                                                    v-model="supplier.utility_percentaje"
+                                                                    :default-value="100"
+                                                                    :min="0"
+                                                                    :formatter="value => `${value}%`"
+                                                                    :parser="value => value.replace('%', '')"
+                                                                />
+                                                            </a-tooltip>
+                                                        </a-col>
 
-                                                    <a-col :span="3">
-                                                        <a-tooltip>
-                                                            <template slot="title">
-                                                                Porcentaje de utilidad sobre el precio del material.
-                                                            </template>
-                                                            <a-input-number
-                                                                v-model="supplier.utilityPercentaje"
-                                                                :default-value="100"
-                                                                :min="0"
-                                                                :formatter="value => `${value}%`"
-                                                                :parser="value => value.replace('%', '')"
-                                                            />
-                                                        </a-tooltip>
-                                                    </a-col>
+                                                        <a-col :span="5">
+                                                            <label>Total: ${{ calculateTotal(supplier) }}</label>
+                                                        </a-col>
+                                                    </a-row>
 
-                                                    <a-col :span="5">
-                                                        <label>Total: ${{ calculateTotal(supplier) }}</label>
-                                                    </a-col>
-                                                </a-row>
+                                                    <a-row type="flex" justify="center">
+                                                        <a-button type="primary" class="add-material-button" @click="addSupplier">
+                                                            Agregar Proveedor
+                                                        </a-button>
+                                                    </a-row>
+                                                </a-col>
+                                            </a-row>
 
-                                                <a-row type="flex" justify="center">
-                                                    <a-button type="primary" class="add-material-button" @click="addSupplier">
-                                                        Agregar Proveedor
-                                                    </a-button>
-                                                </a-row>
-                                            </a-col>
-                                        </a-row>
+                                        </a-collapse-panel>
+                                    </a-collapse>
+                                </a-row>
 
-                                    </a-collapse-panel>
-                                </a-collapse>
-                            </a-row>
-
-                            <a-row>
-                                <a-button type="primary" block>
-                                    Registrar
-                                </a-button>
-                            </a-row>
-                        </a-form>
-                    </div>
+                                <a-row>
+                                    <a-button type="primary" html-type="submit" block>
+                                        Registrar
+                                    </a-button>
+                                </a-row>
+                            </a-form>
+                        </div>
+                    </a-spin>
 
                     <a-table
                         :columns="materials.table.columns"
-                        :data-source="materials.data"
+                        :data-source="data"
                         :bordered="materials.table.bordered"
-                        :loading="materials.table.loading"
+                        :loading="loadingData"
                         :scroll="materials.table.scroll"
                         :pagination="materials.table.pagination"
                         :size="materials.table.size"
@@ -195,7 +197,7 @@
                         </template>
 
                         <template slot="utility" slot-scope="record">
-                            <label>{{ record.utilityPercentaje }}%</label>
+                            <label>{{ record.utility_percentaje }}%</label>
                         </template>
 
                         <template slot="total" slot-scope="record">
@@ -214,124 +216,127 @@
             :visible="editDrawer.visible"
             :width="editDrawer.width"
             :wrap-class-name="editDrawer.wrapClassName"
+            :mask-closable="false"
             @close="onCloseEditDrawer"
         >
-            <a-row type="flex" justify="center" :gutter="16">
-                <a-col :span="24">
-                    <a-form :form="formEdit" layout="vertical">
-                        <a-row :gutter="10">
-                            <a-col :span="12">
-                                <a-form-item>
-                                    <a-input placeholder="Descripción" />
-                                </a-form-item>
-                            </a-col>
+            <a-spin tip="Modificando..." :spinning="visibleSpinEdit">
+                <a-row type="flex" justify="center" :gutter="16">
+                    <a-col :span="24">
+                        <a-form :form="formEdit" layout="vertical" @submit="editMaterial">
+                            <a-row :gutter="10">
+                                <a-col :span="12">
+                                    <a-form-item :label="fields.description.label" :extra="fields.description.extra" :required="fields.description.required">
+                                        <a-input v-decorator="fields.description.decorator" :placeholder="fields.description.placeholder" />
+                                    </a-form-item>
+                                </a-col>
 
-                            <a-col :span="12">
-                                <a-form-item>
-                                    <a-input placeholder="Categoría" />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
+                                <a-col :span="12">
+                                    <a-form-item :label="fields.category.label" :extra="fields.category.extra" :required="fields.category.required">
+                                        <a-input v-decorator="fields.category.decorator" :placeholder="fields.category.placeholder" />
+                                    </a-form-item>
+                                </a-col>
+                            </a-row>
 
-                        <a-row>
-                            <a-collapse>
-                                <a-collapse-panel header="Proveedores">
+                            <a-row>
+                                <a-collapse>
+                                    <a-collapse-panel header="Proveedores">
 
-                                    <a-row>
-                                        <a-col>
-                                            <p><a-icon type="info-circle" /> Todo precio debe ser expresado en Pesos Chilenos (CLP).</p>
+                                        <a-row>
+                                            <a-col>
+                                                <p><a-icon type="info-circle" /> Todo precio debe ser expresado en Pesos Chilenos (CLP).</p>
 
-                                            <a-row v-for="(supplier, index) of editDrawer.record.suppliers" :gutter="10" type="flex" align="middle">
-                                                <a-button
-                                                    type="danger"
-                                                    shape="circle"
-                                                    size="small"
-                                                    icon="minus"
-                                                    class="delete-material-button"
-                                                    @click="deleteSupplier(index, editDrawer.record.suppliers)"
-                                                />
+                                                <a-row v-for="(supplier, index) of editDrawer.record.suppliers" :gutter="10" type="flex" align="middle">
+                                                    <a-button
+                                                        type="danger"
+                                                        shape="circle"
+                                                        size="small"
+                                                        icon="minus"
+                                                        class="delete-material-button"
+                                                        @click="deleteSupplier(index, editDrawer.record.suppliers)"
+                                                    />
 
-                                                <a-col :span="4">
-                                                    <a-input v-model="supplier.name" placeholder="Nombre Proveedor" />
-                                                </a-col>
+                                                    <a-col :span="4">
+                                                        <a-input v-model="supplier.name" placeholder="Nombre Proveedor" />
+                                                    </a-col>
 
-                                                <a-col :span="4">
-                                                    <a-select v-model="supplier.quality" :default-value="materials.options[0].value">
-                                                        <a-select-option v-for="option of materials.options" :value="option.value">
-                                                            {{ option.label }}
-                                                        </a-select-option>
-                                                    </a-select>
-                                                </a-col>
+                                                    <a-col :span="4">
+                                                        <a-select v-model="supplier.quality" :default-value="materials.options[0].value">
+                                                            <a-select-option v-for="option of materials.options" :value="option.value">
+                                                                {{ option.label }}
+                                                            </a-select-option>
+                                                        </a-select>
+                                                    </a-col>
 
-                                                <a-col :span="4">
+                                                    <a-col :span="4">
+                                                        <a-tooltip>
+                                                            <template slot="title">
+                                                                Precio del material.
+                                                            </template>
+                                                            <a-input-number
+                                                                v-model="supplier.price"
+                                                                :default-value="0"
+                                                                :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                                                :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                                            />
+                                                        </a-tooltip>
+                                                    </a-col>
+
                                                     <a-tooltip>
                                                         <template slot="title">
-                                                            Precio del material.
+                                                            IVA Incluido. Esto cambia el valor total del material.
                                                         </template>
-                                                        <a-input-number
-                                                            v-model="supplier.price"
-                                                            :default-value="0"
-                                                            :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                                                            :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                                                        />
+                                                        <a-checkbox @change="changeIva($event, supplier)">
+                                                            IVA
+                                                        </a-checkbox>
                                                     </a-tooltip>
-                                                </a-col>
 
-                                                <a-tooltip>
-                                                    <template slot="title">
-                                                        IVA Incluido. Esto cambia el valor total del material.
-                                                    </template>
-                                                    <a-checkbox @change="changeIva($event, supplier)">
-                                                        IVA
-                                                    </a-checkbox>
-                                                </a-tooltip>
+                                                    <a-col :span="3">
+                                                        <a-tooltip>
+                                                            <template slot="title">
+                                                                Porcentaje de utilidad sobre el precio del material.
+                                                            </template>
+                                                            <a-input-number
+                                                                v-model="supplier.utility_percentaje"
+                                                                :default-value="100"
+                                                                :min="0"
+                                                                :formatter="value => `${value}%`"
+                                                                :parser="value => value.replace('%', '')"
+                                                            />
+                                                        </a-tooltip>
+                                                    </a-col>
 
-                                                <a-col :span="3">
-                                                    <a-tooltip>
-                                                        <template slot="title">
-                                                            Porcentaje de utilidad sobre el precio del material.
-                                                        </template>
-                                                        <a-input-number
-                                                            v-model="supplier.utilityPercentaje"
-                                                            :default-value="100"
-                                                            :min="0"
-                                                            :formatter="value => `${value}%`"
-                                                            :parser="value => value.replace('%', '')"
-                                                        />
-                                                    </a-tooltip>
-                                                </a-col>
+                                                    <a-col :span="5">
+                                                        <label>Total: ${{ calculateTotal(supplier) }}</label>
+                                                    </a-col>
+                                                </a-row>
 
-                                                <a-col :span="5">
-                                                    <label>Total: ${{ calculateTotal(supplier) }}</label>
-                                                </a-col>
-                                            </a-row>
+                                                <a-row type="flex" justify="center">
+                                                    <a-button type="primary" class="add-material-button" @click="addEditSupplier">
+                                                        Agregar Proveedor
+                                                    </a-button>
+                                                </a-row>
+                                            </a-col>
+                                        </a-row>
 
-                                            <a-row type="flex" justify="center">
-                                                <a-button type="primary" class="add-material-button" @click="addSupplier">
-                                                    Agregar Proveedor
-                                                </a-button>
-                                            </a-row>
-                                        </a-col>
-                                    </a-row>
+                                    </a-collapse-panel>
+                                </a-collapse>
+                            </a-row>
 
-                                </a-collapse-panel>
-                            </a-collapse>
-                        </a-row>
+                            <a-row>
+                                <a-button type="primary" html-type="submit" block>
+                                    Modificar
+                                </a-button>
+                            </a-row>
 
-                        <a-row>
-                            <a-button type="primary" block>
-                                Registrar
-                            </a-button>
-                        </a-row>
-
-                        <a-row>
-                            <a-button type="danger" class="delete-material-button" block @click="onCloseEditDrawer">
-                                Cancelar
-                            </a-button>
-                        </a-row>
-                    </a-form>
-                </a-col>
-            </a-row>
+                            <a-row>
+                                <a-button type="danger" class="delete-material-button" block @click="onCloseEditDrawer">
+                                    Cancelar
+                                </a-button>
+                            </a-row>
+                        </a-form>
+                    </a-col>
+                </a-row>
+            </a-spin>
         </a-drawer>
     </div>
 </template>
@@ -342,12 +347,26 @@
     const materialDesktop = {
         name: 'MaterialDesktop',
         components: { AFormItem },
+        props: {
+            data: {
+                required: true
+            },
+            events: {
+                required: true
+            },
+            loadingData: {
+                required: true
+            }
+        },
         data() {
             return {
+                fields,
                 materials,
                 newMaterial,
                 infoDrawer,
-                editDrawer
+                editDrawer,
+                visibleSpin: false,
+                visibleSpinEdit: false
             }
         },
         beforeCreate() {
@@ -355,30 +374,68 @@
             this.formEdit = this.$form.createForm(this)
         },
         methods: {
+            /**
+             * Agrega una nueva fila para un proveedor del material a registrar.
+             */
             addSupplier() {
-                this.newMaterial.suppliers.push({ name: '', quality: this.materials.options[0].value, price: 0, includeIva: false, utilityPercentaje: 100 })
+                this.newMaterial.suppliers.push({ name: '', quality: this.materials.options[0].value, price: 1, include_iva: false, utility_percentaje: 100 })
             },
+            /**
+             * Agrega una nueva fila para un proveedor del material a modificar.
+             */
+            addEditSupplier() {
+                this.editDrawer.record.suppliers.push({ name: '', quality: this.materials.options[0].value, price: 1, include_iva: false, utility_percentaje: 100 })
+            },
+            /**
+             * Elimina proveedor de la lista para el material.
+             * @param index índice del proveedor
+             * @param suppliers lista de proveedores
+             */
             deleteSupplier(index, suppliers) {
                 suppliers.splice(index, 1)
             },
+            /**
+             * Cambia valor del check para saber si incluye o no IVA el precio del material.
+             * @param $event evento que se gatilla, trae valor de verdad
+             * @param supplier proveedor
+             */
             changeIva($event, supplier) {
-                supplier.includeIva = $event.target.checked
+                supplier.include_iva = $event.target.checked
             },
+            /**
+             * Calcula el total del proveedor
+             * @param supplier proveedor
+             * @returns {number|*} precio final
+             */
             calculateTotal(supplier) {
-                if (supplier.includeIva)
-                    return supplier.price + (supplier.price * (supplier.utilityPercentaje / 100))
+                if (supplier.include_iva)
+                    return supplier.price + (supplier.price * (supplier.utility_percentaje / 100))
                 else
-                    return (supplier.price * 1.19) + ((supplier.price * 1.19) * (supplier.utilityPercentaje / 100))
+                    return (supplier.price * 1.19) + ((supplier.price * 1.19) * (supplier.utility_percentaje / 100))
             },
+            /**
+             * Retorna si o no dependiendo de si incluye o no IVA (tema estético)
+             * @param supplier proveedor
+             * @returns {string} si o no
+             */
             includeIva(supplier) {
-                if (supplier.includeIva)
+                if (supplier.include_iva)
                     return 'Si'
                 else
                     return 'No'
             },
+            /**
+             * Obtiene el nombre correspondiente al valor de la calidad (tema estético)
+             * @param supplier proveedor
+             * @returns {*} nombre de la calidad
+             */
             getQualityLabel(supplier) {
                 return materials.options.find(option => option.value === supplier.quality).label
             },
+            /**
+             * Sirve para filtrar en la tabla de materiales por calidad
+             * @returns {Array}
+             */
             getQualityFilters() {
                 const filters = []
 
@@ -388,436 +445,176 @@
 
                 return filters
             },
+            /**
+             * Muestra drawer de información
+             * @param record material seleccionado en la tabla
+             */
             onShowMore(record) {
                 this.infoDrawer.record = record
                 this.infoDrawer.visible = true
             },
+            /**
+             * Muestra drawer para editar material
+             * @param record material seleccionado en la tabla
+             */
             onEdit(record) {
-                this.editDrawer.record = JSON.parse(JSON.stringify(record))
+                const cloneRecord = JSON.parse(JSON.stringify(record))
+                this.editDrawer.record = cloneRecord
                 this.editDrawer.visible = true
+
+                setTimeout(() => {
+                    this.formEdit.setFieldsValue({
+                        description: cloneRecord.description,
+                        category: cloneRecord.category
+                    })
+                }, 100)
             },
+            /**
+             * Elimina material
+             * @param record
+             */
             onDelete(record) {
-                const data = [...this.materials.data]
-                this.materials.data = data.filter(item => item.key !== record.key)
+                const body = {
+                    description: record.description,
+                    category: record.category
+                }
+
+                this.$emit('emit', { type: this.events.DELETE, body: body })
             },
+            /**
+             * Cierra drawer de información
+             */
             onCloseInfoDrawer() {
                 this.infoDrawer.visible = false
                 this.infoDrawer.record = {}
             },
+            /**
+             * Cierra drawer para editar material
+             */
             onCloseEditDrawer() {
                 this.editDrawer.visible = false
                 this.editDrawer.record = {}
+            },
+            /**
+             * Agrega un nuevo material
+             */
+            addMaterial($event) {
+                $event.preventDefault()
+
+                this.formAdd.validateFields((error) => {
+                    if (!error) {
+                        this.visibleSpin = true
+
+                        const material = {
+                            description: this.formAdd.getFieldValue('description'),
+                            category: this.formAdd.getFieldValue('category'),
+                            suppliers: []
+                        }
+
+                        // Agrega solo los proveedores que tienen al menos un nombre
+                        newMaterial.suppliers.forEach((s) => {
+                            if (s.name && s.name !== '')
+                                material.suppliers.push(s)
+                        })
+
+                        const params = {
+                            type: this.events.CREATE,
+                            body: material,
+                            callback: (promise) => {
+                                promise
+                                    // En caso de ser registrado correctamente
+                                    .then(() => {
+                                        this.formAdd.resetFields()
+                                        this.newMaterial.suppliers = []
+                                    })
+                                    .finally(() => {
+                                        this.visibleSpin = false
+                                    })
+                            }
+                        }
+
+                        this.$emit('emit', params)
+                    }
+                })
+            },
+            /**
+             * Editar un material
+             */
+            editMaterial($event) {
+                $event.preventDefault()
+
+                this.formEdit.validateFields((error) => {
+                    if (!error) {
+                        this.visibleSpinEdit = true
+
+                        const material = {
+                            description: this.formEdit.getFieldValue('description'),
+                            category: this.formEdit.getFieldValue('category'),
+                            suppliers: []
+                        }
+
+                        // Agrega solo los proveedores que tienen al menos un nombre
+                        this.editDrawer.record.suppliers.forEach((s) => {
+                            if (s.name && s.name !== '')
+                                material.suppliers.push(s)
+                        })
+
+                        const params = {
+                            type: this.events.EDIT,
+                            body: material,
+                            callback: (promise) => {
+                                promise
+                                    // En caso de ser modificado correctamente
+                                    .then(() => {
+                                        this.formEdit.resetFields()
+                                        this.editDrawer.record.suppliers = []
+                                    })
+                                    .finally(() => {
+                                        this.visibleSpinEdit = false
+                                    })
+                            }
+                        }
+
+                        this.$emit('emit', params)
+                    }
+                })
             }
         }
     }
 
-    const materials = {
-        data: [{
-            'key': 1,
-            'description': 'Broken',
-            'category': 'Horror|Thriller',
-            suppliers: [
-                { name: 'Hola', quality: 'BUENA', price: 1, includeIva: true, utilityPercentaje: 200 },
-                { name: 'Chao', quality: 'ECONÓMICO', price: 100, includeIva: false, utilityPercentaje: 100 },
-                { name: 'Alo', quality: 'RESISTENTE', price: 3580, includeIva: true, utilityPercentaje: 75 }
+    const fields = {
+        description: {
+            label: 'Descripción',
+            required: true,
+            extra: '',
+            placeholder: 'Descripción',
+            decorator: [
+                'description',
+                {
+                    initialValue: undefined,
+                    rules: [
+                        { required: true, message: 'Ingrese una descripción.' }
+                    ]
+                }
             ]
-        }, {
-            'key': 2,
-            'description': 'Breakaway (Speedy Singhs)',
-            'category': 'Comedy|Drama'
-        }, {
-            'key': 3,
-            'description': 'Shepard & Dark',
-            'category': 'Documentary'
-        }, {
-            'key': 4,
-            'description': 'Dazed and Confused',
-            'category': 'Comedy'
-        }, {
-            'key': 5,
-            'description': 'Bad Asses (Bad Ass 2)',
-            'category': 'Action|Drama'
-        }, {
-            'key': 6,
-            'description': 'Rehearsals for Extinct Anatomies',
-            'category': 'Animation'
-        }, {
-            'key': 7,
-            'description': 'Audition (Konkurs)',
-            'category': 'Documentary'
-        }, {
-            'key': 8,
-            'description': 'Take the Money and Run',
-            'category': 'Comedy|Crime'
-        }, {
-            'key': 9,
-            'description': 'Executive Target',
-            'category': 'Action|Adventure|Crime|Thriller'
-        }, {
-            'key': 10,
-            'description': 'Heavy Metal',
-            'category': 'Action|Adventure|Animation|Horror|Sci-Fi'
-        }, {
-            'key': 11,
-            'description': 'Gone Girl',
-            'category': 'Drama|Thriller'
-        }, {
-            'key': 12,
-            'description': 'Oppai Volleyball (Oppai barê)',
-            'category': 'Comedy'
-        }, {
-            'key': 13,
-            'description': 'The Robot vs. the Aztec Mummy',
-            'category': 'Horror|Sci-Fi'
-        }, {
-            'key': 14,
-            'description': 'Sorry, Wrong Number',
-            'category': 'Drama|Film-Noir|Thriller'
-        }, {
-            'key': 15,
-            'description': 'Rosa Luxemburg',
-            'category': 'Drama'
-        }, {
-            'key': 16,
-            'description': "She's Out of Control",
-            'category': 'Comedy'
-        }, {
-            'key': 17,
-            'description': "Tuya's Marriage (Tuya de hun shi)",
-            'category': 'Drama|Romance'
-        }, {
-            'key': 18,
-            'description': 'In a Better World (Hævnen)',
-            'category': 'Drama'
-        }, {
-            'key': 19,
-            'description': 'Ponette',
-            'category': 'Drama'
-        }, {
-            'key': 20,
-            'description': 'Into the Blue 2: The Reef',
-            'category': 'Action|Adventure|Thriller'
-        }, {
-            'key': 21,
-            'description': 'Rookie, The',
-            'category': 'Action|Comedy|Thriller'
-        }, {
-            'key': 22,
-            'description': 'Ce que mes yeux ont vu',
-            'category': 'Drama|Mystery|Thriller'
-        }, {
-            'key': 23,
-            'description': 'Macabre',
-            'category': 'Horror|Thriller'
-        }, {
-            'key': 24,
-            'description': 'Blade on the Feather (Deep Cover)',
-            'category': 'Mystery'
-        }, {
-            'key': 25,
-            'description': 'Superweib, Das',
-            'category': 'Comedy'
-        }, {
-            'key': 26,
-            'description': 'Intermezzo',
-            'category': 'Drama|Romance'
-        }, {
-            'key': 27,
-            'description': 'Bourne Ultimatum, The',
-            'category': 'Action|Crime|Thriller'
-        }, {
-            'key': 28,
-            'description': 'London River',
-            'category': 'Drama|Mystery'
-        }, {
-            'key': 29,
-            'description': 'Hardware',
-            'category': 'Action|Horror|Sci-Fi'
-        }, {
-            'key': 30,
-            'description': 'Trash',
-            'category': 'Adventure|Crime|Drama|Thriller'
-        }, {
-            'key': 31,
-            'description': '3 Idiots',
-            'category': 'Comedy|Drama|Romance'
-        }, {
-            'key': 32,
-            'description': "Female Agents (Les femmes de l'ombre)",
-            'category': 'Drama|War'
-        }, {
-            'key': 33,
-            'description': 'Sune på bilsemester',
-            'category': 'Children|Comedy'
-        }, {
-            'key': 34,
-            'description': 'Godsend',
-            'category': 'Drama|Horror|Thriller'
-        }, {
-            'key': 35,
-            'description': 'Fever',
-            'category': 'Drama'
-        }, {
-            'key': 36,
-            'description': 'Christmas on Mars',
-            'category': 'Sci-Fi'
-        }, {
-            'key': 37,
-            'description': "Baby's Day Out",
-            'category': 'Comedy'
-        }, {
-            'key': 38,
-            'description': 'My Sucky Teen Romance',
-            'category': 'Comedy'
-        }, {
-            'key': 39,
-            'description': "Four Friends (a.k.a. Georgia's Friends)",
-            'category': 'Drama'
-        }, {
-            'key': 40,
-            'description': 'Thank You, Mr. Moto',
-            'category': 'Crime|Drama|Mystery'
-        }, {
-            'key': 41,
-            'description': 'Set Me Free (Emporte-moi)',
-            'category': 'Drama'
-        }, {
-            'key': 42,
-            'description': 'So Big!',
-            'category': 'Drama'
-        }, {
-            'key': 43,
-            'description': 'Naked Blood: Megyaku (Nekeddo burâddo: Megyaku)',
-            'category': 'Horror'
-        }, {
-            'key': 44,
-            'description': 'Carnosaur 3: Primal Species',
-            'category': 'Horror|Sci-Fi'
-        }, {
-            'key': 45,
-            'description': 'Tourist, The',
-            'category': 'Drama|Thriller'
-        }, {
-            'key': 46,
-            'description': 'Soldier',
-            'category': 'Action|Sci-Fi|War'
-        }, {
-            'key': 47,
-            'description': 'Diana Vreeland: The Eye Has to Travel',
-            'category': 'Documentary'
-        }, {
-            'key': 48,
-            'description': 'Bleeding, The',
-            'category': 'Action|Horror'
-        }, {
-            'key': 49,
-            'description': 'Mask of Fu Manchu, The',
-            'category': 'Adventure|Horror|Sci-Fi'
-        }, {
-            'key': 50,
-            'description': 'Ice Age Columbus: Who Were the First Americans?',
-            'category': 'Documentary'
-        }, {
-            'key': 51,
-            'description': 'Winter of Discontent',
-            'category': 'Drama'
-        }, {
-            'key': 52,
-            'description': 'Summer Holiday',
-            'category': 'Musical|Romance'
-        }, {
-            'key': 53,
-            'description': "Acadia Acadia?!? (L'acadie, l'Acadie)",
-            'category': 'Documentary'
-        }, {
-            'key': 54,
-            'description': 'Green Butchers, The (Grønne slagtere, De)',
-            'category': 'Comedy|Crime|Drama|Romance'
-        }, {
-            'key': 55,
-            'description': 'Lady Terminator (Pembalasan ratu pantai selatan)',
-            'category': 'Action|Adventure|Horror|Sci-Fi|Thriller'
-        }, {
-            'key': 56,
-            'description': 'Back to School with Franklin',
-            'category': 'Animation|Children'
-        }, {
-            'key': 57,
-            'description': 'Nocturna',
-            'category': 'Adventure|Animation|Children|Fantasy|Mystery'
-        }, {
-            'key': 58,
-            'description': 'Toronto Stories',
-            'category': 'Drama'
-        }, {
-            'key': 59,
-            'description': 'Mare Nostrum',
-            'category': 'War'
-        }, {
-            'key': 60,
-            'description': 'Color Purple, The',
-            'category': 'Drama'
-        }, {
-            'key': 61,
-            'description': 'Macbeth',
-            'category': 'Drama'
-        }, {
-            'key': 62,
-            'description': 'Speechless',
-            'category': 'Comedy|Romance'
-        }, {
-            'key': 63,
-            'description': '12 Rounds',
-            'category': 'Action|Thriller'
-        }, {
-            'key': 64,
-            'description': 'Dobermann',
-            'category': 'Action|Crime'
-        }, {
-            'key': 65,
-            'description': 'Mummy, The',
-            'category': 'Horror|Romance'
-        }, {
-            'key': 66,
-            'description': 'Straight Shooting',
-            'category': 'Western'
-        }, {
-            'key': 67,
-            'description': 'Commitments, The',
-            'category': 'Comedy|Drama|Musical'
-        }, {
-            'key': 68,
-            'description': 'The Whisperer in Darkness',
-            'category': 'Horror|Mystery|Sci-Fi|Thriller'
-        }, {
-            'key': 69,
-            'description': 'Magnificent Obsession',
-            'category': 'Drama|Romance'
-        }, {
-            'key': 70,
-            'description': 'Charming Mass Suicide, A (Hurmaava joukkoitsemurha)',
-            'category': 'Comedy'
-        }, {
-            'key': 71,
-            'description': 'Don Verdean',
-            'category': 'Comedy'
-        }, {
-            'key': 72,
-            'description': 'The Dark Knight',
-            'category': 'Action|Crime|Drama|Thriller'
-        }, {
-            'key': 73,
-            'description': 'Beautician and the Beast, The',
-            'category': 'Comedy|Romance'
-        }, {
-            'key': 74,
-            'description': 'Twilight Saga: New Moon, The',
-            'category': 'Drama|Fantasy|Horror|Romance|Thriller'
-        }, {
-            'key': 75,
-            'description': "This Girl's Life",
-            'category': 'Drama'
-        }, {
-            'key': 76,
-            'description': 'Sherlock Holmes',
-            'category': 'Action|Crime|Mystery|Thriller'
-        }, {
-            'key': 77,
-            'description': 'Feuerzangenbowle, Die',
-            'category': 'Comedy'
-        }, {
-            'key': 78,
-            'description': 'In the Midst of Life (Au coeur de la vie)',
-            'category': 'Drama|War'
-        }, {
-            'key': 79,
-            'description': 'Tokyo!',
-            'category': 'Drama'
-        }, {
-            'key': 80,
-            'description': 'Cars That Ate Paris, The',
-            'category': 'Comedy|Horror|Thriller'
-        }, {
-            'key': 81,
-            'description': 'I Knew It Was You: Rediscovering John Cazale',
-            'category': 'Documentary'
-        }, {
-            'key': 82,
-            'description': 'Down Terrace',
-            'category': 'Comedy|Crime|Drama'
-        }, {
-            'key': 83,
-            'description': 'Oedipus Rex (Edipo re)',
-            'category': 'Drama'
-        }, {
-            'key': 84,
-            'description': 'Ocean Waves (Umi ga kikoeru)',
-            'category': 'Animation|Drama|Romance'
-        }, {
-            'key': 85,
-            'description': 'Mystic Pizza',
-            'category': 'Comedy|Drama|Romance'
-        }, {
-            'key': 86,
-            'description': 'Hansel & Gretel',
-            'category': 'Drama|Fantasy|Horror|Mystery|Thriller'
-        }, {
-            'key': 87,
-            'description': 'Detention',
-            'category': 'Action|Drama|Thriller'
-        }, {
-            'key': 88,
-            'description': 'Violette (Violette Nozière)',
-            'category': 'Crime|Drama|Thriller'
-        }, {
-            'key': 89,
-            'description': 'Talk to Me',
-            'category': 'Drama'
-        }, {
-            'key': 90,
-            'description': 'Outrageous Class (Hababam sinifi)',
-            'category': 'Comedy|Drama'
-        }, {
-            'key': 91,
-            'description': 'Gamera: The Giant Monster (Daikaijû Gamera)',
-            'category': 'Sci-Fi'
-        }, {
-            'key': 92,
-            'description': 'The Inhabited Island',
-            'category': 'Fantasy|Sci-Fi'
-        }, {
-            'key': 93,
-            'description': 'V/H/S',
-            'category': 'Horror|Thriller'
-        }, {
-            'key': 94,
-            'description': 'Billy Liar',
-            'category': 'Comedy'
-        }, {
-            'key': 95,
-            'description': 'Debut, The',
-            'category': 'Comedy|Drama'
-        }, {
-            'key': 96,
-            'description': 'Cinematographer Style',
-            'category': 'Documentary'
-        }, {
-            'key': 97,
-            'description': 'American Ninja 2: The Confrontation',
-            'category': 'Action|Adventure'
-        }, {
-            'key': 98,
-            'description': 'Aelita: The Queen of Mars (Aelita)',
-            'category': 'Action|Adventure|Drama|Fantasy|Romance|Sci-Fi|Thriller'
-        }, {
-            'key': 99,
-            'description': 'Where Are the Dreams of Youth? (Seishun no yume imaizuko)',
-            'category': 'Drama'
-        }, {
-            'key': 100,
-            'description': 'Beast with a Million Eyes, The',
-            'category': 'Sci-Fi'
-        }],
+        },
+        category: {
+            label: 'Categoría',
+            required: true,
+            extra: '',
+            placeholder: 'Categoría',
+            decorator: [
+                'category',
+                {
+                    initialValue: undefined,
+                    rules: [
+                        { required: true, message: 'Ingrese una categoría.' }
+                    ]
+                }
+            ]
+        }
+    }
+    const materials = {
         options: [
             { key: 1, value: 'ECONÓMICO', label: 'Económico' },
             { key: 2, value: 'BAJA', label: 'Baja' },

@@ -38,14 +38,16 @@
         },
         methods: {
             loadEmployees() {
-                this.$axios.$get('https://1nmeia9rt8.execute-api.us-east-2.amazonaws.com/beta/Tefcom-getAllEmployees')
+                this.loadingStatus = true
+
+                this.$axios.$get(process.env.apiBaseUrl + '/employee/getall')
                     .then((response) => {
                         this.data.employees = response.body
                     })
                     .catch((e) => {
                         this.$notification.error({
-                            message: 'Error',
-                            description: 'Ha ocurrido un error en la obtención de los empleados, inténtelo nuevamente. Si sigue teniendo este problema, contáctece con soporte.',
+                            message: 'Error!',
+                            description: 'Ha ocurrido un error en la obtención de los empleados. Si sigue teniendo este problema, contáctece con soporte.',
                             duration: 8
                         })
                     })
@@ -60,20 +62,141 @@
             onEmit(event) {
                 switch (event.type) {
                     case this.event.CREATE: {
-                        console.log('Add', event.body)
+                        event.callback(this.addEmployee(event.body))
                         break
                     }
 
                     case this.event.EDIT: {
-                        console.log('Edit', event.body)
+                        event.callback(this.editEmployee(event.body))
                         break
                     }
 
                     case this.event.DELETE: {
-                        console.log('Delete', event.body)
+                        this.deleteEmployee(event.body)
                         break
                     }
                 }
+            },
+            addEmployee(request) {
+                return new Promise((resolve, reject) => {
+                    this.$axios.$put(process.env.apiBaseUrl + '/employee/new', request)
+                        .then((response) => {
+                            // Exito en el registro
+                            if (response.ok) {
+                                this.$notification.success({
+                                    message: 'Registro Exitoso!',
+                                    description: response.message
+                                })
+
+                                this.loadEmployees()
+
+                                resolve(null)
+                            } else {
+                                this.$notification.error({
+                                    message: 'Error!',
+                                    description: response.message,
+                                    duration: 8
+                                })
+
+                                reject(null)
+                            }
+                        })
+                        .catch(() => {
+                            this.$notification.error({
+                                message: 'Error!',
+                                description: 'Ha ocurrido un error en la petición, inténtelo nuevamente. Si sigue teniendo este problema, contáctece con soporte.',
+                                duration: 8
+                            })
+
+                            reject(null)
+                        })
+                })
+            },
+            deleteEmployee(request) {
+                this.loadingStatus = true
+
+                this.$axios.$post(process.env.apiBaseUrl + '/employee/delete', request)
+                    .then((response) => {
+                        // Exito en la eliminación
+                        if (response.ok) {
+                            this.$notification.success({
+                                message: 'Eliminación Exitosa!',
+                                description: response.message
+                            })
+
+                            this.loadEmployees()
+                        } else {
+                            this.$notification.error({
+                                message: 'Error!',
+                                description: response.message,
+                                duration: 8
+                            })
+
+                            this.loadingStatus = false
+                        }
+                    })
+                    .catch(() => {
+                        this.$notification.error({
+                            message: 'Error!',
+                            description: 'Ha ocurrido un error en la petición, inténtelo nuevamente. Si sigue teniendo este problema, contáctece con soporte.',
+                            duration: 8
+                        })
+
+                        this.loadingStatus = false
+                    })
+            },
+            editEmployee(request) {
+                const parsedRequest = {
+                    key: {
+                        id: 'rut',
+                        value: request.rut
+                    },
+                    editable: []
+                }
+
+                // Agrega atributos al request en formato correcto
+                Object.keys(request).forEach((item) => {
+                    if (item !== 'rut' && request[item]) {
+                        parsedRequest.editable.push({
+                            id: item,
+                            value: request[item]
+                        })
+                    }
+                })
+
+                return new Promise((resolve, reject) => {
+                    this.$axios.post(process.env.apiBaseUrl + '/employee/edit', parsedRequest)
+                        .then((response) => {
+                            // Exito en la modificación
+                            if (response.data.ok) {
+                                this.$notification.success({
+                                    message: 'Modificación Exitosa!',
+                                    description: response.data.message
+                                })
+
+                                this.loadEmployees()
+
+                                resolve(null)
+                            } else {
+                                this.$notification.error({
+                                    message: 'Error!',
+                                    description: response.message,
+                                    duration: 8
+                                })
+
+                                reject(null)
+                            }
+                        })
+                        .catch(() => {
+                            this.$notification.error({
+                                message: 'Error!',
+                                description: 'Ha ocurrido un error en la petición, inténtelo nuevamente. Si sigue teniendo este problema, contáctece con soporte.',
+                                duration: 8
+                            })
+
+                            reject(null)
+                        })
+                })
             }
         }
     }
