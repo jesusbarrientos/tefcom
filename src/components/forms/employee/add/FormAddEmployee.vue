@@ -3,7 +3,7 @@
         <a-row :gutter="10">
             <a-col :span="6">
                 <a-form-item :label="fields.rut.label" :extra="fields.rut.extra" :required="fields.rut.required">
-                    <a-input v-decorator="fields.rut.decorator" :placeholder="fields.rut.placeholder" />
+                    <a-input v-mask="fields.rut.mask" v-decorator="fields.rut.decorator" :placeholder="fields.rut.placeholder" />
                 </a-form-item>
             </a-col>
 
@@ -29,7 +29,7 @@
         <a-row :gutter="10">
             <a-col :span="6">
                 <a-form-item :label="fields.telefono.label" :extra="fields.telefono.extra" :required="fields.telefono.required">
-                    <a-input v-decorator="fields.telefono.decorator" :placeholder="fields.telefono.placeholder" />
+                    <a-input v-mask="fields.telefono.mask" v-decorator="fields.telefono.decorator" :placeholder="fields.telefono.placeholder" />
                 </a-form-item>
             </a-col>
 
@@ -54,6 +54,10 @@
             </a-col>
         </a-row>
 
+        <a-row style="margin-bottom: 10px">
+            <label>* Campo obligatorio.</label>
+        </a-row>
+
         <a-row>
             <a-button type="primary" html-type="submit" block>
                 Registrar
@@ -63,22 +67,37 @@
 </template>
 
 <script>
-
     const fields = {
         rut: {
             label: 'Rut',
             required: true,
-            extra: 'Formato: 12.345.678-9.',
+            extra: '',
             placeholder: 'Rut',
             decorator: [
                 'rut',
                 {
+                    initialValue: undefined,
                     rules: [
                         { required: true, message: 'Ingrese un rut.' },
-                        { pattern: new RegExp('^[1-9]{1}\\d{0,1}\\.\\d{3}\\.\\d{3}[-][0-9kK]{1}$'), message: 'Ingrese un rut con formato válido.' }
+                        { pattern: new RegExp('^[1-9]{1}\\d{0,1}\\.\\d{3}\\.\\d{3}[-][0-9kK]{1}$'), message: 'Ingrese un rut con formato válido (12.345.678-K).' }
                     ]
                 }
-            ]
+            ],
+            mask: {
+                mask: ['F.###.###-V', 'F#.###.###-V'],
+                tokens: {
+                    '#': {
+                        pattern: /[0-9]/
+                    },
+                    'V': {
+                        pattern: /[0-9kK]/,
+                        transform: v => v.toLocaleUpperCase()
+                    },
+                    'F': {
+                        pattern: /[1-9]/
+                    }
+                }
+            }
         },
         nombre: {
             label: 'Nombre',
@@ -86,8 +105,9 @@
             extra: '',
             placeholder: 'Nombre',
             decorator: [
-                'nombre',
+                'first_name',
                 {
+                    initialValue: undefined,
                     rules: [
                         { required: true, message: 'El nombre es obligatorio.' },
                         { max: 32, message: 'Excede el máximo de caracteres permitidos (32).' }
@@ -101,8 +121,9 @@
             extra: '',
             placeholder: 'Apellido',
             decorator: [
-                'apellido',
+                'last_name',
                 {
+                    initialValue: undefined,
                     rules: [
                         { required: true, message: 'El apellido es obligatorio.' },
                         { max: 32, message: 'Excede el máximo de caracteres permitidos (32).' }
@@ -116,8 +137,9 @@
             extra: '',
             placeholder: 'Ocupación',
             decorator: [
-                'ocupacion',
+                'occupation',
                 {
+                    initialValue: undefined,
                     rules: [
                         { max: 200, message: 'Excede el máximo de caracteres permitidos (200).' }
                     ]
@@ -127,16 +149,28 @@
         telefono: {
             label: 'Teléfono',
             required: false,
-            extra: 'Formato: +(56) 32 123-1234.',
+            extra: '',
             placeholder: 'Teléfono',
             decorator: [
-                'telefono',
+                'phone',
                 {
+                    initialValue: undefined,
                     rules: [
-                        { pattern: new RegExp('^[+]{1}\\(\\d{1,2}\\)[ ]\\d{1,2}[ ]\\d{3,4}[-]\\d{4}$'), message: 'Ingrese un teléfono con formato válido.' }
+                        { pattern: new RegExp('^[+]{1}\\(\\d{1,2}\\)[ ]\\d{1,2}[ ]\\d{3,4}[-]\\d{4}$'), message: 'Ingrese un teléfono con formato válido (+(56) 9 1234-1234).' }
                     ]
                 }
-            ]
+            ],
+            mask: {
+                mask: ['+(56) F ####-####', '+(56) FF ###-####'],
+                tokens: {
+                    '#': {
+                        pattern: /[0-9]/
+                    },
+                    'F': {
+                        pattern: /[1-9]/
+                    }
+                }
+            }
         },
         correo: {
             label: 'Correo Electrónico',
@@ -144,8 +178,9 @@
             extra: '',
             placeholder: 'Correo electrónico',
             decorator: [
-                'correo',
+                'email',
                 {
+                    initialValue: undefined,
                     rules: [
                         { type: 'email', message: 'Ingrese un correo válido.' },
                         { max: 200, message: 'Excede el máximo de caracteres permitidos (200).' }
@@ -159,8 +194,9 @@
             extra: 'Valor expresado en CLP.',
             placeholder: 'Valor Hora/Hombre',
             decorator: [
-                'valor',
+                'price',
                 {
+                    initialValue: 1,
                     rules: [
                         { required: true, message: 'El valor es obligatorio.' },
                         { type: 'number', message: 'El valor debe ser numérico.' }
@@ -186,9 +222,22 @@
              */
             addEmployee($event) {
                 $event.preventDefault()
+
                 this.formAdd.validateFields((error) => {
-                    if (!error)
-                        this.$emit('addEmployee', { body: 'Hola Mundo!' })
+                    if (!error) {
+                        const params = {
+                            body: this.formAdd.getFieldsValue(),
+                            callback: (promise) => {
+                                promise
+                                    // En caso de ser registrado correctamente
+                                    .then(() => {
+                                        this.formAdd.resetFields()
+                                    })
+                            }
+                        }
+
+                        this.$emit('addEmployee', params)
+                    }
                 })
             }
         }

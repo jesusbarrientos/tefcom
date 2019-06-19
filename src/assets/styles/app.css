@@ -175,6 +175,10 @@ body {
   background-color: #f0f2f5;
 }
 
+.ant-input-number {
+  width: 100%;
+}
+
 /*
  * Components
  */
@@ -390,9 +394,6 @@ body {
 }
 #employee-page-desktop .new-employee .ant-row {
   margin-bottom: 0;
-}
-#employee-page-desktop .new-employee .ant-input-number {
-  width: 100%;
 }
 #employee-page-mobile {
   display: grid;

@@ -23,6 +23,7 @@ module.exports = {
         }],
         "curly": ["error", "multi-or-nest"],
         "dot-notation": "off",
+        "prefer-promise-reject-errors": "off",
 
         // Vue
         "vue/script-indent": ["error", 4, {
