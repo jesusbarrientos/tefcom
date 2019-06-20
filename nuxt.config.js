@@ -60,7 +60,8 @@ module.exports = {
     ** Environment variables
     */
     env: {
-        apiBaseUrl: 'https://pzgpr1vjzg.execute-api.us-east-2.amazonaws.com/beta'
+        apiBaseUrl: 'https://pzgpr1vjzg.execute-api.us-east-2.amazonaws.com/beta',
+        apiChileCitiesUrl: 'https://apis.digital.gob.cl/dpa/comunas'
     },
 
     /*

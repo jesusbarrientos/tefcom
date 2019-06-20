@@ -114,6 +114,11 @@
                             <b>Valor Hora Hombre:</b>
                             <label>${{ infoDrawer.record.price }}</label>
                         </span>
+
+                        <span>
+                            <b>Valor Hora Hombre Extra:</b>
+                            <label>${{ infoDrawer.record.price_extra }}</label>
+                        </span>
                     </div>
                 </a-col>
             </a-row>
@@ -154,21 +159,21 @@
                                 </a-col>
                             </a-row>
 
-                            <a-row>
-                                <a-col :span="24">
+                            <a-row :gutter="10">
+                                <a-col :span="16">
                                     <a-form-item :label="editDrawer.fields.ocupacion.label" :extra="editDrawer.fields.ocupacion.extra" :required="editDrawer.fields.ocupacion.required">
                                         <a-input v-decorator="editDrawer.fields.ocupacion.decorator" :placeholder="editDrawer.fields.ocupacion.placeholder" />
                                     </a-form-item>
                                 </a-col>
-                            </a-row>
 
-                            <a-row :gutter="10">
                                 <a-col :span="8">
                                     <a-form-item :label="editDrawer.fields.telefono.label" :extra="editDrawer.fields.telefono.extra" :required="editDrawer.fields.telefono.required">
                                         <a-input v-mask="editDrawer.fields.telefono.mask" v-decorator="editDrawer.fields.telefono.decorator" :placeholder="editDrawer.fields.telefono.placeholder" />
                                     </a-form-item>
                                 </a-col>
+                            </a-row>
 
+                            <a-row :gutter="10">
                                 <a-col :span="8">
                                     <a-form-item :label="editDrawer.fields.correo.label" :extra="editDrawer.fields.correo.extra" :required="editDrawer.fields.correo.required">
                                         <a-input v-decorator="editDrawer.fields.correo.decorator" :placeholder="editDrawer.fields.correo.placeholder" />
@@ -181,6 +186,20 @@
                                             v-decorator="editDrawer.fields.valor.decorator"
                                             :precision="0"
                                             :placeholder="editDrawer.fields.valor.placeholder"
+                                            :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                            :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                            :min="1"
+                                            :max="1000000"
+                                        />
+                                    </a-form-item>
+                                </a-col>
+
+                                <a-col :span="8">
+                                    <a-form-item :label="editDrawer.fields.valor_extra.label" :extra="editDrawer.fields.valor_extra.extra" :required="editDrawer.fields.valor_extra.required">
+                                        <a-input-number
+                                            v-decorator="editDrawer.fields.valor_extra.decorator"
+                                            :precision="0"
+                                            :placeholder="editDrawer.fields.valor_extra.placeholder"
                                             :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                             :parser="value => value.replace(/\$\s?|(,*)/g, '')"
                                             :min="1"
@@ -404,6 +423,22 @@
                         ]
                     }
                 ]
+            },
+            valor_extra: {
+                label: 'Valor HH Extra',
+                required: true,
+                extra: 'Valor expresado en CLP.',
+                placeholder: 'Valor Hora/Hombre Extra',
+                decorator: [
+                    'price_extra',
+                    {
+                        initialValue: 1,
+                        rules: [
+                            { required: true, message: 'El valor es obligatorio.' },
+                            { type: 'number', message: 'El valor debe ser numérico.' }
+                        ]
+                    }
+                ]
             }
         }
     }
@@ -466,7 +501,8 @@
                         occupation: cloneRecord.occupation,
                         phone: cloneRecord.phone,
                         email: cloneRecord.email,
-                        price: cloneRecord.price
+                        price: cloneRecord.price,
+                        price_extra: cloneRecord.price_extra
                     })
                 }, 100)
             },
@@ -477,7 +513,7 @@
             onDelete(record) {
                 const body = {
                     rut: record.rut,
-                    name: record.name
+                    first_name: record.first_name
                 }
 
                 this.$emit('emit', { type: this.events.DELETE, body: body })

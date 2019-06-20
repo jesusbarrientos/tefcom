@@ -24,8 +24,11 @@ module.exports = {
         "curly": ["error", "multi-or-nest"],
         "dot-notation": "off",
         "prefer-promise-reject-errors": "off",
+        "require-await": "off",
 
         // Vue
+        "vue/no-unused-components": "off",
+
         "vue/script-indent": ["error", 4, {
             "baseIndent": 1,
             "switchCase": 1,

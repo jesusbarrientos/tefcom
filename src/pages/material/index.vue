@@ -76,8 +76,15 @@
                 }
             },
             addMaterial(request) {
+                const currentDate = new Date()
+                const date = currentDate.getDate() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getFullYear() + '/' + currentDate.getHours() + ':' + currentDate.getMinutes() + ':' + currentDate.getSeconds()
+                const parsedRequest = {
+                    id: `${request.description},${request.category},${date}`,
+                    ...request
+                }
+
                 return new Promise((resolve, reject) => {
-                    this.$axios.$post(process.env.apiBaseUrl + '/material/new', request)
+                    this.$axios.$post(process.env.apiBaseUrl + '/material/new', parsedRequest)
                         .then((response) => {
                             // Exito en el registro
                             if (response.ok) {

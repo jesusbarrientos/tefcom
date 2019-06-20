@@ -52,6 +52,20 @@
                     />
                 </a-form-item>
             </a-col>
+
+            <a-col :span="6">
+                <a-form-item :label="fields.valor_extra.label" :extra="fields.valor_extra.extra" :required="fields.valor_extra.required">
+                    <a-input-number
+                        v-decorator="fields.valor_extra.decorator"
+                        :precision="0"
+                        :placeholder="fields.valor_extra.placeholder"
+                        :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                        :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                        :min="1"
+                        :max="1000000"
+                    />
+                </a-form-item>
+            </a-col>
         </a-row>
 
         <a-row style="margin-bottom: 10px">
@@ -67,6 +81,8 @@
 </template>
 
 <script>
+    import Mask from '@/utils/mask.js'
+
     const fields = {
         rut: {
             label: 'Rut',
@@ -83,21 +99,7 @@
                     ]
                 }
             ],
-            mask: {
-                mask: ['F.###.###-V', 'F#.###.###-V'],
-                tokens: {
-                    '#': {
-                        pattern: /[0-9]/
-                    },
-                    'V': {
-                        pattern: /[0-9kK]/,
-                        transform: v => v.toLocaleUpperCase()
-                    },
-                    'F': {
-                        pattern: /[1-9]/
-                    }
-                }
-            }
+            mask: Mask.rut
         },
         nombre: {
             label: 'Nombre',
@@ -160,17 +162,7 @@
                     ]
                 }
             ],
-            mask: {
-                mask: ['+(56) F ####-####', '+(56) FF ###-####'],
-                tokens: {
-                    '#': {
-                        pattern: /[0-9]/
-                    },
-                    'F': {
-                        pattern: /[1-9]/
-                    }
-                }
-            }
+            mask: Mask.phone
         },
         correo: {
             label: 'Correo Electrónico',
@@ -195,6 +187,22 @@
             placeholder: 'Valor Hora/Hombre',
             decorator: [
                 'price',
+                {
+                    initialValue: 1,
+                    rules: [
+                        { required: true, message: 'El valor es obligatorio.' },
+                        { type: 'number', message: 'El valor debe ser numérico.' }
+                    ]
+                }
+            ]
+        },
+        valor_extra: {
+            label: 'Valor HH Extra',
+            required: true,
+            extra: 'Valor expresado en CLP.',
+            placeholder: 'Valor Hora/Hombre Extra',
+            decorator: [
+                'price_extra',
                 {
                     initialValue: 1,
                     rules: [

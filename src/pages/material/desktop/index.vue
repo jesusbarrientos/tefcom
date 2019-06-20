@@ -30,24 +30,15 @@
 
                                             <a-row>
                                                 <a-col>
-                                                    <p><a-icon type="info-circle" /> Todo precio debe ser expresado en Pesos Chilenos (CLP).</p>
-
-                                                    <a-row v-for="(supplier, index) of newMaterial.suppliers" :gutter="10" type="flex" align="middle">
-                                                        <a-button
-                                                            type="danger"
-                                                            shape="circle"
-                                                            size="small"
-                                                            icon="minus"
-                                                            class="delete-material-button"
-                                                            @click="deleteSupplier(index, newMaterial.suppliers)"
-                                                        />
-
-                                                        <a-col :span="4">
-                                                            <a-input v-model="supplier.name" placeholder="Nombre Proveedor" />
+                                                    <a-row v-for="(supplier, index) of newMaterial.suppliers" :gutter="10" type="flex" align="bottom">
+                                                        <a-col :span="5">
+                                                            <label for="supplier_name">Nombre Proveedor</label>
+                                                            <a-input id="supplier_name" v-model="supplier.name" placeholder="Nombre Proveedor" />
                                                         </a-col>
 
-                                                        <a-col :span="4">
-                                                            <a-select v-model="supplier.quality" :default-value="materials.options[0].value">
+                                                        <a-col :span="5">
+                                                            <label for="quality">Calidad</label>
+                                                            <a-select id="quality" v-model="supplier.quality" :default-value="materials.options[0].value">
                                                                 <a-select-option v-for="option of materials.options" :value="option.value">
                                                                     {{ option.label }}
                                                                 </a-select-option>
@@ -57,47 +48,60 @@
                                                         <a-col :span="4">
                                                             <a-tooltip>
                                                                 <template slot="title">
-                                                                    Precio del material.
+                                                                    El precio se debe expresar en Pesos Chilenos (CLP).
                                                                 </template>
+                                                                <label for="price">Precio</label>
                                                                 <a-input-number
+                                                                    id="price"
                                                                     v-model="supplier.price"
                                                                     :default-value="0"
                                                                     :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                                                    :precision="2"
                                                                 />
                                                             </a-tooltip>
                                                         </a-col>
-
-                                                        <a-tooltip>
-                                                            <template slot="title">
-                                                                IVA Incluido. Esto cambia el valor total del material.
-                                                            </template>
-                                                            <a-checkbox @change="changeIva($event, supplier)">
-                                                                IVA
-                                                            </a-checkbox>
-                                                        </a-tooltip>
 
                                                         <a-col :span="3">
                                                             <a-tooltip>
                                                                 <template slot="title">
-                                                                    Porcentaje de utilidad sobre el precio del material.
+                                                                    ¿El precio incluye IVA?
                                                                 </template>
-                                                                <a-input-number
-                                                                    v-model="supplier.utility_percentaje"
-                                                                    :default-value="100"
-                                                                    :min="0"
-                                                                    :formatter="value => `${value}%`"
-                                                                    :parser="value => value.replace('%', '')"
-                                                                />
+                                                                <label for="iva">IVA</label>
+                                                                <a-select id="iva" v-model="supplier.include_iva" :default-value="false">
+                                                                    <a-select-option :value="true">
+                                                                        Si
+                                                                    </a-select-option>
+
+                                                                    <a-select-option :value="false">
+                                                                        No
+                                                                    </a-select-option>
+                                                                </a-select>
                                                             </a-tooltip>
                                                         </a-col>
 
-                                                        <a-col :span="5">
-                                                            <label>Total: ${{ calculateTotal(supplier) }}</label>
+                                                        <a-col :span="4">
+                                                            <label for="total-value">Total</label>
+                                                            <a-input-number
+                                                                id="total-value"
+                                                                :value="calculateTotal(supplier)"
+                                                                :default-value="0"
+                                                                :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                                                :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                                                :precision="2"
+                                                                disabled
+                                                                style="color: black"
+                                                            />
+                                                        </a-col>
+
+                                                        <a-col :span="3">
+                                                            <a-button type="danger" @click="deleteSupplier(index, newMaterial.suppliers)">
+                                                                Eliminar
+                                                            </a-button>
                                                         </a-col>
                                                     </a-row>
 
-                                                    <a-row type="flex" justify="center">
+                                                    <a-row type="flex" justify="start">
                                                         <a-button type="primary" class="add-material-button" @click="addSupplier">
                                                             Agregar Proveedor
                                                         </a-button>
@@ -109,10 +113,12 @@
                                     </a-collapse>
                                 </a-row>
 
-                                <a-row>
-                                    <a-button type="primary" html-type="submit" block>
-                                        Registrar
-                                    </a-button>
+                                <a-row type="flex" justify="end" :gutter="10" style="margin-top: 20px">
+                                    <a-col :span="6">
+                                        <a-button type="primary" html-type="submit" block>
+                                            Registrar Material
+                                        </a-button>
+                                    </a-col>
                                 </a-row>
                             </a-form>
                         </div>
@@ -126,6 +132,7 @@
                         :scroll="materials.table.scroll"
                         :pagination="materials.table.pagination"
                         :size="materials.table.size"
+                        row-key="id"
                         position="bottom"
                     >
                         <span slot="action" slot-scope="record">
@@ -226,13 +233,13 @@
                             <a-row :gutter="10">
                                 <a-col :span="12">
                                     <a-form-item :label="fields.description.label" :extra="fields.description.extra" :required="fields.description.required">
-                                        <a-input v-decorator="fields.description.decorator" :placeholder="fields.description.placeholder" />
+                                        <a-input v-decorator="fields.description.decorator" :placeholder="fields.description.placeholder" disabled style="color: black" />
                                     </a-form-item>
                                 </a-col>
 
                                 <a-col :span="12">
                                     <a-form-item :label="fields.category.label" :extra="fields.category.extra" :required="fields.category.required">
-                                        <a-input v-decorator="fields.category.decorator" :placeholder="fields.category.placeholder" />
+                                        <a-input v-decorator="fields.category.decorator" :placeholder="fields.category.placeholder" disabled style="color: black" />
                                     </a-form-item>
                                 </a-col>
                             </a-row>
@@ -243,24 +250,15 @@
 
                                         <a-row>
                                             <a-col>
-                                                <p><a-icon type="info-circle" /> Todo precio debe ser expresado en Pesos Chilenos (CLP).</p>
-
-                                                <a-row v-for="(supplier, index) of editDrawer.record.suppliers" :gutter="10" type="flex" align="middle">
-                                                    <a-button
-                                                        type="danger"
-                                                        shape="circle"
-                                                        size="small"
-                                                        icon="minus"
-                                                        class="delete-material-button"
-                                                        @click="deleteSupplier(index, editDrawer.record.suppliers)"
-                                                    />
-
-                                                    <a-col :span="4">
-                                                        <a-input v-model="supplier.name" placeholder="Nombre Proveedor" />
+                                                <a-row v-for="(supplier, index) of editDrawer.record.suppliers" :gutter="10" type="flex" align="bottom">
+                                                    <a-col :span="5">
+                                                        <label for="edit_supplier_name">Nombre Proveedor</label>
+                                                        <a-input id="edit_supplier_name" v-model="supplier.name" placeholder="Nombre Proveedor" />
                                                     </a-col>
 
-                                                    <a-col :span="4">
-                                                        <a-select v-model="supplier.quality" :default-value="materials.options[0].value">
+                                                    <a-col :span="5">
+                                                        <label for="edit_quality">Calidad</label>
+                                                        <a-select id="edit_quality" v-model="supplier.quality" :default-value="materials.options[0].value">
                                                             <a-select-option v-for="option of materials.options" :value="option.value">
                                                                 {{ option.label }}
                                                             </a-select-option>
@@ -270,9 +268,11 @@
                                                     <a-col :span="4">
                                                         <a-tooltip>
                                                             <template slot="title">
-                                                                Precio del material.
+                                                                El precio se debe expresar en Pesos Chilenos (CLP).
                                                             </template>
+                                                            <label for="edit_price">Precio</label>
                                                             <a-input-number
+                                                                id="edit_price"
                                                                 v-model="supplier.price"
                                                                 :default-value="0"
                                                                 :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
@@ -281,57 +281,68 @@
                                                         </a-tooltip>
                                                     </a-col>
 
-                                                    <a-tooltip>
-                                                        <template slot="title">
-                                                            IVA Incluido. Esto cambia el valor total del material.
-                                                        </template>
-                                                        <a-checkbox @change="changeIva($event, supplier)">
-                                                            IVA
-                                                        </a-checkbox>
-                                                    </a-tooltip>
-
                                                     <a-col :span="3">
                                                         <a-tooltip>
                                                             <template slot="title">
-                                                                Porcentaje de utilidad sobre el precio del material.
+                                                                ¿El precio incluye IVA?
                                                             </template>
-                                                            <a-input-number
-                                                                v-model="supplier.utility_percentaje"
-                                                                :default-value="100"
-                                                                :min="0"
-                                                                :formatter="value => `${value}%`"
-                                                                :parser="value => value.replace('%', '')"
-                                                            />
+                                                            <label for="edit_iva">IVA</label>
+                                                            <a-select id="edit_iva" v-model="supplier.include_iva" :default-value="false">
+                                                                <a-select-option :value="true">
+                                                                    Si
+                                                                </a-select-option>
+
+                                                                <a-select-option :value="false">
+                                                                    No
+                                                                </a-select-option>
+                                                            </a-select>
                                                         </a-tooltip>
                                                     </a-col>
 
-                                                    <a-col :span="5">
-                                                        <label>Total: ${{ calculateTotal(supplier) }}</label>
+                                                    <a-col :span="4">
+                                                        <label for="edit_total-value">Total</label>
+                                                        <a-input-number
+                                                            id="edit_total-value"
+                                                            :value="calculateTotal(supplier)"
+                                                            :default-value="0"
+                                                            :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                                            :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                                                            :precision="2"
+                                                            disabled
+                                                            style="color: black"
+                                                        />
+                                                    </a-col>
+
+                                                    <a-col :span="3">
+                                                        <a-button type="danger" @click="deleteSupplier(index, editDrawer.record.suppliers)">
+                                                            Eliminar
+                                                        </a-button>
                                                     </a-col>
                                                 </a-row>
 
-                                                <a-row type="flex" justify="center">
+                                                <a-row type="flex" justify="start">
                                                     <a-button type="primary" class="add-material-button" @click="addEditSupplier">
                                                         Agregar Proveedor
                                                     </a-button>
                                                 </a-row>
                                             </a-col>
                                         </a-row>
-
                                     </a-collapse-panel>
                                 </a-collapse>
                             </a-row>
 
-                            <a-row>
-                                <a-button type="primary" html-type="submit" block>
-                                    Modificar
-                                </a-button>
-                            </a-row>
+                            <a-row type="flex" justify="end" :gutter="10" style="margin-top: 20px">
+                                <a-col :span="6">
+                                    <a-button type="primary" html-type="submit" block>
+                                        Modificar
+                                    </a-button>
+                                </a-col>
 
-                            <a-row>
-                                <a-button type="danger" class="delete-material-button" block @click="onCloseEditDrawer">
-                                    Cancelar
-                                </a-button>
+                                <a-col :span="6">
+                                    <a-button type="danger" class="delete-material-button" block @click="onCloseEditDrawer">
+                                        Cancelar
+                                    </a-button>
+                                </a-col>
                             </a-row>
                         </a-form>
                     </a-col>
@@ -378,13 +389,19 @@
              * Agrega una nueva fila para un proveedor del material a registrar.
              */
             addSupplier() {
-                this.newMaterial.suppliers.push({ name: '', quality: this.materials.options[0].value, price: 1, include_iva: false, utility_percentaje: 100 })
+                const currentDate = new Date()
+                const date = currentDate.getDate() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getFullYear() + '/' + currentDate.getHours() + ':' + currentDate.getMinutes() + ':' + currentDate.getSeconds() + ':' + currentDate.getMilliseconds()
+                const id = `SUP-${date}`
+                this.newMaterial.suppliers.push({ id: id, name: '', quality: this.materials.options[0].value, price: 1, include_iva: false })
             },
             /**
              * Agrega una nueva fila para un proveedor del material a modificar.
              */
             addEditSupplier() {
-                this.editDrawer.record.suppliers.push({ name: '', quality: this.materials.options[0].value, price: 1, include_iva: false, utility_percentaje: 100 })
+                const currentDate = new Date()
+                const date = currentDate.getDate() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getFullYear() + '/' + currentDate.getHours() + ':' + currentDate.getMinutes() + ':' + currentDate.getSeconds() + ':' + currentDate.getMilliseconds()
+                const id = `SUP-${date}`
+                this.editDrawer.record.suppliers.push({ id: id, name: '', quality: this.materials.options[0].value, price: 1, include_iva: false })
             },
             /**
              * Elimina proveedor de la lista para el material.
@@ -409,9 +426,9 @@
              */
             calculateTotal(supplier) {
                 if (supplier.include_iva)
-                    return supplier.price + (supplier.price * (supplier.utility_percentaje / 100))
+                    return supplier.price.toFixed(2)
                 else
-                    return (supplier.price * 1.19) + ((supplier.price * 1.19) * (supplier.utility_percentaje / 100))
+                    return (supplier.price * 1.19).toFixed(2)
             },
             /**
              * Retorna si o no dependiendo de si incluye o no IVA (tema estético)
@@ -698,12 +715,6 @@
                     scopedSlots: { customRender: 'includeIva' }
                 },
                 {
-                    title: '% Utilidad',
-                    key: 'utilityPercentaje',
-                    align: 'center',
-                    scopedSlots: { customRender: 'utility' }
-                },
-                {
                     title: 'Total',
                     key: 'total',
                     sorter: (a, b) => materialDesktop.methods.calculateTotal(a) - materialDesktop.methods.calculateTotal(b),
@@ -717,7 +728,7 @@
         visible: false,
         closable: false,
         placement: 'right',
-        width: 660,
+        width: 760,
         wrapClassName: 'material-page-desktop-drawer-edit',
         record: {}
     }
