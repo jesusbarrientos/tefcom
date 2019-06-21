@@ -25,6 +25,7 @@ module.exports = {
         "dot-notation": "off",
         "prefer-promise-reject-errors": "off",
         "require-await": "off",
+        "prefer-const": "off",
 
         // Vue
         "vue/no-unused-components": "off",

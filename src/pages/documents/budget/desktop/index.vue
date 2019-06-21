@@ -3,11 +3,11 @@
         <a-back-top />
 
         <a-row type="flex" justify="center">
-            <a-col :span="20">
+            <a-col :sm="{ span: 24 }" :xxl="{ span: 20 }">
                 <a-card title="Generar Cotización" :bordered="false">
                     <!--EXTRA-->
                     <div slot="extra">
-                        <a-button size="small" type="primary">
+                        <a-button size="small" type="primary" @click="showModal">
                             Cargar
                         </a-button>
                         <a-button size="small" type="primary" @click="exportToJsonFile">
@@ -23,7 +23,7 @@
                         Datos Globales
                     </a-divider>
 
-                    <a-row :gutter="10">
+                    <a-row :gutter="10" type="flex" align="bottom">
                         <a-col :span="3">
                             <label for="badget-number">Número de Cotización</label>
                             <a-input-number id="badget-number" v-model="budget.number" :min="1" style="width: 100%" />
@@ -166,36 +166,42 @@
                         Detalle
                     </a-divider>
 
-                    <a-collapse>
-                        <!--EMPLOYEES-->
-                        <a-collapse-panel key="1" header="Mano de Obra">
-                            <hhrr-section :data="data.employees" :budget="budget" />
-                        </a-collapse-panel>
+                    <a-tabs default-active-key="1">
+                        <a-tab-pane key="1" tab="Trabajos">
+                            <jobs-section :budget="budget" :data="data" />
 
-                        <!--MATERIALS-->
-                        <a-collapse-panel key="2" header="Materiales">
-                            <material-section :data="data.materials" :budget="budget" />
-                        </a-collapse-panel>
+                            <a-row type="flex" justify="start" style="margin-top: 20px">
+                                <a-button type="primary" @click="addJob">
+                                    Agregar Trabajo
+                                </a-button>
+                            </a-row>
+                        </a-tab-pane>
+                        <a-tab-pane key="2" tab="Condición de Pago">
+                            <a-textarea v-model="budget.payment_condition" placeholder="Condiciones de pago..." :autosize="{ minRows: 10, maxRows: 20 }" />
+                        </a-tab-pane>
+                        <a-tab-pane key="3" tab="Notas">
+                            <a-textarea v-model="budget.notes" placeholder="Notas..." :autosize="{ minRows: 10, maxRows: 20 }" />
+                        </a-tab-pane>
+                    </a-tabs>
 
-                        <!--OTHERS CONCEPTS-->
-                        <a-collapse-panel key="3" header="Otros Conceptos">
-                            <other-section :budget="budget" />
-                        </a-collapse-panel>
-
-                        <!--PROCEDURE-->
-                        <a-collapse-panel key="4" header="Procedimiento">
-                            <a-textarea v-model="budget.procedure" placeholder="Procedimientos por parte de la mano de obra..." :autosize="{ minRows: 4, maxRows: 10 }" />
-                        </a-collapse-panel>
-
-                        <!--PAYMENTS-->
-                        <a-collapse-panel key="5" header="Condiciones de Pago">
-                            <a-textarea v-model="budget.payment_condition" placeholder="Condiciones de pago..." :autosize="{ minRows: 4, maxRows: 10 }" />
-                        </a-collapse-panel>
-
-                        <!--NOTES-->
-                        <a-collapse-panel key="6" header="Notas">
-                        </a-collapse-panel>
-                    </a-collapse>
+                    <!--MODALS-->
+                    <a-modal
+                        v-model="visibleModal"
+                        title="Carga de Cotización"
+                        :footer="null"
+                    >
+                        <a-upload-dragger name="file" accept=".json" :support-server-render="false" @change="budgetLoaded">
+                            <p class="ant-upload-drag-icon">
+                                <a-icon type="inbox" />
+                            </p>
+                            <p class="ant-upload-text">
+                                Pincha o arrastra a esta área para subir un archivo
+                            </p>
+                            <p class="ant-upload-hint">
+                                Asegúrese de que el archivo que esté cargando tenga en su nombre el número de cotización que desea ver
+                            </p>
+                        </a-upload-dragger>
+                    </a-modal>
                 </a-card>
             </a-col>
         </a-row>
@@ -207,12 +213,13 @@
     import MaterialSection from '../../../../components/budget/MaterialSection'
     import OtherSection from '../../../../components/budget/OtherSection'
     import Mask from '@/utils/mask.js'
+    import JobsSection from '../../../../components/budget/JobsSection'
 
     const comunas = []
 
     export default {
         name: 'BudgetDesktop',
-        components: { OtherSection, MaterialSection, HhrrSection },
+        components: { JobsSection, OtherSection, MaterialSection, HhrrSection },
         props: {
             data: {
                 required: true
@@ -224,7 +231,8 @@
         data() {
             return {
                 Mask,
-                comunas
+                comunas,
+                visibleModal: false
             }
         },
         methods: {
@@ -251,6 +259,48 @@
             },
             onSelectCity(value) {
                 this.budget.client.comuna = value
+            },
+            addJob() {
+                this.budget.jobs.push({
+                    name: 'Trabajo Nuevo',
+                    days_est: 1,
+                    count: 1,
+                    description: '',
+                    subtotal: {
+                        employees: 0,
+                        materials: 0,
+                        others: 0
+                    },
+                    employees: [],
+                    materials: [],
+                    others: []
+                })
+            },
+            showModal() {
+                this.visibleModal = true
+            },
+            budgetLoaded(response) {
+                if (response.file.status === 'done') {
+                    let files = response.fileList
+                    let json
+                    let f = files[0].originFileObj
+
+                    let reader = new FileReader()
+                    reader.onload = ((theFile) => {
+                        return (e) => {
+                            try {
+                                json = JSON.parse(e.target.result)
+                                this.$emit('loadBudget', { ok: true, body: json })
+                            } catch (ex) {
+                                this.$emit('loadBudget', { ok: false, body: 'Error al cargar archivo con la configuración de la cotización.' })
+                            }
+                        }
+                    })(f)
+
+                    reader.readAsText(f)
+
+                    this.visibleModal = false
+                }
             },
             exportToJsonFile() {
                 const dataStr = JSON.stringify(this.budget)

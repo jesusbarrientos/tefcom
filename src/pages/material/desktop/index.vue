@@ -2,7 +2,7 @@
     <div id="material-page-desktop">
         <!--REGISTER & LIST MATERIALS-->
         <a-row type="flex" justify="center">
-            <a-col :span="16">
+            <a-col :sm="{ span: 24 }" :xxl="{ span: 20 }">
                 <a-card title="Materiales" :bordered="false" class="materials-card">
                     <a-spin tip="Registrando..." :spinning="visibleSpin">
                         <div class="new-material">
