@@ -1,7 +1,7 @@
 <template>
     <div>
         <mq-layout mq="desktop">
-            <budget-desktop :data="data" :budget="budget" />
+            <budget-desktop :data="data" :budget="budget" @loadBudget="loadBudget" />
         </mq-layout>
 
         <mq-layout :mq="['mobile', 'tablet']">
@@ -21,7 +21,7 @@
         materials: [],
         comunas: []
     }
-    const budget = {
+    let budget = {
         number: 1,
         date: moment(new Date()),
         duration: 1,
@@ -42,12 +42,9 @@
             discount: 0,
             paymentType: ''
         },
-        materials: [],
-        employees: [],
-        others: [],
-        procedure: '',
         payment_condition: '',
-        notes: []
+        notes: '',
+        jobs: []
     }
 
     export default {
@@ -117,6 +114,19 @@
                     .then((response) => {
                         this.data.comunas = response
                     })
+            },
+            loadBudget(file) {
+                if (file.ok) {
+                    const date = file.body.date
+                    file.body.date = moment(new Date(date))
+                    
+                    this.budget = file.body
+                } else {
+                    this.$notification.error({
+                        message: 'Error!',
+                        description: file.body
+                    })
+                }
             }
         }
     }

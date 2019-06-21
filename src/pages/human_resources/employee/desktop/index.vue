@@ -2,7 +2,7 @@
     <div id="employee-page-desktop">
         <!--REGISTER & LIST EMPLOYEES-->
         <a-row type="flex" justify="center" :gutter="16">
-            <a-col :span="16">
+            <a-col :sm="{ span: 24 }" :xxl="{ span: 20 }">
                 <a-card title="Empleados" :bordered="false" class="employees-card">
                     <a-spin tip="Registrando..." :spinning="visibleSpin">
                         <div class="new-employee">

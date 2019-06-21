@@ -502,5 +502,28 @@ body {
 #budget-page-desktop .ant-row-flex {
   margin-bottom: 5px;
 }
+#budget-page-desktop .resume-job-row {
+  background-color: #fafafa;
+  margin: -16px -16px 16px -16px !important;
+  padding: 16px;
+  border-bottom: 1px solid #d9d9d9;
+}
+#budget-page-desktop .job-content {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#budget-page-desktop ::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+  /* make scrollbar transparent */
+}
+#budget-page-desktop .bottom-bar-button {
+  position: sticky;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px 0;
+  margin-bottom: 0 !important;
+}
 
 /*# sourceMappingURL=app.css.map */
