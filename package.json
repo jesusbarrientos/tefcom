@@ -25,6 +25,8 @@
         "ant-design-vue": "^1.1.10",
         "cross-env": "^5.2.0",
         "express": "^4.16.4",
+        "jspdf": "^1.5.3",
+        "jspdf-autotable": "^3.1.1",
         "moment": "latest",
         "nuxt": "^2.4.0",
         "vue-infinite-loading": "^2.4.4",

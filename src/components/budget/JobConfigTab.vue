@@ -3,7 +3,7 @@
         <a-row type="flex" :gutter="10" align="bottom">
             <a-col :span="16">
                 <label for="name">Nombre del Trabajo</label>
-                <a-input id="name" v-model="job.name" />
+                <a-input id="name" v-model="job.name" @change="setValue(job, 'name')" />
             </a-col>
 
             <a-col :span="4">
@@ -46,7 +46,7 @@
         <a-row>
             <a-col>
                 <label for="description">Descripción</label>
-                <a-textarea id="description" v-model="job.description" placeholder="El trabajo consiste en..." :autosize="{ minRows: 6, maxRows: 10 }" />
+                <a-textarea id="description" v-model="job.description" placeholder="El trabajo consiste en..." :autosize="{ minRows: 6, maxRows: 10 }" @change="setValue(job, 'description')" />
             </a-col>
         </a-row>
 
@@ -87,6 +87,21 @@
             },
             deleteJob() {
                 this.budgetJobsList.splice(this.index, 1)
+            },
+            setValue(job, attr) {
+                switch (attr) {
+                    case 'name': {
+                        if (job.name === '')
+                            job.name = undefined
+                        break
+                    }
+
+                    case 'description': {
+                        if (job.description === '')
+                            job.description = undefined
+                        break
+                    }
+                }
             }
         }
     }

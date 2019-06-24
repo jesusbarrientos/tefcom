@@ -32,7 +32,7 @@
                         <label for="total-others">Subtotal Conceptos</label>
                         <a-input-number
                             id="total-others"
-                            v-model="job.subtotal.others"
+                            :value="calculateTotalOthers(job)"
                             :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                             :parser="value => value.replace(/\$\s?|(,*)/g, '')"
                             style="width: 100%; color: black"
@@ -69,7 +69,7 @@
                         <material-section :data="data.materials" :job="job" />
                     </a-tab-pane>
                     <a-tab-pane key="4" tab="Otros Conceptos">
-                        Content of tab 4
+                        <other-section :job="job" />
                     </a-tab-pane>
                 </a-tabs>
             </a-collapse-panel>
@@ -81,10 +81,11 @@
     import JobConfigTab from './JobConfigTab'
     import HhrrSection from './HhrrSection'
     import MaterialSection from './MaterialSection'
+    import OtherSection from './OtherSection'
 
     export default {
         name: 'JobsSection',
-        components: { MaterialSection, JobConfigTab, HhrrSection },
+        components: { OtherSection, MaterialSection, JobConfigTab, HhrrSection },
         props: {
             budget: {
                 required: true
@@ -98,7 +99,8 @@
              * Calcula el total del trabajo.
              */
             calculateTotalJob(job) {
-                return (job.subtotal.employees + job.subtotal.materials + job.subtotal.others) * job.count
+                job.total = parseFloat(((job.subtotal.employees + job.subtotal.materials + job.subtotal.others) * job.count).toFixed(2))
+                return job.total
             },
             /**
              * Calcula el total de la mano de obra.
@@ -121,6 +123,17 @@
                 })
                 job.subtotal.materials = parseFloat(total.toFixed(2))
                 return job.subtotal.materials
+            },
+            /**
+             * Calcula el total de la lista de conceptos.
+             */
+            calculateTotalOthers(job) {
+                let total = 0
+                job.others.forEach((e) => {
+                    total += e.total
+                })
+                job.subtotal.others = parseFloat(total.toFixed(2))
+                return job.subtotal.others
             }
         }
     }

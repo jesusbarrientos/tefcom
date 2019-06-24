@@ -30,14 +30,14 @@
                                 <template slot="title">
                                     Horas Estimadas Diarias en jornada de trabajo normal.
                                 </template>
-                                <a-input-number v-model="e.hours.normal" :min="0" :precision="1" style="width: 50%" />
+                                <a-input-number v-model="e.hours.normal" :min="0" :precision="1" style="width: 50%" @change="setValue(e, 'hours-normal')" />
                             </a-tooltip>
 
                             <a-tooltip>
                                 <template slot="title">
                                     Horas Estimadas Diarias Extras de la jornada normal (fin de semana, más de las horas normales del día, feriados).
                                 </template>
-                                <a-input-number v-model="e.hours.extra" :min="0" :precision="1" style="width: 50%" />
+                                <a-input-number v-model="e.hours.extra" :min="0" :precision="1" style="width: 50%" @change="setValue(e, 'hours-extra')" />
                             </a-tooltip>
                         </a-input-group>
                     </a-col>
@@ -89,6 +89,7 @@
                                 :precision="2"
                                 :step="0.01"
                                 style="width: 100%"
+                                @change="setValue(e, 'factor')"
                             />
                         </a-tooltip>
                     </a-col>
@@ -242,6 +243,25 @@
              */
             filterOption(input, option) {
                 return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            },
+            setValue(e, attr) {
+                switch (attr) {
+                    case 'hours-normal': {
+                        if (!e.hours.normal)
+                            e.hours.normal = 0
+                        break
+                    }
+                    case 'hours-extra': {
+                        if (!e.hours.extra)
+                            e.hours.extra = 0
+                        break
+                    }
+                    case 'factor': {
+                        if (!e.factor)
+                            e.factor = 1
+                        break
+                    }
+                }
             }
         }
     }
