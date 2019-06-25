@@ -17,7 +17,7 @@
                                 Guardar
                             </a-button>
                             <no-ssr>
-                                <a-button size="small" type="primary" @click="exportBudgetPDF(budget)">
+                                <a-button size="small" type="primary" @click="exportBudgetPDF(data.company, budget)">
                                     Imprimir
                                 </a-button>
                             </no-ssr>
@@ -166,6 +166,7 @@
                                     :formatter="value => `${value}%`"
                                     :parser="value => value.replace('%', '')"
                                     style="width: 100%"
+                                    @change="methods.setValue('client-discount')"
                                 />
                             </a-col>
 
@@ -217,6 +218,7 @@
                                             }
                                         ]"
                                         :min="1"
+                                        :max="maxId"
                                         :precision="0"
                                     />
                                 </a-form-item>
@@ -291,7 +293,8 @@
                 exportBudgetPDF,
                 comunas,
                 visibleModal: false,
-                formLoad: this.$form.createForm(this)
+                formLoad: this.$form.createForm(this),
+                maxId: 1
             }
         },
         methods: {
@@ -327,6 +330,7 @@
                             this.formLoad.setFieldsValue({
                                 id: result
                             })
+                            this.maxId = result
                         }, 100)
                     })
                     .catch(() => {
@@ -334,6 +338,7 @@
                             this.formLoad.setFieldsValue({
                                 id: 1
                             })
+                            this.maxId = 1
                         }, 100)
                     })
                     .finally(() => {

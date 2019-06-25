@@ -21,12 +21,45 @@
         materials: [],
         comunas: []
     }
+    let initialBudget = {
+        number: 1,
+        status: 'new' || 'saved',
+        date: moment(new Date()),
+        duration: 1,
+        total: {},
+        pdf: {
+            subtotal: 0,
+            discount: 0,
+            neto: 0,
+            iva: 0
+        },
+        client: {
+            company: undefined,
+            rut: undefined,
+            phone: undefined,
+            contact: undefined,
+            comuna: undefined,
+            address: undefined,
+            email: undefined,
+            discount: 0,
+            paymentType: undefined
+        },
+        payment_condition: undefined,
+        notes: undefined,
+        jobs: []
+    }
     let budget = {
         number: 1,
         status: 'new' || 'saved',
         date: moment(new Date()),
         duration: 1,
         total: {},
+        pdf: {
+            subtotal: 0,
+            discount: 0,
+            neto: 0,
+            iva: 0
+        },
         client: {
             company: undefined,
             rut: undefined,
@@ -43,8 +76,12 @@
         jobs: []
     }
 
+    function numberWithCommas(x) {
+        return x.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    }
+
     /**
-     * Calcula el total neto del presupuesto.
+     * Calcula el total neto del presupuesto aplicando descuento.
      * @returns {number}
      */
     budget.total.subtotal = (b) => {
@@ -52,9 +89,19 @@
         b.jobs.forEach((j) => {
             total += j.total
         })
+
+        b.pdf.subtotal = numberWithCommas(total.toFixed(2))
+        b.pdf.discount = numberWithCommas((total * (b.client.discount / 100)).toFixed(2))
+        b.pdf.neto = numberWithCommas((total * (1 - (b.client.discount / 100))).toFixed(2))
+        b.pdf.iva = numberWithCommas(((total * (1 - (b.client.discount / 100))) * 0.19).toFixed(2))
+
         total = total * (1 - (b.client.discount / 100))
+
+        b.pdf.total = numberWithCommas((total + ((total * 0.19))).toFixed(2))
+
         return parseFloat(total.toFixed(2))
     }
+    initialBudget.total.subtotal = budget.total.subtotal
 
     /**
      * Calcula el IVA del total neto.
@@ -63,6 +110,7 @@
     budget.total.iva = (b) => {
         return b.total.subtotal(b) * 0.19
     }
+    initialBudget.total.iva = budget.total.iva
 
     /**
      * Calcula la suma del IVA con el total neto.
@@ -71,6 +119,7 @@
     budget.total.total = (b) => {
         return b.total.subtotal(b) + b.total.iva(b)
     }
+    initialBudget.total.total = budget.total.total
 
     export default {
         name: 'Budget',
@@ -80,6 +129,7 @@
                 moment,
                 data,
                 budget,
+                initialBudget,
                 loadingStatus: {
                     number: false,
                     company: false,
@@ -306,6 +356,8 @@
                         responseClone.date = moment(new Date(response.body.budget.date))
                         responseClone.status = request.status
 
+                        this.resetBudget()
+
                         this.budget = {
                             ...this.budget,
                             ...responseClone
@@ -383,7 +435,22 @@
                             this.budget.client.paymentType = undefined
                         break
                     }
+                    case 'client-discount': {
+                        if (!this.budget.client.discount)
+                            this.budget.client.discount = 0
+                        break
+                    }
                 }
+            },
+            resetBudget() {
+                const clone = JSON.parse(JSON.stringify(this.initialBudget))
+                clone.date = this.initialBudget
+                clone.status = 'new'
+                clone.total.subtotal = this.budget.total.subtotal
+                clone.total.iva = this.budget.total.iva
+                clone.total.total = this.budget.total.total
+
+                this.budget = clone
             }
         }
     }
