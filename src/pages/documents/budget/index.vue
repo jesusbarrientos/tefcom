@@ -12,6 +12,7 @@
 
 <script>
     import moment from 'moment'
+    import voca from 'voca'
     import BudgetDesktop from './desktop/index'
     import BudgetMobile from './mobile/index'
 
@@ -141,6 +142,7 @@
                     edit: true
                 },
                 methods: {
+                    newBudget: this.newBudget,
                     saveBudget: this.saveBudget,
                     loadBudget: this.loadBudget,
                     loadLastNumber: this.loadLastNumber,
@@ -193,11 +195,11 @@
                 this.$axios.$get(process.env.apiBaseUrl + '/company/get')
                     .then((response) => {
                         this.data.company = response.body[0]
-                        this.$notification.success({
+                        /* this.$notification.success({
                             message: 'Éxito!',
                             description: 'Se ha cargado la información de la compañía.',
                             duration: 2
-                        })
+                        }) */
                     })
                     .catch((e) => {
                         this.$notification.error({
@@ -214,11 +216,11 @@
                 this.$axios.$get(process.env.apiBaseUrl + '/employee/getall')
                     .then((response) => {
                         this.data.employees = response.body
-                        this.$notification.success({
+                        /* this.$notification.success({
                             message: 'Éxito!',
                             description: 'Se han cargado todos los empleados.',
                             duration: 2
-                        })
+                        }) */
                     })
                     .catch((e) => {
                         this.$notification.error({
@@ -235,11 +237,11 @@
                 this.$axios.$get(process.env.apiBaseUrl + '/material/getall')
                     .then((response) => {
                         this.data.materials = response.body
-                        this.$notification.success({
+                        /* this.$notification.success({
                             message: 'Éxito!',
                             description: 'Se han cargado todos los materiales.',
                             duration: 2
-                        })
+                        }) */
                     })
                     .catch((e) => {
                         this.$notification.error({
@@ -260,6 +262,11 @@
                     .finally(() => {
                         this.loadingStatus.cities = true
                     })
+            },
+            newBudget() {
+                this.loadingStatus.number = false
+                this.resetBudget()
+                this.loadNewNumber()
             },
             saveBudget() {
                 if (this.budget.status === 'new')
@@ -396,47 +403,47 @@
             setValue(attr) {
                 switch (attr) {
                     case 'client-company': {
-                        if (this.budget.client.company === '')
+                        if (this.getParseBudget().client.company === '')
                             this.budget.client.company = undefined
                         break
                     }
                     case 'client-rut': {
-                        if (this.budget.client.rut === '')
+                        if (this.getParseBudget().client.rut === '')
                             this.budget.client.rut = undefined
                         break
                     }
                     case 'client-phone': {
-                        if (this.budget.client.phone === '')
+                        if (this.getParseBudget().client.phone === '')
                             this.budget.client.phone = undefined
                         break
                     }
                     case 'client-contact': {
-                        if (this.budget.client.contact === '')
+                        if (this.getParseBudget().client.contact === '')
                             this.budget.client.contact = undefined
                         break
                     }
                     case 'client-comuna': {
-                        if (this.budget.client.comuna === '')
+                        if (this.getParseBudget().client.comuna === '')
                             this.budget.client.comuna = undefined
                         break
                     }
                     case 'client-address': {
-                        if (this.budget.client.address === '')
+                        if (this.getParseBudget().client.address === '')
                             this.budget.client.address = undefined
                         break
                     }
                     case 'client-email': {
-                        if (this.budget.client.email === '')
+                        if (this.getParseBudget().client.email === '')
                             this.budget.client.email = undefined
                         break
                     }
                     case 'client-paymentType': {
-                        if (this.budget.client.paymentType === '')
+                        if (this.getParseBudget().client.paymentType === '')
                             this.budget.client.paymentType = undefined
                         break
                     }
                     case 'client-discount': {
-                        if (!this.budget.client.discount)
+                        if (!this.getParseBudget().client.discount)
                             this.budget.client.discount = 0
                         break
                     }
@@ -444,13 +451,23 @@
             },
             resetBudget() {
                 const clone = JSON.parse(JSON.stringify(this.initialBudget))
-                clone.date = this.initialBudget
+                clone.date = this.initialBudget.date
                 clone.status = 'new'
                 clone.total.subtotal = this.budget.total.subtotal
                 clone.total.iva = this.budget.total.iva
                 clone.total.total = this.budget.total.total
 
                 this.budget = clone
+            },
+            getParseBudget() {
+                this.budget.client.address = voca.upperCase(this.budget.client.address)
+                this.budget.client.company = voca.upperCase(this.budget.client.company)
+                this.budget.client.comuna = voca.upperCase(this.budget.client.comuna)
+                this.budget.client.contact = voca.upperCase(this.budget.client.contact)
+                this.budget.client.email = voca.upperCase(this.budget.client.email)
+                this.budget.client.paymentType = voca.upperCase(this.budget.client.paymentType)
+
+                return this.budget
             }
         }
     }

@@ -10,6 +10,11 @@
                     <a-card title="Generar Cotización" :bordered="false">
                         <!--EXTRA-->
                         <div slot="extra">
+                            <a-popconfirm title="Los cambios no guardados se sobrescribirán, ¿Desea continuar con la operación?" placement="bottomRight" ok-text="Si" cancel-text="No" @confirm="methods.newBudget()">
+                                <a-button size="small" type="primary">
+                                    Nueva
+                                </a-button>
+                            </a-popconfirm>
                             <a-button size="small" type="primary" @click="showModal">
                                 Cargar
                             </a-button>

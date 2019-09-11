@@ -36,7 +36,7 @@ export function exportBudgetPDF(company, budget) {
                 },
                 headerNumber: {
                     fontSize: 9,
-                    bold: false,
+                    bold: true,
                     italics: false,
                     alignment: 'center'
                 },
@@ -73,10 +73,13 @@ export function exportBudgetPDF(company, budget) {
                 },
                 information: {
                     fontSize: 8,
-                    bold: false,
+                    bold: true,
                     italics: false,
                     alignment: 'justify',
-                    margin: [20, 30, 20, 30]
+                    margin: [0, -10, 0, 5]
+                },
+                informationBaseline: {
+                    margin: [0, 0, 0, 20]
                 },
                 table: {
                     margin: [0, 0, 0, 30]
@@ -94,10 +97,7 @@ export function exportBudgetPDF(company, budget) {
                     bold: true
                 }
             },
-            content: [],
-            footer: [
-                { text: 'INFORMACIÓN: ESTA COTIZACIÓN TIENE UNA DURACIÓN VÁLIDA DE ' + budget.duration + ' DÍAS A PARTIR DE LA FECHA DE SOLICITUD (INDICADA EN LA INFORMACIÓN DEL CLIENTE).', style: 'information' }
-            ]
+            content: []
         }
 
         generateBudgetPDF(company, budget, doc)
@@ -108,15 +108,17 @@ export function exportBudgetPDF(company, budget) {
 
 /**
  * Organiza y genera contenido del documento.
+ * @param company
  * @param budget
  * @param doc
  */
 function generateBudgetPDF(company, budget, doc) {
     setHeader(company, budget, doc)
     setClient(budget, doc)
-    setJobs(budget, doc)
+    setInformation(budget, doc)
     setNotes(budget, doc)
     setPaymentNotes(budget, doc)
+    setJobs(budget, doc)
     setAgent(company.agent, doc)
 }
 
@@ -124,6 +126,7 @@ function generateBudgetPDF(company, budget, doc) {
  * Genera header de la empresa
  * @param company
  * @param budget
+ * @param doc
  */
 function setHeader(company, budget, doc) {
     doc.content.push({
@@ -191,11 +194,11 @@ function setClient(budget, doc) {
         layout: 'noBorders',
         table: {
             headerRows: 1,
-            widths: [ 90, '*', 150, 90 ],
+            widths: [ 90, '*', '*', 80 ],
 
             body: [
-                [ { text: 'RUT', style: 'tableHeader' }, { text: 'Nombre de Empresa', style: 'tableHeader' }, { text: 'Contacto', style: 'tableHeader' }, { text: 'Fecha', style: 'tableHeader' } ],
-                [ { text: rut, style: 'tableValue' }, { text: nombre, style: 'tableValue' }, { text: contacto, style: 'tableValue' }, { text: fecha, style: 'tableValue' } ]
+                [ { text: 'RUT', style: 'tableHeader' }, { text: 'Nombre de Empresa', style: 'tableHeader' }, { text: 'Dirección', style: 'tableHeader' }, { text: 'Fecha', style: 'tableHeader' } ],
+                [ { text: rut, style: 'tableValue' }, { text: nombre, style: 'tableValue' }, { text: fullDireccion, style: 'tableValue' }, { text: fecha, style: 'tableValue' } ]
             ]
         }
     })
@@ -205,11 +208,11 @@ function setClient(budget, doc) {
         style: 'table',
         table: {
             headerRows: 1,
-            widths: [ '*', '*', 90, 90 ],
+            widths: [ 90, '*', '*', 80 ],
 
             body: [
-                [ { text: 'Correo Electrónico', style: 'tableHeader' }, { text: 'Dirección', style: 'tableHeader' }, { text: 'Descuento', style: 'tableHeader' }, { text: 'Tipo de Pago', style: 'tableHeader' } ],
-                [ { text: email, style: 'tableValue' }, { text: fullDireccion, style: 'tableValue' }, { text: descuento, style: 'tableValue' }, { text: tipoPago, style: 'tableValue' } ]
+                [ { text: 'Descuento', style: 'tableHeader' }, { text: 'Contacto', style: 'tableHeader' }, { text: 'Correo Electrónico', style: 'tableHeader' }, { text: 'Tipo de Pago', style: 'tableHeader' } ],
+                [ { text: descuento, style: 'tableValue' }, { text: contacto, style: 'tableValue' }, { text: email, style: 'tableValue' }, { text: tipoPago, style: 'tableValue' } ]
             ]
         }
     })
@@ -257,6 +260,16 @@ function setJobs(budget, doc) {
                 { text: '$ ' + numberWithCommas((j.subtotal.employees + j.subtotal.materials + j.subtotal.others).toFixed(2)), style: 'tableValue', border: [false, false, false, true] },
                 { text: j.count, style: ['tableValue', 'center'], border: [false, false, false, true] },
                 { text: '$ ' + numberWithCommas((j.total).toFixed(2)), style: ['tableValue', 'right'], border: [false, false, false, true] }
+            ])
+
+            content.table.body.push([
+                { text: '', style: 'tableValue', border: [false, false, false, true] },
+                {
+                    colSpan: 4,
+                    text: j.description,
+                    style: 'tableValue',
+                    border: [false, false, false, true]
+                }
             ])
         })
 
@@ -335,6 +348,22 @@ function setNotes(budget, doc) {
 function setPaymentNotes(budget, doc) {
     doc.content.push({ text: 'Condiciones de Pago', style: 'notesTitle' })
     doc.content.push({ text: budget.payment_condition ? budget.payment_condition : 'No existen condiciones de pago.', style: 'notesValue' })
+}
+
+function setInformation(budget, doc) {
+    doc.content.push({ text: 'INFORMACIÓN: ESTA COTIZACIÓN TIENE UNA DURACIÓN VÁLIDA DE ' + budget.duration + ' DÍAS A PARTIR DE LA FECHA DE SOLICITUD (INDICADA EN LA INFORMACIÓN DE MÁS ARRIBA).', style: 'information' })
+    doc.content.push({
+        style: 'informationBaseline',
+        table: {
+            widths: [ '*' ],
+            heights: [0],
+            body: [
+                [
+                    { text: '', border: [false, false, false, true] }
+                ]
+            ]
+        }
+    })
 }
 
 function setAgent(agent, doc) {
