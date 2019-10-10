@@ -17,9 +17,8 @@ async function start() {
     if (config.dev) {
         const builder = new Builder(nuxt)
         await builder.build()
-    } else {
+    } else
         await nuxt.ready()
-    }
 
     // Give nuxt middleware to express
     app.use(nuxt.render)

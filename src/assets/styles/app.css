@@ -179,6 +179,14 @@ body {
   width: 100%;
 }
 
+.ant-time-picker {
+  width: 100%;
+}
+
+.ant-calendar-picker {
+  width: 100%;
+}
+
 /*
  * Components
  */
@@ -524,6 +532,19 @@ body {
   background-color: rgba(255, 255, 255, 0.9);
   padding: 10px 0;
   margin-bottom: 0 !important;
+}
+
+/*
+ * Attendance
+ */
+#attendance-page-desktop .new-attendance {
+  padding: 1rem;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #e6e6e6;
+}
+#attendance-page-desktop .new-attendance .ant-row {
+  margin-bottom: 0;
 }
 
 /*# sourceMappingURL=app.css.map */

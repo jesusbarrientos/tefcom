@@ -403,42 +403,42 @@
             setValue(attr) {
                 switch (attr) {
                     case 'client-company': {
-                        if (this.getParseBudget().client.company === '')
+                        if (this.getParseBudget().client.company == '')
                             this.budget.client.company = undefined
                         break
                     }
                     case 'client-rut': {
-                        if (this.getParseBudget().client.rut === '')
+                        if (this.getParseBudget().client.rut == '')
                             this.budget.client.rut = undefined
                         break
                     }
                     case 'client-phone': {
-                        if (this.getParseBudget().client.phone === '')
+                        if (this.getParseBudget().client.phone == '')
                             this.budget.client.phone = undefined
                         break
                     }
                     case 'client-contact': {
-                        if (this.getParseBudget().client.contact === '')
+                        if (this.getParseBudget().client.contact == '')
                             this.budget.client.contact = undefined
                         break
                     }
                     case 'client-comuna': {
-                        if (this.getParseBudget().client.comuna === '')
+                        if (this.getParseBudget().client.comuna == '')
                             this.budget.client.comuna = undefined
                         break
                     }
                     case 'client-address': {
-                        if (this.getParseBudget().client.address === '')
+                        if (this.getParseBudget().client.address == '')
                             this.budget.client.address = undefined
                         break
                     }
                     case 'client-email': {
-                        if (this.getParseBudget().client.email === '')
+                        if (this.getParseBudget().client.email == '')
                             this.budget.client.email = undefined
                         break
                     }
                     case 'client-paymentType': {
-                        if (this.getParseBudget().client.paymentType === '')
+                        if (this.getParseBudget().client.paymentType == '')
                             this.budget.client.paymentType = undefined
                         break
                     }

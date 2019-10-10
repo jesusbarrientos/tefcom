@@ -52,7 +52,7 @@
 
         <a-row>
             <a-col>
-                <a-popconfirm title="¿Estás seguro de querer eliminar este trabajo?" @confirm="deleteJob" okText="Si" cancelText="No">
+                <a-popconfirm title="¿Estás seguro de querer eliminar este trabajo?" ok-text="Si" cancel-text="No" @confirm="deleteJob">
                     <a-button type="danger" block>
                         Eliminar Trabajo
                     </a-button>

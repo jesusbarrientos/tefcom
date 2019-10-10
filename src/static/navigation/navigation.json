@@ -28,7 +28,7 @@
                 {
                     "key": "asistencia",
                     "label": "Asistencia",
-                    "url": "/asistencia",
+                    "url": "/human_resources/attendance",
                     "icon": "",
                     "responsive": ["mobile", "tablet", "desktop"],
                     "menu": []

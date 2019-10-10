@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import navigation from '@@/static/navigation/navigation.json'
+    import navigation from '@/static/navigation/navigation.json'
 
     export default {
         name: 'Navigation',
