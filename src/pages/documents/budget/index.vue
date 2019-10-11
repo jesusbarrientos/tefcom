@@ -1,7 +1,7 @@
 <template>
     <div>
         <mq-layout mq="desktop">
-            <budget-desktop :data="data" :budget="budget" :loading-status="loading" :methods="methods" @loadBudget="loadBudget" />
+            <budget-desktop :data="data" :budget="budget" :parsed-budget="getParseBudget" :loading-status="loading" :methods="methods" @loadBudget="loadBudget" />
         </mq-layout>
 
         <mq-layout :mq="['mobile', 'tablet']">
@@ -279,7 +279,7 @@
 
                 this.budget.status = 'saved'
 
-                const clone = JSON.parse(JSON.stringify(this.budget))
+                const clone = JSON.parse(JSON.stringify(this.getParseBudget()))
                 delete clone.total
 
                 const request = {
@@ -321,7 +321,7 @@
             editBudget() {
                 this.loadingStatus.edit = false
 
-                const clone = JSON.parse(JSON.stringify(this.budget))
+                const clone = JSON.parse(JSON.stringify(this.getParseBudget()))
                 delete clone.total
 
                 const request = {
@@ -403,47 +403,47 @@
             setValue(attr) {
                 switch (attr) {
                     case 'client-company': {
-                        if (this.getParseBudget().client.company == '')
+                        if (this.budget.client.company === '')
                             this.budget.client.company = undefined
                         break
                     }
                     case 'client-rut': {
-                        if (this.getParseBudget().client.rut == '')
+                        if (this.budget.client.rut === '')
                             this.budget.client.rut = undefined
                         break
                     }
                     case 'client-phone': {
-                        if (this.getParseBudget().client.phone == '')
+                        if (this.budget.client.phone === '')
                             this.budget.client.phone = undefined
                         break
                     }
                     case 'client-contact': {
-                        if (this.getParseBudget().client.contact == '')
+                        if (this.budget.client.contact === '')
                             this.budget.client.contact = undefined
                         break
                     }
                     case 'client-comuna': {
-                        if (this.getParseBudget().client.comuna == '')
+                        if (this.budget.client.comuna === '')
                             this.budget.client.comuna = undefined
                         break
                     }
                     case 'client-address': {
-                        if (this.getParseBudget().client.address == '')
+                        if (this.budget.client.address === '')
                             this.budget.client.address = undefined
                         break
                     }
                     case 'client-email': {
-                        if (this.getParseBudget().client.email == '')
+                        if (this.budget.client.email === '')
                             this.budget.client.email = undefined
                         break
                     }
                     case 'client-paymentType': {
-                        if (this.getParseBudget().client.paymentType == '')
+                        if (this.budget.client.paymentType === '')
                             this.budget.client.paymentType = undefined
                         break
                     }
                     case 'client-discount': {
-                        if (!this.getParseBudget().client.discount)
+                        if (!this.budget.client.discount)
                             this.budget.client.discount = 0
                         break
                     }
@@ -460,12 +460,33 @@
                 this.budget = clone
             },
             getParseBudget() {
-                this.budget.client.address = voca.upperCase(this.budget.client.address)
-                this.budget.client.company = voca.upperCase(this.budget.client.company)
-                this.budget.client.comuna = voca.upperCase(this.budget.client.comuna)
-                this.budget.client.contact = voca.upperCase(this.budget.client.contact)
-                this.budget.client.email = voca.upperCase(this.budget.client.email)
-                this.budget.client.paymentType = voca.upperCase(this.budget.client.paymentType)
+                if (this.budget.client.address !== '')
+                    this.budget.client.address = voca.upperCase(this.budget.client.address)
+
+                if (this.budget.client.company !== '')
+                    this.budget.client.company = voca.upperCase(this.budget.client.company)
+
+                if (this.budget.client.comuna !== '')
+                    this.budget.client.comuna = voca.upperCase(this.budget.client.comuna)
+
+                if (this.budget.client.contact !== '')
+                    this.budget.client.contact = voca.upperCase(this.budget.client.contact)
+
+                if (this.budget.client.email !== '')
+                    this.budget.client.email = voca.upperCase(this.budget.client.email)
+
+                if (this.budget.client.paymentType !== '')
+                    this.budget.client.paymentType = voca.upperCase(this.budget.client.paymentType)
+
+                this.budget.jobs.forEach((job) => {
+                    if (job.name !== undefined && job.name !== '')
+                        job.name = voca.upperCase(job.name)
+
+                    if (job.description !== undefined && job.description !== '')
+                        job.description = voca.upperCase(job.description)
+                })
+
+                console.log(this.budget)
 
                 return this.budget
             }

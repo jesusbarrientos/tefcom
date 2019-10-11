@@ -22,7 +22,7 @@
                                 Guardar
                             </a-button>
                             <no-ssr>
-                                <a-button size="small" type="primary" @click="exportBudgetPDF(data.company, budget)">
+                                <a-button size="small" type="primary" @click="exportBudgetPDF(data.company, parsedBudget())">
                                     Imprimir
                                 </a-button>
                             </no-ssr>
@@ -282,6 +282,9 @@
                 required: true
             },
             budget: {
+                required: true
+            },
+            parsedBudget: {
                 required: true
             },
             loadingStatus: {
