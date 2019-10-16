@@ -1,0 +1,73 @@
+{
+    "defaultSelectedKeys": ["dashboard"],
+
+    "menu": [
+        {
+            "key": "dashboard",
+            "label": "Dashboard",
+            "url": "/dashboard",
+            "icon": "dashboard",
+            "responsive": ["mobile", "tablet", "desktop"],
+            "menu": []
+        },
+        {
+            "key": "recursos_humanos",
+            "label": "Recursos Humanos",
+            "url": "",
+            "icon": "team",
+            "responsive": ["mobile", "tablet", "desktop"],
+            "menu": [
+                {
+                    "key": "empleados",
+                    "label": "Empleados",
+                    "url": "/human_resources/employee",
+                    "icon": "",
+                    "responsive": ["mobile", "tablet", "desktop"],
+                    "menu": []
+                },
+                {
+                    "key": "asistencia",
+                    "label": "Asistencia",
+                    "url": "/human_resources/attendance",
+                    "icon": "",
+                    "responsive": ["mobile", "tablet", "desktop"],
+                    "menu": []
+                }
+            ]
+        },
+        {
+            "key": "insumos",
+            "label": "Insumos",
+            "url": "",
+            "icon": "experiment",
+            "responsive": ["mobile", "tablet", "desktop"],
+            "menu": [
+                {
+                    "key": "materiales",
+                    "label": "Materiales",
+                    "url": "/material",
+                    "icon": "",
+                    "responsive": ["mobile", "tablet", "desktop"],
+                    "menu": []
+                }
+            ]
+        },
+        {
+            "key": "documentos",
+            "label": "Documentos",
+            "url": "",
+            "icon": "file-text",
+            "responsive": ["desktop"],
+            "menu": [
+                {
+                    "key": "cotizaciones",
+                    "label": "Cotizaciones",
+                    "url": "/documents/budget",
+                    "icon": "",
+                    "responsive": ["desktop"],
+                    "menu": []
+                }
+            ]
+        }
+    ]
+}

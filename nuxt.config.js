@@ -1,7 +1,7 @@
 const pkg = require('./package')
 
 module.exports = {
-    mode: 'universal',
+    mode: 'spa',
 
     /*
     ** Headers of the page
@@ -11,17 +11,38 @@ module.exports = {
         meta: [
             { charset: 'utf-8' },
             { name: 'viewport', content: 'user-scalable=no, width=device-width, initial-scale=1' },
+            { name: 'theme-color', content: '#00cdff' },
             { hid: 'description', name: 'description', content: pkg.description }
         ],
         link: [
             { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-        ]
+        ],
+        htmlAttrs: {
+            lang: 'es'
+        }
     },
 
     /*
     ** Customize the progress-bar color
     */
     loading: { color: '#fff' },
+
+    manifest: {
+        lang: 'es',
+        name: 'Tefcom',
+        short_name: 'Tefcom',
+        start_url: '/',
+        orientation: 'portrait-primary',
+        background_color: '#1e1e1e',
+        display: 'fullscreen'
+    },
+
+    workbox: {
+        dev: true,
+        config: {
+            debug: true
+        }
+    },
 
     /*
     ** Global CSS
@@ -48,6 +69,7 @@ module.exports = {
         // Doc: https://axios.nuxtjs.org/usage
         '@nuxtjs/axios',
         '@nuxtjs/pwa'
+        // '@nuxtjs/eslint-module'
     ],
     /*
     ** Axios module configuration

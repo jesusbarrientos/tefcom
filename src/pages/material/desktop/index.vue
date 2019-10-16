@@ -58,6 +58,7 @@
                                                                     :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')"
                                                                     :precision="2"
+                                                                    :min="0.01"
                                                                 />
                                                             </a-tooltip>
                                                         </a-col>
@@ -68,12 +69,12 @@
                                                                     ¿El precio incluye IVA?
                                                                 </template>
                                                                 <label for="iva">IVA</label>
-                                                                <a-select id="iva" v-model="supplier.include_iva" :default-value="false">
-                                                                    <a-select-option :value="true">
+                                                                <a-select id="iva" v-model="supplier.include_iva" :default-value="0">
+                                                                    <a-select-option :value="1">
                                                                         Si
                                                                     </a-select-option>
 
-                                                                    <a-select-option :value="false">
+                                                                    <a-select-option :value="0">
                                                                         No
                                                                     </a-select-option>
                                                                 </a-select>
@@ -392,7 +393,7 @@
                 const currentDate = new Date()
                 const date = currentDate.getDate() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getFullYear() + '/' + currentDate.getHours() + ':' + currentDate.getMinutes() + ':' + currentDate.getSeconds() + ':' + currentDate.getMilliseconds()
                 const id = `SUP-${date}`
-                this.newMaterial.suppliers.push({ id: id, name: '', quality: this.materials.options[0].value, price: 1, include_iva: false })
+                this.newMaterial.suppliers.push({ id: id, name: '', quality: this.materials.options[0].value, price: 1, include_iva: 0 })
             },
             /**
              * Agrega una nueva fila para un proveedor del material a modificar.

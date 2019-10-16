@@ -11,8 +11,8 @@
 </template>
 
 <script>
-    import MaterialDesktop from './desktop/index'
-    import MaterialMobile from './mobile/index'
+    import MaterialDesktop from './desktop'
+    import MaterialMobile from './mobile'
 
     const data = []
     const event = {

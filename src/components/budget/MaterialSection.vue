@@ -47,7 +47,7 @@
                                 disabled
                             />
 
-                            <a-input-number v-model="e.count" :min="1" style="width: 50%" />
+                            <a-input-number v-model="e.count" :min="1" style="width: 50%" @change="setValue(e, 'count')" />
                         </a-input-group>
                     </a-col>
 
@@ -270,6 +270,15 @@
              */
             filterOption(input, option) {
                 return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            },
+            setValue(e, attr) {
+                switch (attr) {
+                    case 'count': {
+                        if (!e.count)
+                            e.count = 1
+                        break
+                    }
+                }
             }
         }
     }
