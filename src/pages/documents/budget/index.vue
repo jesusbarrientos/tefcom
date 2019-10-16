@@ -460,33 +460,35 @@
                 this.budget = clone
             },
             getParseBudget() {
-                if (this.budget.client.address !== '')
+                if (this.budget.client.address !== undefined)
                     this.budget.client.address = voca.upperCase(this.budget.client.address)
 
-                if (this.budget.client.company !== '')
+                if (this.budget.client.company !== undefined)
                     this.budget.client.company = voca.upperCase(this.budget.client.company)
 
-                if (this.budget.client.comuna !== '')
+                if (this.budget.client.comuna !== undefined)
                     this.budget.client.comuna = voca.upperCase(this.budget.client.comuna)
 
-                if (this.budget.client.contact !== '')
+                if (this.budget.client.contact !== undefined)
                     this.budget.client.contact = voca.upperCase(this.budget.client.contact)
 
-                if (this.budget.client.email !== '')
+                if (this.budget.client.email !== undefined)
                     this.budget.client.email = voca.upperCase(this.budget.client.email)
 
-                if (this.budget.client.paymentType !== '')
+                if (this.budget.client.paymentType !== undefined)
                     this.budget.client.paymentType = voca.upperCase(this.budget.client.paymentType)
 
                 this.budget.jobs.forEach((job) => {
                     if (job.name !== undefined && job.name !== '')
                         job.name = voca.upperCase(job.name)
+                    else
+                        job.name = undefined
 
                     if (job.description !== undefined && job.description !== '')
                         job.description = voca.upperCase(job.description)
+                    else
+                        job.description = undefined
                 })
-
-                console.log(this.budget)
 
                 return this.budget
             }
