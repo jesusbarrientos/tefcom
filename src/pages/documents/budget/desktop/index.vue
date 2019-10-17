@@ -142,23 +142,7 @@
 
                             <a-col :span="4">
                                 <label for="badget-city">Comuna</label>
-                                <a-select
-                                    id="badget-city"
-                                    show-search
-                                    :value="budget.client.comuna"
-                                    :default-active-first-option="false"
-                                    :show-arrow="false"
-                                    :filter-option="false"
-                                    :not-found-content="null"
-                                    class="city-select"
-                                    @search="onSearchCity"
-                                    @select="onSelectCity"
-                                    @change="methods.setValue('client-comuna')"
-                                >
-                                    <a-select-option v-for="c in comunas" :key="c.nombre">
-                                        {{ c.nombre }}
-                                    </a-select-option>
-                                </a-select>
+                                <a-input id="badget-city" v-model="budget.client.comuna" @change="methods.setValue('client-comuna')" />
                             </a-col>
 
                             <a-col :span="3">
@@ -306,14 +290,6 @@
             }
         },
         methods: {
-            onSearchCity(value) {
-                this.comunas = this.data.comunas.filter((c) => {
-                    return c.nombre.toLowerCase().indexOf(value.toLowerCase()) > -1
-                })
-            },
-            onSelectCity(value) {
-                this.budget.client.comuna = value
-            },
             addJob() {
                 this.budget.jobs.push({
                     name: 'Trabajo Nuevo',

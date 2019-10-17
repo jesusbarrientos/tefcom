@@ -136,7 +136,6 @@
                     company: false,
                     employees: false,
                     materials: false,
-                    cities: false,
                     save: true,
                     load: true,
                     edit: true
@@ -173,7 +172,6 @@
                 this.loadCompany()
                 this.loadEmployees()
                 this.loadMaterials()
-                this.loadChileCities()
             },
             loadNewNumber() {
                 this.$axios.$get(process.env.apiBaseUrl + '/budget/getnewid')
@@ -195,11 +193,6 @@
                 this.$axios.$get(process.env.apiBaseUrl + '/company/get')
                     .then((response) => {
                         this.data.company = response.body[0]
-                        /* this.$notification.success({
-                            message: 'Éxito!',
-                            description: 'Se ha cargado la información de la compañía.',
-                            duration: 2
-                        }) */
                     })
                     .catch((e) => {
                         this.$notification.error({
@@ -216,11 +209,6 @@
                 this.$axios.$get(process.env.apiBaseUrl + '/employee/getall')
                     .then((response) => {
                         this.data.employees = response.body
-                        /* this.$notification.success({
-                            message: 'Éxito!',
-                            description: 'Se han cargado todos los empleados.',
-                            duration: 2
-                        }) */
                     })
                     .catch((e) => {
                         this.$notification.error({
@@ -237,11 +225,6 @@
                 this.$axios.$get(process.env.apiBaseUrl + '/material/getall')
                     .then((response) => {
                         this.data.materials = response.body
-                        /* this.$notification.success({
-                            message: 'Éxito!',
-                            description: 'Se han cargado todos los materiales.',
-                            duration: 2
-                        }) */
                     })
                     .catch((e) => {
                         this.$notification.error({
@@ -252,15 +235,6 @@
                     })
                     .finally(() => {
                         this.loadingStatus.materials = true
-                    })
-            },
-            loadChileCities() {
-                this.$axios.$get(process.env.apiChileCitiesUrl)
-                    .then((response) => {
-                        this.data.comunas = response
-                    })
-                    .finally(() => {
-                        this.loadingStatus.cities = true
                     })
             },
             newBudget() {
@@ -359,19 +333,26 @@
 
                 this.$axios.$post(process.env.apiBaseUrl + '/budget/get', request)
                     .then((response) => {
-                        const responseClone = JSON.parse(JSON.stringify(response.body.budget))
-                        responseClone.date = moment(new Date(response.body.budget.date))
-                        responseClone.status = request.status
+                        if (response.ok) {
+                            const responseClone = JSON.parse(JSON.stringify(response.body.budget))
+                            responseClone.date = moment(new Date(response.body.budget.date))
+                            responseClone.status = request.status
 
-                        this.resetBudget()
+                            this.resetBudget()
 
-                        this.budget = {
-                            ...this.budget,
-                            ...responseClone
+                            this.budget = {
+                                ...this.budget,
+                                ...responseClone
+                            }
+
+                            if (request.status === 'new')
+                                this.loadNewNumber()
+                        } else {
+                            this.$notification.error({
+                                message: 'Error!',
+                                description: response.message
+                            })
                         }
-
-                        if (request.status === 'new')
-                            this.loadNewNumber()
                     })
                     .catch((e) => {
                         this.$notification.error({
@@ -479,14 +460,10 @@
                     this.budget.client.paymentType = voca.upperCase(this.budget.client.paymentType)
 
                 this.budget.jobs.forEach((job) => {
-                    if (job.name !== undefined && job.name !== '')
-                        job.name = voca.upperCase(job.name)
-                    else
+                    if (job.name === '')
                         job.name = undefined
 
-                    if (job.description !== undefined && job.description !== '')
-                        job.description = voca.upperCase(job.description)
-                    else
+                    if (job.description === '')
                         job.description = undefined
                 })
 
