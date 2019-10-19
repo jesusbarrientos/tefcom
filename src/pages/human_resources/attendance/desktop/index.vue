@@ -12,19 +12,17 @@
                                 <a-row :gutter="10">
                                     <a-col :span="8">
                                         <a-form-item :label="fields.date.label" :extra="fields.date.extra" :required="fields.date.required">
-                                            <a-date-picker v-decorator="fields.date.decorator" :allow-clear="false" :placeholder="fields.date.placeholder" />
-                                        </a-form-item>
-                                    </a-col>
-
-                                    <a-col :span="8">
-                                        <a-form-item :label="fields.time.label" :extra="fields.time.extra" :required="fields.time.required">
-                                            <a-time-picker v-decorator="fields.time.decorator" use12hours :allow-empty="false" format="h:mm:ss A" :placeholder="fields.time.placeholder" />
+                                            <a-date-picker v-decorator="fields.date.decorator" showTime format="DD-MM-YYYY HH:mm:ss" :allow-clear="false" :placeholder="fields.date.placeholder" />
                                         </a-form-item>
                                     </a-col>
 
                                     <a-col :span="8">
                                         <a-form-item :label="fields.employee.label" :extra="fields.employee.extra" :required="fields.employee.required">
-                                            <a-select v-decorator="fields.employee.decorator" :placeholder="fields.employee.placeholder" />
+                                            <a-select v-decorator="fields.employee.decorator" :placeholder="fields.employee.placeholder">
+                                                <a-select-option v-for="option of body.employees" :value="option.rut">
+                                                    {{ option.first_name }} {{ option.last_name }}
+                                                </a-select-option>
+                                            </a-select>
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
@@ -67,21 +65,6 @@
                 }
             ]
         },
-        time: {
-            label: 'Hora',
-            extra: '',
-            required: true,
-            placeholder: 'Hora',
-            decorator: [
-                'time',
-                {
-                    initialValue: moment(new Date()),
-                    rules: [
-                        { required: true, message: 'Ingrese hora de entrada/salida.' }
-                    ]
-                }
-            ]
-        },
         employee: {
             label: 'Empleado',
             extra: '',
@@ -102,6 +85,17 @@
     export default {
         name: 'AttendanceDesktop',
         components: { AFormItem },
+        props: {
+            body: {
+                required: true
+            },
+            event: {
+                required: true
+            },
+            bodyData: {
+                required: true
+            }
+        },
         data() {
             return {
                 moment,
@@ -113,8 +107,47 @@
             this.form = this.$form.createForm(this)
         },
         methods: {
-            addAttendance() {
+            getBodyData() {
+                return {
+                    ...this.bodyData,
+                    rut: this.form.getFieldValue('employee'),
+                    date: this.form.getFieldValue('date').toISOString()
+                }
+            },
+            addAttendance($event) {
+                $event.preventDefault()
 
+                this.form.validateFields((error) => {
+                    if (!error) {
+                        this.visibleSpin = true
+
+                        const param = {
+                            type: this.event.REGISTER,
+                            body: this.getBodyData(),
+                            callback: (promise) => {
+                                promise
+                                    .then((response) => {
+                                        if (response === true) {
+                                            this.bodyData.use_as_exit = true
+                                            this.bodyData.new_attendance = false
+                                            this.addAttendance($event)
+                                            this.bodyData.use_as_exit = false
+                                            this.bodyData.new_attendance = true
+                                        } else if (response === false) {
+                                            this.bodyData.use_as_exit = false
+                                            this.bodyData.new_attendance = false
+                                            this.addAttendance($event)
+                                            this.bodyData.use_as_exit = false
+                                            this.bodyData.new_attendance = true
+                                        }
+                                    })
+                                    .finally(() => { this.visibleSpin = false })
+                            }
+                        }
+
+                        this.$emit('emit', param)
+                    }
+                })
             }
         }
     }
