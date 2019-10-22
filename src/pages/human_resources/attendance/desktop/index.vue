@@ -3,16 +3,15 @@
         <a-row type="flex" justify="center" :gutter="16">
             <a-col :sm="{ span: 24 }" :xxl="{ span: 20 }">
                 <a-card title="Asistencia" :bordered="false" class="attendance-card">
-                    <a-spin tip="Registrando..." :spinning="visibleSpin">
+                    <a-spin tip="Cargando..." :spinning="loading">
                         <div class="new-attendance">
-
                             <h3>Registrar</h3>
 
                             <a-form :form="form" layout="vertical" @submit="addAttendance">
                                 <a-row :gutter="10">
                                     <a-col :span="8">
                                         <a-form-item :label="fields.date.label" :extra="fields.date.extra" :required="fields.date.required">
-                                            <a-date-picker v-decorator="fields.date.decorator" showTime format="DD-MM-YYYY HH:mm:ss" :allow-clear="false" :placeholder="fields.date.placeholder" />
+                                            <a-date-picker v-decorator="fields.date.decorator" show-time format="DD-MM-YYYY HH:mm:ss" :allow-clear="false" :placeholder="fields.date.placeholder" />
                                         </a-form-item>
                                     </a-col>
 
@@ -37,6 +36,30 @@
                                     </a-button>
                                 </a-row>
                             </a-form>
+                        </div>
+
+                        <div>
+                            <a-table
+                                :columns="table.columns"
+                                :data-source="dataSource"
+                                :bordered="table.bordered"
+                                :loading="table.loading"
+                                :scroll="table.scroll"
+                                :pagination="table.pagination"
+                                row-key="key"
+                                position="bottom"
+                                @change="onPaginate"
+                            >
+                                <span slot="action" slot-scope="record">
+                                    <a @click="onEdit(record)">Editar</a>
+
+                                    <a-divider type="vertical" />
+
+                                    <a-popconfirm title="¿Estás seguro de querer eliminar esta asistencia?" @confirm="onDelete(record)">
+                                        <a>Eliminar</a>
+                                    </a-popconfirm>
+                                </span>
+                            </a-table>
                         </div>
                     </a-spin>
                 </a-card>
@@ -82,25 +105,181 @@
         }
     }
 
+    const table = {
+        bordered: true,
+        loading: false,
+        scroll: { x: '100%' },
+        pagination: { pageSize: 5 },
+        columns: [
+            {
+                title: 'Empleado',
+                dataIndex: 'employee',
+                key: 'employee',
+                sorter: (a, b) => `${a['employee']}`.localeCompare(`${b['employee']}`)
+            },
+            {
+                title: 'Entrada',
+                children: [
+                    {
+                        title: 'Fecha',
+                        dataIndex: 'entry_date',
+                        key: 'entry_date',
+                        sorter: (a, b) => {
+                            let xDate = a.entry_date.split('-')
+                            let yDate = b.entry_date.split('-')
+                            let x = new Date(xDate[2], xDate[1] - 1, xDate[0])
+                            let y = new Date(yDate[2], yDate[1] - 1, yDate[0])
+                            return x - y
+                        }
+                    },
+                    {
+                        title: 'Hora',
+                        dataIndex: 'entry_hour',
+                        key: 'entry_hour',
+                        sorter: (a, b) => {
+                            let xTime = a.entry_hour.split(':')
+                            let yTime = b.entry_hour.split(':')
+                            let x = new Date(1990, 0, 1, xTime[0], xTime[1], xTime[2])
+                            let y = new Date(1990, 0, 1, yTime[0], yTime[1], yTime[2])
+                            return x.getTime() - y.getTime()
+                        }
+                    }
+                ]
+            },
+            {
+                title: 'Salida',
+                children: [
+                    {
+                        title: 'Fecha',
+                        dataIndex: 'exit_date',
+                        key: 'exit_date',
+                        sorter: (a, b) => {
+                            let xDate = a.exit_date.split('-')
+                            let yDate = b.exit_date.split('-')
+                            let x = new Date(xDate[2], xDate[1] - 1, xDate[0])
+                            let y = new Date(yDate[2], yDate[1] - 1, yDate[0])
+                            return x - y
+                        }
+                    },
+                    {
+                        title: 'Hora',
+                        dataIndex: 'exit_hour',
+                        key: 'exit_hour',
+                        sorter: (a, b) => {
+                            let xTime = a.exit_hour.split(':')
+                            let yTime = b.exit_hour.split(':')
+                            let x = new Date(1990, 0, 1, xTime[0], xTime[1], xTime[2])
+                            let y = new Date(1990, 0, 1, yTime[0], yTime[1], yTime[2])
+                            return x.getTime() - y.getTime()
+                        }
+                    }
+                ]
+            },
+            {
+                title: 'Horas Totales',
+                dataIndex: 'hours_count',
+                key: 'hours_count',
+                width: 100,
+                align: 'center',
+                sorter: (a, b) => a.hours_count - b.hours_count
+            },
+            {
+                title: 'Acción',
+                key: 'action',
+                fixed: 'right',
+                width: 200,
+                align: 'center',
+                scopedSlots: { customRender: 'action' }
+            }
+        ],
+        dataSource: [
+            {
+                key: 0,
+                rut: '18.949.969-8',
+                employee: 'Jesus Barrientos',
+                entry_date: '19-10-2019',
+                entry_hour: '12:53:45',
+                exit_date: '19-10-2019',
+                exit_hour: '20:53:45',
+                hours_count: 8
+            },
+            {
+                key: 1,
+                rut: '18.949.969-8',
+                employee: 'A',
+                entry_date: '23-10-2019',
+                entry_hour: '10:00:00',
+                exit_date: '23-10-2019',
+                exit_hour: '15:40:00',
+                hours_count: 5
+            },
+            {
+                key: 2,
+                rut: '18.949.969-8',
+                employee: 'C',
+                entry_date: '05-10-2019',
+                entry_hour: '00:00:45',
+                exit_date: '05-10-2019',
+                exit_hour: '08:30:00',
+                hours_count: 8
+            },
+            {
+                key: 3,
+                rut: '18.949.969-8',
+                employee: 'B',
+                entry_date: '30-10-2019',
+                entry_hour: '23:50:00',
+                exit_date: '30-10-2019',
+                exit_hour: '07:45:00',
+                hours_count: 8
+            }
+        ]
+    }
+
     export default {
         name: 'AttendanceDesktop',
         components: { AFormItem },
         props: {
             body: {
-                required: true
+                required: true,
+                default: {}
             },
             event: {
                 required: true
             },
             bodyData: {
                 required: true
+            },
+            loading: {
+                required: true
             }
         },
         data() {
             return {
                 moment,
-                visibleSpin: false,
-                fields
+                fields,
+                table,
+                lastPage: 1
+            }
+        },
+        computed: {
+            dataSource: function () {
+                let newDataSource = []
+
+                this.body.attendances.forEach((e, k) => {
+                    newDataSource.push({
+                        key: k,
+                        rut: e.rut,
+                        employee: this.getEmployee(e.rut),
+                        entry_date: this.getDate(e.entry_date),
+                        entry_hour: this.getTime(e.entry_date),
+                        exit_date: this.getDate(e.exit_date),
+                        exit_hour: this.getTime(e.exit_date),
+                        hours_count: this.getHoursCount(e)
+                    })
+                })
+
+                return newDataSource
             }
         },
         beforeCreate() {
@@ -119,8 +298,6 @@
 
                 this.form.validateFields((error) => {
                     if (!error) {
-                        this.visibleSpin = true
-
                         const param = {
                             type: this.event.REGISTER,
                             body: this.getBodyData(),
@@ -141,13 +318,55 @@
                                             this.bodyData.new_attendance = true
                                         }
                                     })
-                                    .finally(() => { this.visibleSpin = false })
                             }
                         }
 
                         this.$emit('emit', param)
                     }
                 })
+            },
+            onEdit(record) {
+
+            },
+            onDelete(record) {
+                console.log(record)
+            },
+            getEmployee(rut) {
+                let employee = this.body.employees.find((e) => {
+                    return e.rut === rut
+                })
+
+                if (employee)
+                    return employee.first_name + ' ' + employee.last_name
+                else
+                    return ''
+            },
+            getDate(date) {
+                if (date != null)
+                    return moment(date).format('DD-MM-YYYY')
+                else
+                    return ''
+            },
+            getTime(time) {
+                if (time != null)
+                    return moment(time).format('HH:mm:ss')
+                else
+                    return ''
+            },
+            getHoursCount(attendance) {
+                if (attendance.exit_date)
+                    return moment(attendance.exit_date).diff(moment(attendance.entry_date), 'hours')
+                else
+                    return 0
+            },
+            onPaginate(pagination, filters, sorter) {
+                let size = pagination.current * this.table.pagination.pageSize
+
+                if (pagination.current > this.lastPage && size >= this.body.attendances.length) {
+                    this.$emit('emit', {
+                        type: this.event.GET
+                    })
+                }
             }
         }
     }
