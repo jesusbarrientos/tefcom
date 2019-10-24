@@ -12,7 +12,7 @@
 
 <script>
     import moment from 'moment'
-    import voca from 'voca'
+    import { parseRequest, stringToUppercase } from '../../../utils/dynamodb'
     import BudgetDesktop from './desktop/index'
     import BudgetMobile from './mobile/index'
 
@@ -382,53 +382,7 @@
                 })
             },
             setValue(attr) {
-                switch (attr) {
-                    case 'client-company': {
-                        if (this.budget.client.company === '')
-                            this.budget.client.company = undefined
-                        break
-                    }
-                    case 'client-rut': {
-                        if (this.budget.client.rut === '')
-                            this.budget.client.rut = undefined
-                        break
-                    }
-                    case 'client-phone': {
-                        if (this.budget.client.phone === '')
-                            this.budget.client.phone = undefined
-                        break
-                    }
-                    case 'client-contact': {
-                        if (this.budget.client.contact === '')
-                            this.budget.client.contact = undefined
-                        break
-                    }
-                    case 'client-comuna': {
-                        if (this.budget.client.comuna === '')
-                            this.budget.client.comuna = undefined
-                        break
-                    }
-                    case 'client-address': {
-                        if (this.budget.client.address === '')
-                            this.budget.client.address = undefined
-                        break
-                    }
-                    case 'client-email': {
-                        if (this.budget.client.email === '')
-                            this.budget.client.email = undefined
-                        break
-                    }
-                    case 'client-paymentType': {
-                        if (this.budget.client.paymentType === '')
-                            this.budget.client.paymentType = undefined
-                        break
-                    }
-                    case 'client-discount': {
-                        if (!this.budget.client.discount)
-                            this.budget.client.discount = 0
-                        break
-                    }
-                }
+                this.getParseBudget()
             },
             resetBudget() {
                 const clone = JSON.parse(JSON.stringify(this.initialBudget))
@@ -441,32 +395,8 @@
                 this.budget = clone
             },
             getParseBudget() {
-                if (this.budget.client.address !== undefined)
-                    this.budget.client.address = voca.upperCase(this.budget.client.address)
-
-                if (this.budget.client.company !== undefined)
-                    this.budget.client.company = voca.upperCase(this.budget.client.company)
-
-                if (this.budget.client.comuna !== undefined)
-                    this.budget.client.comuna = voca.upperCase(this.budget.client.comuna)
-
-                if (this.budget.client.contact !== undefined)
-                    this.budget.client.contact = voca.upperCase(this.budget.client.contact)
-
-                if (this.budget.client.email !== undefined)
-                    this.budget.client.email = voca.upperCase(this.budget.client.email)
-
-                if (this.budget.client.paymentType !== undefined)
-                    this.budget.client.paymentType = voca.upperCase(this.budget.client.paymentType)
-
-                this.budget.jobs.forEach((job) => {
-                    if (job.name === '')
-                        job.name = undefined
-
-                    if (job.description === '')
-                        job.description = undefined
-                })
-
+                stringToUppercase(this.budget.client)
+                parseRequest(this.budget)
                 return this.budget
             }
         }
