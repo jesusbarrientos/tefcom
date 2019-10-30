@@ -83,7 +83,7 @@
                 {
                     initialValue: moment(new Date()),
                     rules: [
-                        { required: true, message: 'Se necesita una fecha de jornada.' }
+                        { required: true, message: 'Se necesita una fecha.' }
                     ]
                 }
             ]
@@ -191,48 +191,6 @@
                 align: 'center',
                 scopedSlots: { customRender: 'action' }
             }
-        ],
-        dataSource: [
-            {
-                key: 0,
-                rut: '18.949.969-8',
-                employee: 'Jesus Barrientos',
-                entry_date: '19-10-2019',
-                entry_hour: '12:53:45',
-                exit_date: '19-10-2019',
-                exit_hour: '20:53:45',
-                hours_count: 8
-            },
-            {
-                key: 1,
-                rut: '18.949.969-8',
-                employee: 'A',
-                entry_date: '23-10-2019',
-                entry_hour: '10:00:00',
-                exit_date: '23-10-2019',
-                exit_hour: '15:40:00',
-                hours_count: 5
-            },
-            {
-                key: 2,
-                rut: '18.949.969-8',
-                employee: 'C',
-                entry_date: '05-10-2019',
-                entry_hour: '00:00:45',
-                exit_date: '05-10-2019',
-                exit_hour: '08:30:00',
-                hours_count: 8
-            },
-            {
-                key: 3,
-                rut: '18.949.969-8',
-                employee: 'B',
-                entry_date: '30-10-2019',
-                entry_hour: '23:50:00',
-                exit_date: '30-10-2019',
-                exit_hour: '07:45:00',
-                hours_count: 8
-            }
         ]
     }
 
@@ -326,10 +284,16 @@
                 })
             },
             onEdit(record) {
-
+                this.$emit('emit', {
+                    type: this.event.EDIT,
+                    body: record
+                })
             },
             onDelete(record) {
-                console.log(record)
+                this.$emit('emit', {
+                    type: this.event.DELETE,
+                    body: record
+                })
             },
             getEmployee(rut) {
                 let employee = this.body.employees.find((e) => {
@@ -353,6 +317,9 @@
                 else
                     return ''
             },
+            getFullDate(date, time) {
+                return moment(date + ' ' + time)
+            },
             getHoursCount(attendance) {
                 if (attendance.exit_date)
                     return moment(attendance.exit_date).diff(moment(attendance.entry_date), 'hours')
@@ -367,6 +334,8 @@
                         type: this.event.GET
                     })
                 }
+
+                this.lastPage = pagination.current
             }
         }
     }

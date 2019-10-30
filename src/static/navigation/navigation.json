@@ -66,6 +66,14 @@
                     "icon": "",
                     "responsive": ["desktop"],
                     "menu": []
+                },
+                {
+                    "key": "asistencias",
+                    "label": "Asistencias",
+                    "url": "/documents/attendance",
+                    "icon": "",
+                    "responsive": ["desktop"],
+                    "menu": []
                 }
             ]
         }

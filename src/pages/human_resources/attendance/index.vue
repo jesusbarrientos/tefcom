@@ -6,6 +6,8 @@
 
         <mq-layout :mq="['mobile', 'tablet']" />
 
+        <edit-attendance :show="showEditComponent" :event="event" @emit="onEmit($event)" />
+
         <a-modal :visible="confirmVisible" :closable="false" :centered="true">
             <template slot="title">
                 <div style="display: flex">
@@ -35,11 +37,16 @@
 
 <script>
     import moment from 'moment'
+    import EditAttendance from '../../../components/edit-attendance/index'
     import AttendanceDesktop from './desktop/index'
 
     const event = {
         GET: 'get',
-        REGISTER: 'register'
+        REGISTER: 'register',
+        EDIT: 'edit',
+        CONFIRM_EDIT: 'confirm_edit',
+        SHOW_EDIT: 'show_edit',
+        DELETE: 'delete'
     }
 
     const data = {
@@ -56,7 +63,7 @@
 
     export default {
         name: 'Attendance',
-        components: { AttendanceDesktop },
+        components: { EditAttendance, AttendanceDesktop },
         data() {
             return {
                 data,
@@ -71,7 +78,8 @@
                 confirmData: {},
                 attendanceDataRequest: {
                     Limit: 20
-                }
+                },
+                showEditComponent: false
             }
         },
         computed: {
@@ -159,6 +167,27 @@
                         event.callback(this.addAttendance(event.body))
                         break
                     }
+
+                    case this.event.EDIT: {
+                        this.showEditModal(event.body)
+                        break
+                    }
+
+                    case this.event.CONFIRM_EDIT: {
+                        event.callback(this.editAttendance())
+                        break
+                    }
+
+                    case this.event.SHOW_EDIT: {
+                        this.$store.commit('attendance/reset')
+                        this.showEditComponent = false
+                        break
+                    }
+
+                    case this.event.DELETE: {
+                        this.deleteAttendance(event.body)
+                        break
+                    }
                 }
             },
             addAttendance(request) {
@@ -227,6 +256,107 @@
                             this.loadingStatus.register = true
                         })
                 })
+            },
+            editAttendance() {
+                return new Promise((resolve, reject) => {
+                    const request = {
+                        rut: this.$store.state.attendance.rut,
+                        old_date: this.$store.state.attendance.old_date.toISOString(),
+                        entry: this.$store.state.attendance.entry.toISOString(),
+                        exit: this.$store.state.attendance.exit ? this.$store.state.attendance.exit.toISOString() : undefined
+                    }
+
+                    this.$axios.$post(process.env.apiBaseUrl + '/employee/attendance/edit', request)
+                        .then((response) => {
+                            // Exito en el registro
+                            if (response.ok) {
+                                this.$notification.success({
+                                    message: 'Edición Exitosa!',
+                                    description: response.message
+                                })
+
+                                resolve()
+
+                                this.$store.commit('attendance/reset')
+                                this.data.attendances = []
+                                this.loadAttendances()
+                            } else {
+                                this.$notification.error({
+                                    message: 'Error!',
+                                    description: response.message,
+                                    duration: 8
+                                })
+
+                                reject()
+                            }
+                        })
+                        .catch(() => {
+                            this.$notification.error({
+                                message: 'Error!',
+                                description: 'Ha ocurrido un error en la petición, inténtelo nuevamente. Si sigue teniendo este problema, contáctece con soporte.',
+                                duration: 8
+                            })
+
+                            reject()
+                        })
+                })
+            },
+            deleteAttendance(record) {
+                this.loadingStatus.register = false
+
+                const date = this.getFullDate(record.entry_date, record.entry_hour)
+
+                const request = {
+                    rut: record.rut,
+                    date: date.toISOString()
+                }
+
+                this.$axios.$post(process.env.apiBaseUrl + '/employee/attendance/delete', request)
+                    .then((response) => {
+                        if (response.ok) {
+                            this.$notification.success({
+                                message: 'Registro Eliminado!',
+                                description: response.message
+                            })
+
+                            this.data.attendances = []
+                            this.loadAttendances()
+                        } else {
+                            this.$notification.error({
+                                message: 'Error!',
+                                description: response.message,
+                                duration: 8
+                            })
+                        }
+                    })
+                    .catch(() => {
+                        this.$notification.error({
+                            message: 'Error!',
+                            description: 'Ha ocurrido un error en la petición, inténtelo nuevamente. Si sigue teniendo este problema, contáctece con soporte.',
+                            duration: 8
+                        })
+                    })
+                    .finally(() => {
+                        this.loadingStatus.register = true
+                    })
+            },
+            showEditModal(record) {
+                let entry = this.getFullDate(record.entry_date, record.entry_hour)
+                let exit = this.getFullDate(record.exit_date, record.exit_hour)
+
+                this.$store.commit('attendance/setAttendance', {
+                    rut: record.rut,
+                    employee: record.employee,
+                    old_date: entry,
+                    entry: entry,
+                    exit: exit
+                })
+
+                this.showEditComponent = true
+            },
+            getFullDate(date, time) {
+                let dateArray = date.split('-')
+                return moment(`${dateArray[2]}-${dateArray[1]}-${dateArray[0]} ${time}`)
             }
         }
     }

@@ -307,3 +307,20 @@
         }
     }
 }
+
+#document-attendance-page {
+
+    &-desktop {
+        .filter,
+        .options {
+            padding: 1rem;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: $background-form;
+
+            .ant-row {
+                margin-bottom: 0;
+            }
+        }
+    }
+}

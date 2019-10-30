@@ -547,4 +547,16 @@ body {
   margin-bottom: 0;
 }
 
+#document-attendance-page-desktop .filter,
+#document-attendance-page-desktop .options {
+  padding: 1rem;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #e6e6e6;
+}
+#document-attendance-page-desktop .filter .ant-row,
+#document-attendance-page-desktop .options .ant-row {
+  margin-bottom: 0;
+}
+
 /*# sourceMappingURL=app.css.map */
