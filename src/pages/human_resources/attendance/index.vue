@@ -263,7 +263,7 @@
                         rut: this.$store.state.attendance.rut,
                         old_date: this.$store.state.attendance.old_date.toISOString(),
                         entry: this.$store.state.attendance.entry.toISOString(),
-                        exit: this.$store.state.attendance.exit ? this.$store.state.attendance.exit.toISOString() : undefined
+                        exit: this.$store.state.attendance.exit != null ? this.$store.state.attendance.exit.toISOString() : undefined
                     }
 
                     this.$axios.$post(process.env.apiBaseUrl + '/employee/attendance/edit', request)
@@ -278,6 +278,7 @@
                                 resolve()
 
                                 this.$store.commit('attendance/reset')
+                                this.showEditComponent = false
                                 this.data.attendances = []
                                 this.loadAttendances()
                             } else {
@@ -349,7 +350,7 @@
                     employee: record.employee,
                     old_date: entry,
                     entry: entry,
-                    exit: exit
+                    exit: exit.isValid() ? exit : null
                 })
 
                 this.showEditComponent = true

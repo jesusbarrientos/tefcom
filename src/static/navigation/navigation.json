@@ -1,5 +1,6 @@
 {
-    "defaultSelectedKeys": ["dashboard"],
+    "defaultSelectedKeys": ["cotizaciones"],
+    "defaultRoute": "documents-budget",
 
     "menu": [
         {
@@ -7,7 +8,7 @@
             "label": "Dashboard",
             "url": "/dashboard",
             "icon": "dashboard",
-            "responsive": ["mobile", "tablet", "desktop"],
+            "responsive": [],
             "menu": []
         },
         {

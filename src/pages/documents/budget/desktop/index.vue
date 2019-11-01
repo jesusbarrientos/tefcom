@@ -253,7 +253,7 @@
     import OtherSection from '../../../../components/budget/OtherSection'
     import Mask from '@/utils/mask.js'
     import JobsSection from '../../../../components/budget/JobsSection'
-    import { exportBudgetPDF } from '../../../../components/budget/pdfExport'
+    import { exportBudgetPDF } from '../../../../utils/pdfExport'
 
     const comunas = []
 

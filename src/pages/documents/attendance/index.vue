@@ -16,6 +16,11 @@
         FILTER: 'filter'
     }
 
+    const resume = {
+        start: undefined,
+        end: undefined
+    }
+
     export default {
         name: 'DocumentAttendance',
         components: { DocumentAttendanceDesktop },
@@ -24,7 +29,8 @@
                 event,
                 data: {
                     employees: [],
-                    attendances: []
+                    attendances: [],
+                    resume
                 },
                 loadingStatus: {
                     employees: false,

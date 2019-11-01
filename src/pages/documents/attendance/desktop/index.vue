@@ -8,7 +8,7 @@
                         <!--EXTRA-->
                         <div slot="extra">
                             <no-ssr>
-                                <a-button size="small" type="primary" @click="exportPDF()">
+                                <a-button size="small" type="primary" @click="exportAttendancesPDF(data.resume, dataSource, dataSourceResume)">
                                     Generar PDF
                                 </a-button>
                             </no-ssr>
@@ -21,12 +21,12 @@
                             <a-row :gutter="10">
                                 <a-col :span="8">
                                     <label for="start-date">Fecha Inicio</label>
-                                    <a-date-picker id="start-date" v-model="startDate" :allow-clear="false" />
+                                    <a-date-picker id="start-date" v-model="startDate" :allow-clear="false" @change="onChange" />
                                 </a-col>
 
                                 <a-col :span="8">
                                     <label for="end-date">Fecha Fin</label>
-                                    <a-date-picker id="end-date" v-model="endDate" :allow-clear="false" />
+                                    <a-date-picker id="end-date" v-model="endDate" :allow-clear="false" @change="onChange" />
                                 </a-col>
 
                                 <a-col :span="8">
@@ -83,6 +83,12 @@
                                 <template slot="title">
                                     <h3>Resumen de Asistencias</h3>
                                 </template>
+
+                                <label slot="price" slot-scope="text">${{ text }}</label>
+
+                                <label slot="extra_price" slot-scope="text">${{ text }}</label>
+
+                                <label slot="total" slot-scope="text">${{ text }}</label>
                             </a-table>
                         </div>
 
@@ -114,6 +120,7 @@
 
 <script>
     import moment from 'moment'
+    import { exportAttendancesPDF } from './../../../../utils/pdfExportAttendances'
 
     const table = {
         bordered: true,
@@ -211,12 +218,16 @@
             {
                 title: 'Precio Normal',
                 dataIndex: 'normal_price',
-                key: 'normal_price'
+                key: 'normal_price',
+                scopedSlots: { customRender: 'price' },
+                sorter: (a, b) => a.normal_price - b.normal_price
             },
             {
                 title: 'Precio Extra',
                 dataIndex: 'extra_price',
-                key: 'extra_price'
+                key: 'extra_price',
+                scopedSlots: { customRender: 'extra_price' },
+                sorter: (a, b) => a.extra_price - b.extra_price
             },
             {
                 title: 'Horas',
@@ -234,6 +245,13 @@
                         sorter: (a, b) => a.extra_hour - b.extra_hour
                     }
                 ]
+            },
+            {
+                title: 'Total',
+                dataIndex: 'total',
+                key: 'total',
+                scopedSlots: { customRender: 'total' },
+                sorter: (a, b) => a.extra_price - b.extra_price
             }
         ]
     }
@@ -256,6 +274,7 @@
         },
         data() {
             return {
+                exportAttendancesPDF,
                 startDate: moment().startOf('month'),
                 endDate: moment().startOf('day'),
                 employee: undefined,
@@ -274,8 +293,10 @@
                         key: k,
                         rut: e.rut,
                         employee: this.getEmployee(e.rut),
+                        entry: this.getFullDate(e.entry_date),
                         entry_date: this.getDate(e.entry_date),
                         entry_hour: this.getTime(e.entry_date),
+                        exit: this.getFullDate(e.exit_date),
                         exit_date: this.getDate(e.exit_date),
                         exit_hour: this.getTime(e.exit_date),
                         hours_count: this.getHoursCount(e)
@@ -285,12 +306,50 @@
                 return newDataSource
             },
             dataSourceResume: function () {
-                return []
+                let employeeObject = {}
+                let newDataSource = []
+
+                this.dataSource.forEach((e) => {
+                    if (!employeeObject[e.rut]) {
+                        let employee = this.getEmployeeData(e.rut)
+
+                        employeeObject[e.rut] = {
+                            key: e.key,
+                            employee: e.employee,
+                            normal_price: employee.price,
+                            extra_price: employee.price_extra,
+                            normal_hour: 0,
+                            extra_hour: 0
+                        }
+                    }
+
+                    let normalHours = (e.hours_count > this.normalHours) ? this.normalHours : e.hours_count
+                    let extraHours = (e.hours_count > this.normalHours) ? (e.hours_count - this.normalHours) : 0
+
+                    employeeObject[e.rut] = {
+                        ...employeeObject[e.rut],
+                        normal_hour: employeeObject[e.rut]['normal_hour'] + normalHours,
+                        extra_hour: employeeObject[e.rut]['extra_hour'] + extraHours
+                    }
+                })
+
+                Object.keys(employeeObject).forEach((key) => {
+                    newDataSource.push({
+                        ...employeeObject[key],
+                        total: (employeeObject[key]['normal_hour'] * employeeObject[key]['normal_price']) + (employeeObject[key]['extra_hour'] * employeeObject[key]['extra_price'])
+                    })
+                })
+
+                return newDataSource
             }
         },
+        created() {
+            this.onChange()
+        },
         methods: {
-            exportPDF() {
-
+            onChange() {
+                this.data.resume.start = this.startDate
+                this.data.resume.end = this.endDate
             },
             filterAttendances() {
                 this.dataRequest['start'] = this.startDate
@@ -315,6 +374,11 @@
                 }
 
                 this.lastPage = pagination.current
+            },
+            getEmployeeData(rut) {
+                return this.data.employees.find((e) => {
+                    return e.rut === rut
+                })
             },
             getEmployee(rut) {
                 let employee = this.data.employees.find((e) => {
@@ -344,8 +408,8 @@
                 else
                     return 0
             },
-            applyOptions() {
-
+            getFullDate(date) {
+                return date ? moment(date).format('DD-MM-YYYY HH:mm:ss') : 'Sin Fecha'
             }
         }
     }

@@ -40,6 +40,7 @@
 </template>
 
 <script>
+    import navigation from '@/static/navigation/navigation.json'
     import Logo from '../../../../components/logo/Logo'
 
     export default {
@@ -52,8 +53,7 @@
             loginSubmit($event) {
                 // TODO: falta implementar función
                 $event.preventDefault()
-                console.log('Login!')
-                this.$router.push({ name: 'dashboard' })
+                this.$router.push({ name: navigation.defaultRoute })
             }
         }
     }
