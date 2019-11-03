@@ -164,7 +164,7 @@
         },
         created() {
             this.loadData()
-            this.budget.status = 'new'
+            this.resetBudget()
         },
         methods: {
             async loadData() {
