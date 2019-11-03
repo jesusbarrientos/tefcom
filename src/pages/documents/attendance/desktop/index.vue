@@ -276,7 +276,7 @@
             return {
                 exportAttendancesPDF,
                 startDate: moment().startOf('month'),
-                endDate: moment().startOf('day'),
+                endDate: moment().endOf('day'),
                 employee: undefined,
                 table,
                 tableResume,
