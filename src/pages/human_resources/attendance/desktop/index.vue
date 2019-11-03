@@ -243,6 +243,11 @@
         beforeCreate() {
             this.form = this.$form.createForm(this)
         },
+        mounted() {
+            this.form.setFieldsValue({
+                date: moment(new Date())
+            })
+        },
         methods: {
             getBodyData() {
                 return {
