@@ -1,6 +1,5 @@
 <template>
     <a-spin :spinning="loadingStatus" tip="Cargando...">
-        <a-icon slot="indicator" type="sync" spin />
 
         <div id="budget-page-desktop">
             <a-back-top />
@@ -23,7 +22,7 @@
                             </a-button>
                             <no-ssr>
                                 <a-button size="small" type="primary" @click="exportBudgetPDF(data.company, parsedBudget())">
-                                    Imprimir
+                                    Generar PDF
                                 </a-button>
                             </no-ssr>
                         </div>
@@ -39,7 +38,7 @@
                                 <a-input-number id="badget-number" v-model="budget.number" :min="1" style="width: 100%; color: black;" disabled />
                             </a-col>
 
-                            <a-col :span="3">
+                            <a-col :span="4">
                                 <label for="badget-date">Fecha de Solicitud</label>
                                 <a-date-picker
                                     id="badget-date"
@@ -52,12 +51,12 @@
                                 />
                             </a-col>
 
-                            <a-col :span="3">
+                            <a-col :span="2">
                                 <a-tooltip>
                                     <template slot="title">
-                                        Tiempo que es válida esta cotización una vez que es entregada al cliente.
+                                        Tiempo que es válida esta cotización desde la fecha de solicitud.
                                     </template>
-                                    <label for="badget-duration">Duración de Cotización</label>
+                                    <label for="badget-duration">Validez</label>
                                     <a-input-number id="badget-duration" v-model="budget.duration" :min="1" style="width: 100%" />
                                 </a-tooltip>
                             </a-col>
@@ -254,7 +253,7 @@
     import OtherSection from '../../../../components/budget/OtherSection'
     import Mask from '@/utils/mask.js'
     import JobsSection from '../../../../components/budget/JobsSection'
-    import { exportBudgetPDF } from '../../../../components/budget/pdfExport'
+    import { exportBudgetPDF } from '../../../../utils/pdfExport'
 
     const comunas = []
 
