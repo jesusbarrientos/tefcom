@@ -41,6 +41,8 @@
 
             </div>
         </mq-layout>
+
+        <div v-if="showSaveScreen" id="layout-save-screen"></div>
     </div>
 </template>
 
@@ -48,11 +50,21 @@
     import HeaderDesktop from '../components/header/HeaderDesktop'
     import Navigation from '../components/navigation/Navigation'
     import HeaderMobile from '../components/header/HeaderMobile'
-    import FooterNavbar from '../components/footer_navbar/FooterNavbar'
+    import FooterNavbar from '../components/footer-navbar/FooterNavbar'
 
     export default {
         name: 'Default',
-        components: { FooterNavbar, HeaderMobile, Navigation, HeaderDesktop }
+        components: { FooterNavbar, HeaderMobile, Navigation, HeaderDesktop },
+        data() {
+            return {
+                showSaveScreen: true
+            }
+        },
+        mounted() {
+            setTimeout(() => {
+                this.showSaveScreen = false
+            }, 100)
+        }
     }
 </script>
 

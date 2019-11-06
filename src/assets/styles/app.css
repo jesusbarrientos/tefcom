@@ -60,6 +60,16 @@ body {
 /*
  * Padding
  */
+#layout-save-screen {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5000;
+  background-color: white;
+}
+
 /*
  * Authentication mode
  */
@@ -317,6 +327,14 @@ body {
   height: 1.125rem;
 }
 
+.change-password-component .ant-row {
+  margin-bottom: 0;
+}
+
+.recover-password-component .ant-row {
+  margin-bottom: 5px;
+}
+
 /*
  * Pages
  */
@@ -331,14 +349,11 @@ body {
 #login-page-desktop .card {
   max-width: 21.875rem;
 }
-#login-page-desktop .form .item-forgot {
-  float: right;
+#login-page-desktop .form .ant-row {
+  margin-bottom: 15px;
 }
 #login-page-desktop .form .button-submit {
   width: 100%;
-}
-#login-page-desktop .form .item-remember {
-  float: left;
 }
 #login-page-mobile {
   height: 100%;

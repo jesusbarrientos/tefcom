@@ -19,17 +19,12 @@
 
         // Form
         .form {
-
-            .item-forgot {
-                float: right;
+            .ant-row {
+                margin-bottom: 15px;
             }
 
             .button-submit {
                 width: 100%;
-            }
-
-            .item-remember {
-                float: left;
             }
         }
     }

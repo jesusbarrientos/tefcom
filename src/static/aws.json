@@ -1,0 +1,6 @@
+{
+    "COGNITO_USER_POOL_CLIENT_ID": "8hbvufuuhe0n0ish9nciak6nu",
+    "COGNITO_USER_POOL_ID": "us-east-2_7fLbucusT",
+    "COGNITO_USER_POOL_REGION": "us-east-2",
+    "COGNITO_USER_POOL_DOMAIN": "tefcom.auth.us-east-2.amazoncognito.com"
+}

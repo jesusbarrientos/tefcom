@@ -1,6 +1,8 @@
 {
     "defaultSelectedKeys": ["cotizaciones"],
     "defaultRoute": "documents-budget",
+    "defaultRoutePath": "documents/budget",
+    "loginRoutePath": "authentication/login",
 
     "menu": [
         {

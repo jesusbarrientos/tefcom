@@ -7,7 +7,7 @@
             </div>
 
             <div class="user-name">
-                Nombre Apellido
+                {{ fullName }}
             </div>
         </a-row>
 
@@ -15,8 +15,15 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex'
+
     export default {
-        name: 'UserDesktop'
+        name: 'UserDesktop',
+        computed: {
+            ...mapGetters({
+                fullName: 'user/fullName'
+            })
+        }
     }
 </script>
 

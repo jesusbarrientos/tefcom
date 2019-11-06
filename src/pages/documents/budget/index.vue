@@ -1,7 +1,14 @@
 <template>
     <div>
         <mq-layout mq="desktop">
-            <budget-desktop :data="data" :budget="budget" :parsed-budget="getParseBudget" :loading-status="loading" :methods="methods" @loadBudget="loadBudget" />
+            <budget-desktop
+                :data="data"
+                :budget="budget"
+                :parsed-budget="getParseBudget"
+                :loading-status="loading"
+                :methods="methods"
+                @loadBudget="loadBudget"
+            />
         </mq-layout>
 
         <mq-layout :mq="['mobile', 'tablet']">

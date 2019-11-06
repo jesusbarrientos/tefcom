@@ -1,4 +1,6 @@
 const pkg = require('./package')
+const aws = require('./src/static/aws')
+const app = require('./src/static/app')
 
 module.exports = {
     mode: 'spa',
@@ -59,6 +61,7 @@ module.exports = {
         '@@/plugins/antd-ui',
         '@@/plugins/scroll',
         '@@/plugins/mask',
+        '@@/plugins/aws',
         { src: '@@/plugins/mq', ssr: true }
     ],
 
@@ -82,8 +85,9 @@ module.exports = {
     ** Environment variables
     */
     env: {
-        apiBaseUrl: 'https://pzgpr1vjzg.execute-api.us-east-2.amazonaws.com/beta',
-        apiChileCitiesUrl: 'https://apis.digital.gob.cl/dpa/comunas'
+        app,
+        aws,
+        apiBaseUrl: 'https://pzgpr1vjzg.execute-api.us-east-2.amazonaws.com/beta'
     },
 
     /*
@@ -115,6 +119,7 @@ module.exports = {
     ** Router options
     */
     router: {
+        middleware: 'auth',
         extendRoutes(routes, resolve) {
             routes.push({
                 name: 'custom',
