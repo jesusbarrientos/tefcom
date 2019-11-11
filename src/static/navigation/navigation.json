@@ -1,10 +1,19 @@
 {
     "defaultSelectedKeys": ["cotizaciones"],
+    "defaultOpenKeys": ["documentos"],
     "defaultRoute": "documents-budget",
     "defaultRoutePath": "documents/budget",
     "loginRoutePath": "authentication/login",
 
     "menu": [
+        {
+            "key": "profile",
+            "label": "Perfil",
+            "url": "/profile",
+            "icon": "",
+            "responsive": [],
+            "menu": []
+        },
         {
             "key": "dashboard",
             "label": "Dashboard",

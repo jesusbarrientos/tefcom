@@ -1,18 +1,15 @@
 // LIBRERIAS
 import { Auth, Hub } from 'aws-amplify'
+import axios from 'axios'
 const navigation = require('@/static/navigation/navigation')
 
-function authValidation({ store, route, redirect }) {
+async function authValidation({ store, route, redirect }) {
     // Verifica sesión
-    Auth.currentSession()
-        .then(() => {
-            // Si hay token y se está tratando de acceder al login, redirecciona al por defecto
-            if (route.name === 'authentication-login')
-                redirect(window.location.origin + '/' + navigation.defaultRoutePath)
-
-            Auth.currentUserInfo()
-                .then((user) => {
-                    store.commit('user/setUser', user.attributes)
+    await Auth.currentSession()
+        .then(async () => {
+            await Auth.currentUserInfo()
+                .then(async (user) => {
+                    await getUserData(user.attributes.email, store, redirect, route)
                 })
         })
         .catch(() => {
@@ -22,19 +19,42 @@ function authValidation({ store, route, redirect }) {
         })
 }
 
-export default ({ store, route, redirect }) => {
+async function getUserData(email, store, redirect, route) {
+    if (store.state.profile.email === '') {
+        await axios.post(process.env.apiBaseUrl + '/user/get', {
+            email
+        })
+            .then((response) => {
+                store.commit('profile/setProfile', {
+                    avatar: response.data.body.avatar,
+                    name: response.data.body.name,
+                    lastName: response.data.body.lastName,
+                    email: response.data.body.email
+                })
+
+                // Si hay token y se está tratando de acceder al login, redirecciona al por defecto
+                if (route.name === 'authentication-login')
+                    redirect(window.location.origin + '/' + navigation.defaultRoutePath)
+            })
+    } else if (route.name === 'authentication-login') {
+        // Si hay token y se está tratando de acceder al login, redirecciona al por defecto
+        redirect(window.location.origin + '/' + navigation.defaultRoutePath)
+    }
+}
+
+export default async ({ store, route, redirect }) => {
     // Escuchar evento cuando se inicia o se cierra sesion
-    Hub.listen('auth', ({ payload: { event, data } }) => {
+    await Hub.listen('auth', async ({ payload: { event, data } }) => {
         switch (event) {
             case 'signIn':
-                authValidation({ store, route, redirect })
+                await authValidation({ store, route, redirect })
                 break
             case 'signOut':
                 redirect(window.location.origin + '/' + navigation.loginRoutePath)
-                store.commit('user/reset')
+                store.commit('profile/reset')
                 break
         }
     })
 
-    authValidation({ store, route, redirect })
+    await authValidation({ store, route, redirect })
 }

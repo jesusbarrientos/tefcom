@@ -107,6 +107,26 @@
             closeChangePassword() {
                 this.showChangePassModal = false
             },
+            async getUserData(email) {
+                await this.$axios.$post(process.env.apiBaseUrl + '/user/get', {
+                    email
+                })
+                    .then((response) => {
+                        this.$store.commit('profile/setProfile', {
+                            avatar: response.body.avatar,
+                            name: response.body.name,
+                            lastName: response.body.lastName,
+                            email: response.body.email
+                        })
+
+                        this.$router.push({ name: navigation.defaultRoute })
+                    })
+                    .catch(() => {
+                        this.alertMessage = 'Error al obtener datos del usuario.'
+                        this.alertType = 'error'
+                        this.showAlert = true
+                    })
+            },
             async loginSubmit($event) {
                 $event.preventDefault()
 
@@ -128,7 +148,7 @@
                                     this.changeData = response.challengeParam.userAttributes
                                     this.showChangePassModal = true
                                 } else
-                                    this.$router.push({ name: navigation.defaultRoute })
+                                    await this.getUserData(this.user.attributes.email)
                             })
                             .catch((error) => {
                                 switch (error.code) {
@@ -164,7 +184,7 @@
                     params.body.password,
                     data
                 )
-                    .then((user) => {
+                    .then(() => {
                         this.$router.push({ name: navigation.defaultRoute })
                     })
                     .catch(() => {

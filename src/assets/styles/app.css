@@ -339,6 +339,33 @@ body {
  * Pages
  */
 /*
+ * Profile
+ */
+#profile-page-desktop .avatar-row {
+  margin-bottom: 20px;
+}
+#profile-page-desktop .avatar-uploader {
+  height: 170px;
+  width: 50%;
+  overflow: hidden;
+}
+#profile-page-desktop .avatar-uploader > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+#profile-page-desktop .avatar-uploader > div span {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#profile-page-desktop .avatar-uploader > div img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/*
  * Login
  */
 #login-page-desktop .logo {
