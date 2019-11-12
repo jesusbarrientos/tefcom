@@ -98,7 +98,8 @@
                 {
                     initialValue: undefined,
                     rules: [
-                        { required: true, message: 'Ingrese una contraseña.' }
+                        { required: true, message: 'Ingrese una contraseña.' },
+                        { min: 8, message: 'Contraseña debe tener al menos 8 caracteres.' }
                     ]
                 }
             ]

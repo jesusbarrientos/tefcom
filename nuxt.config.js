@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const pkg = require('./package')
 const aws = require('./src/static/aws')
 const app = require('./src/static/app')
@@ -17,7 +19,8 @@ module.exports = {
             { hid: 'description', name: 'description', content: pkg.description }
         ],
         link: [
-            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+            { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css' }
         ],
         htmlAttrs: {
             lang: 'es'
@@ -126,6 +129,13 @@ module.exports = {
                 path: '*',
                 redirect: 'authentication/login'
             })
+        }
+    },
+
+    server: {
+        https: {
+            key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
+            cert: fs.readFileSync(path.resolve(__dirname, 'server.crt'))
         }
     }
 }

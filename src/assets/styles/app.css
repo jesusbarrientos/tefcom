@@ -385,8 +385,28 @@ body {
 #login-page-mobile {
   height: 100%;
   min-height: 100%;
-  background: linear-gradient(#00c4ff, #2073d9);
+  background: linear-gradient(#2073d9, #00c4ff);
   padding: 1.25rem;
+}
+#login-page-mobile .spin {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+#login-page-mobile .spin .ant-spin-text {
+  margin-top: 15px;
+  font-size: 1rem;
+}
+#login-page-mobile .alert {
+  margin-bottom: 15px;
+  text-align: left;
 }
 #login-page-mobile > .content {
   width: 100%;
@@ -407,20 +427,66 @@ body {
   max-width: 25rem;
   padding: 0 1.875rem;
 }
-#login-page-mobile > .content > .form {
-  text-align: center;
-}
 #login-page-mobile > .content > .form .button-submit {
   width: 100%;
 }
 #login-page-mobile > .content > .form .item-forgot {
   margin: 20px;
+  text-align: center;
 }
 #login-page-mobile > .content > .form .item-forgot a {
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  color: white;
 }
 #login-page-mobile > .content > .form .item-forgot a:active {
-  color: white;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper {
+  top: 0;
+  bottom: 0;
+  height: unset !important;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body {
+  padding: 0;
+  overflow: auto;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div {
+  height: 100%;
+  padding: 24px;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: unset !important;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin .ant-spin-text {
+  margin-top: 15px;
+  font-size: 1rem;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin-container {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin-container .send-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin-container .buttons {
+  margin-top: 24px;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin-container .buttons button:nth-child(2) {
+  margin-top: 24px;
 }
 
 /*

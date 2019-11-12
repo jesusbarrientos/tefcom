@@ -22,6 +22,7 @@
     "dependencies": {
         "@nuxtjs/axios": "^5.3.6",
         "@nuxtjs/pwa": "^2.6.0",
+        "animate.css": "^3.7.2",
         "ant-design-vue": "^1.1.10",
         "aws-amplify": "^1.2.4",
         "aws-amplify-vue": "^0.3.3",
