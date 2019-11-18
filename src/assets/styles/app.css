@@ -710,6 +710,16 @@ body {
 #attendance-page-desktop .new-attendance .ant-row {
   margin-bottom: 0;
 }
+#attendance-page-mobile {
+  padding: 20px;
+}
+#attendance-page-mobile .ant-form-item {
+  width: 100%;
+  margin-bottom: 4px;
+}
+#attendance-page-mobile .save-btn {
+  margin-top: 10px;
+}
 
 #document-attendance-page-desktop .filter,
 #document-attendance-page-desktop .options {
@@ -721,6 +731,37 @@ body {
 #document-attendance-page-desktop .filter .ant-row,
 #document-attendance-page-desktop .options .ant-row {
   margin-bottom: 0;
+}
+
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper {
+  top: 0;
+  bottom: 0;
+  height: unset !important;
+}
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body {
+  padding: 0;
+  overflow: auto;
+}
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div {
+  height: 100%;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto auto auto;
+  align-items: flex-start;
+}
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .btn,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .btn {
+  margin: 5px 0;
 }
 
 /*# sourceMappingURL=app.css.map */

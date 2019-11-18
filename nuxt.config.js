@@ -1,5 +1,3 @@
-const fs = require('fs')
-const path = require('path')
 const pkg = require('./package')
 const aws = require('./src/static/aws')
 const app = require('./src/static/app')
@@ -43,10 +41,6 @@ module.exports = {
     },
 
     workbox: {
-        dev: true,
-        config: {
-            debug: true
-        }
     },
 
     /*
@@ -72,16 +66,13 @@ module.exports = {
     ** Nuxt.js modules
     */
     modules: [
-        // Doc: https://axios.nuxtjs.org/usage
         '@nuxtjs/axios',
         '@nuxtjs/pwa'
-        // '@nuxtjs/eslint-module'
     ],
     /*
     ** Axios module configuration
     */
     axios: {
-        // See https://github.com/nuxt-community/axios-module#options
     },
 
     /*
@@ -129,13 +120,6 @@ module.exports = {
                 path: '*',
                 redirect: 'authentication/login'
             })
-        }
-    },
-
-    server: {
-        https: {
-            key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
-            cert: fs.readFileSync(path.resolve(__dirname, 'server.crt'))
         }
     }
 }
