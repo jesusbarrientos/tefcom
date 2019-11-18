@@ -33,6 +33,51 @@
             }
         }
     }
+
+    &-mobile {
+        padding: $default-mobile-padding;
+
+        .avatar-row {
+            margin-bottom: 10px;
+        }
+
+        .avatar-uploader {
+            height: 120px;
+            width: 100%;
+            overflow: hidden;
+
+            & > div {
+                height: 100%;
+                width: 100%;
+                display: flex;
+
+                span {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                }
+            }
+        }
+
+        .ant-form-item {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .delete-btn {
+            margin-bottom: 15px;
+        }
+
+        .save-btn {
+            margin-top: 10px;
+        }
+    }
 }
 
 /*

@@ -1,7 +1,7 @@
 
 export const state = () => ({
-    selected: 'Dashboard',
-    title: 'Dashboard'
+    selected: 'Asistencia',
+    title: 'Asistencia'
 })
 
 export const mutations = {
@@ -12,7 +12,7 @@ export const mutations = {
         state.title = title
     },
     reset(state) {
-        state.selected = 'Dashboard'
-        state.title = 'Dashboard'
+        state.selected = 'Asistencia'
+        state.title = 'Asistencia'
     }
 }

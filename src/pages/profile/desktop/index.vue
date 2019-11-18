@@ -299,33 +299,43 @@
                 event.preventDefault()
 
                 this.formEdit.validateFields((errors, fields) => {
-                    this.loadingSpin = true
+                    if (!errors) {
+                        this.loadingSpin = true
 
-                    this.$axios.$post(process.env.apiBaseUrl + '/user/edit', {
-                        ...fields,
-                        avatar: this.imageUrl !== '' && this.imageUrl !== null ? this.imageUrl : null
-                    })
-                        .then((response) => {
-                            this.$store.commit('profile/setProfile', {
-                                avatar: this.imageUrl,
-                                ...fields
-                            })
+                        this.$axios.$post(process.env.apiBaseUrl + '/user/edit', {
+                            ...fields,
+                            avatar: this.imageUrl !== '' && this.imageUrl !== null ? this.imageUrl : undefined
+                        })
+                            .then((response) => {
+                                if (response != null) {
+                                    this.$store.commit('profile/setProfile', {
+                                        avatar: this.imageUrl,
+                                        ...fields
+                                    })
 
-                            this.$notification.success({
-                                message: 'Actualización Correcta!',
-                                description: 'Los datos se han modificado correctamente.'
+                                    this.$notification.success({
+                                        message: 'Actualización Correcta!',
+                                        description: 'Los datos se han modificado correctamente.'
+                                    })
+                                } else {
+                                    this.$notification.error({
+                                        message: 'Error!',
+                                        description: 'Ha ocurrido un error al editar sus datos. Si sigue teniendo este problema, contáctece con soporte.',
+                                        duration: 8
+                                    })
+                                }
                             })
-                        })
-                        .catch((e) => {
-                            this.$notification.error({
-                                message: 'Error!',
-                                description: 'Ha ocurrido un error al editar sus datos. Si sigue teniendo este problema, contáctece con soporte.',
-                                duration: 8
+                            .catch((e) => {
+                                this.$notification.error({
+                                    message: 'Error!',
+                                    description: 'Ha ocurrido un error al editar sus datos. Si sigue teniendo este problema, contáctece con soporte.',
+                                    duration: 8
+                                })
                             })
-                        })
-                        .finally(() => {
-                            this.loadingSpin = false
-                        })
+                            .finally(() => {
+                                this.loadingSpin = false
+                            })
+                    }
                 })
             },
             editPassword(event) {

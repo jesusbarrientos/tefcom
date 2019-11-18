@@ -139,11 +139,34 @@
             top: 0;
             right: 0;
             left: 0;
+            z-index: 900;
         }
 
         & > #content-mobile {
             margin-bottom: $size-footer-navbar-height;
             background-color: $background-content-layout;
+        }
+    }
+
+    .spin-loading {
+        position: fixed;
+        z-index: 2000;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0,0,0,0.9);
+
+        & > span {
+            margin-bottom: 10px;
+        }
+
+        & > div {
+            font-size: 1rem;
         }
     }
 }

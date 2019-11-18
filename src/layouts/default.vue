@@ -25,6 +25,8 @@
         </mq-layout>
 
         <mq-layout :mq="['mobile', 'tablet']">
+            <a-spin v-if="loadingData" class="spin-loading" :tip="tip" size="large" />
+
             <div id="mobile">
 
                 <div id="header-mobile">
@@ -42,7 +44,7 @@
             </div>
         </mq-layout>
 
-        <div v-if="showSaveScreen" id="layout-save-screen"></div>
+        <div v-if="showSaveScreen" id="layout-save-screen" />
     </div>
 </template>
 
@@ -58,6 +60,14 @@
         data() {
             return {
                 showSaveScreen: true
+            }
+        },
+        computed: {
+            loadingData() {
+                return this.$store.state.spin.show
+            },
+            tip() {
+                return this.$store.state.spin.tip
             }
         },
         mounted() {

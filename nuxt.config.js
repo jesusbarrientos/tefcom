@@ -15,7 +15,7 @@ module.exports = {
         meta: [
             { charset: 'utf-8' },
             { name: 'viewport', content: 'user-scalable=no, width=device-width, initial-scale=1' },
-            { name: 'theme-color', content: '#00cdff' },
+            { name: 'theme-color', content: '#fff' },
             { hid: 'description', name: 'description', content: pkg.description }
         ],
         link: [
@@ -39,7 +39,7 @@ module.exports = {
         start_url: '/',
         orientation: 'portrait-primary',
         background_color: '#1e1e1e',
-        display: 'fullscreen'
+        display: 'standalone'
     },
 
     workbox: {
