@@ -464,6 +464,19 @@
             }
         }
     }
+
+    &-mobile {
+        padding: $default-mobile-padding;
+
+        .ant-form-item {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .save-btn {
+            margin-top: 10px;
+        }
+    }
 }
 
 #document-attendance-page {
@@ -478,6 +491,39 @@
 
             .ant-row {
                 margin-bottom: 0;
+            }
+        }
+    }
+}
+
+.drawer-mobile-confirm-add-attendance,
+.drawer-mobile-confirm-edit-attendance {
+    .ant-drawer-content-wrapper{
+        top: 0;
+        bottom: 0;
+        height: unset !important;
+
+        .ant-drawer-wrapper-body {
+            height: 100%;
+            display: grid;
+            grid-template-rows: auto 1fr;
+
+            .ant-drawer-body {
+                padding: 0;
+                overflow: auto;
+
+                & > div {
+                    height: 100%;
+                    padding: 24px;
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    grid-template-rows: 1fr auto auto auto;
+                    align-items: flex-start;
+
+                    .btn {
+                        margin: 5px 0;
+                    }
+                }
             }
         }
     }
