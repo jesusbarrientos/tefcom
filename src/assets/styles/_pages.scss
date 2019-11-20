@@ -1,5 +1,86 @@
 
 /*
+ * Profile
+ */
+#profile-page {
+    &-desktop {
+
+        .avatar-row {
+            margin-bottom: 20px;
+        }
+
+        .avatar-uploader {
+            height: 170px;
+            width: 50%;
+            overflow: hidden;
+
+            & > div {
+                width: 100%;
+                height: 100%;
+                display: flex;
+
+                span {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                }
+            }
+        }
+    }
+
+    &-mobile {
+        padding: $default-mobile-padding;
+
+        .avatar-row {
+            margin-bottom: 10px;
+        }
+
+        .avatar-uploader {
+            height: 120px;
+            width: 100%;
+            overflow: hidden;
+
+            & > div {
+                height: 100%;
+                width: 100%;
+                display: flex;
+
+                span {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                }
+            }
+        }
+
+        .ant-form-item {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .delete-btn {
+            margin-bottom: 15px;
+        }
+
+        .save-btn {
+            margin-top: 10px;
+        }
+    }
+}
+
+/*
  * Login
  */
 #login-page {
@@ -19,17 +100,12 @@
 
         // Form
         .form {
-
-            .item-forgot {
-                float: right;
+            .ant-row {
+                margin-bottom: 15px;
             }
 
             .button-submit {
                 width: 100%;
-            }
-
-            .item-remember {
-                float: left;
             }
         }
     }
@@ -39,6 +115,29 @@
         min-height: 100%;
         background: $background-login-mobile;
         padding: 1.25rem;
+
+        .spin {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-flow: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0,0,0, 0.8);
+
+            .ant-spin-text {
+                margin-top: 15px;
+                font-size: 1rem;
+            }
+        }
+
+        .alert {
+            margin-bottom: 15px;
+            text-align: left;
+        }
 
         & > .content {
             width: 100%;
@@ -64,7 +163,6 @@
             }
 
             & > .form {
-                text-align: center;
 
                 .button-submit {
                     width: 100%;
@@ -72,12 +170,72 @@
 
                 .item-forgot {
                     margin: 20px;
+                    text-align: center;
 
                     a {
-                        color: rgba($color-text-white, 0.7);
+                        font-size: 1rem;
+                        color: $color-text-white;
 
                         &:active {
-                            color: $color-text-white;
+                            color: rgba($color-text-white, 0.7);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.drawer-mobile-forgot-password {
+    .ant-drawer-content-wrapper{
+        top: 0;
+        bottom: 0;
+        height: unset !important;
+
+        .ant-drawer-wrapper-body {
+            height: 100%;
+            display: grid;
+            grid-template-rows: auto 1fr;
+
+            .ant-drawer-body {
+                padding: 0;
+                overflow: auto;
+
+                & > div {
+                    height: 100%;
+                    padding: 24px;
+
+                    .ant-spin {
+                        top: 0;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        max-height: unset !important;
+
+                        .ant-spin-text {
+                            margin-top: 15px;
+                            font-size: 1rem;
+                        }
+                    }
+
+                    .ant-spin-container {
+                        height: 100%;
+                        display: grid;
+                        grid-template-rows: auto 1fr auto;
+
+                        .send-code {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 1rem;
+                        }
+
+                        .buttons {
+                            margin-top: 24px;
+
+                            button:nth-child(2) {
+                                margin-top: 24px;
+                            }
                         }
                     }
                 }
@@ -306,6 +464,19 @@
             }
         }
     }
+
+    &-mobile {
+        padding: $default-mobile-padding;
+
+        .ant-form-item {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .save-btn {
+            margin-top: 10px;
+        }
+    }
 }
 
 #document-attendance-page {
@@ -320,6 +491,39 @@
 
             .ant-row {
                 margin-bottom: 0;
+            }
+        }
+    }
+}
+
+.drawer-mobile-confirm-add-attendance,
+.drawer-mobile-confirm-edit-attendance {
+    .ant-drawer-content-wrapper{
+        top: 0;
+        bottom: 0;
+        height: unset !important;
+
+        .ant-drawer-wrapper-body {
+            height: 100%;
+            display: grid;
+            grid-template-rows: auto 1fr;
+
+            .ant-drawer-body {
+                padding: 0;
+                overflow: auto;
+
+                & > div {
+                    height: 100%;
+                    padding: 24px;
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    grid-template-rows: 1fr auto auto auto;
+                    align-items: flex-start;
+
+                    .btn {
+                        margin: 5px 0;
+                    }
+                }
             }
         }
     }

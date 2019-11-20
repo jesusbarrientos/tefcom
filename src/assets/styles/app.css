@@ -60,6 +60,16 @@ body {
 /*
  * Padding
  */
+#layout-save-screen {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5000;
+  background-color: white;
+}
+
 /*
  * Authentication mode
  */
@@ -169,10 +179,30 @@ body {
   top: 0;
   right: 0;
   left: 0;
+  z-index: 900;
 }
 #default-layout #mobile > #content-mobile {
   margin-bottom: 3.75rem;
   background-color: #f0f2f5;
+}
+#default-layout .spin-loading {
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+#default-layout .spin-loading > span {
+  margin-bottom: 10px;
+}
+#default-layout .spin-loading > div {
+  font-size: 1rem;
 }
 
 .ant-input-number {
@@ -317,9 +347,80 @@ body {
   height: 1.125rem;
 }
 
+.change-password-component .ant-row {
+  margin-bottom: 0;
+}
+
+.recover-password-component .ant-row {
+  margin-bottom: 5px;
+}
+
 /*
  * Pages
  */
+/*
+ * Profile
+ */
+#profile-page-desktop .avatar-row {
+  margin-bottom: 20px;
+}
+#profile-page-desktop .avatar-uploader {
+  height: 170px;
+  width: 50%;
+  overflow: hidden;
+}
+#profile-page-desktop .avatar-uploader > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+#profile-page-desktop .avatar-uploader > div span {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#profile-page-desktop .avatar-uploader > div img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+#profile-page-mobile {
+  padding: 20px;
+}
+#profile-page-mobile .avatar-row {
+  margin-bottom: 10px;
+}
+#profile-page-mobile .avatar-uploader {
+  height: 120px;
+  width: 100%;
+  overflow: hidden;
+}
+#profile-page-mobile .avatar-uploader > div {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+#profile-page-mobile .avatar-uploader > div span {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#profile-page-mobile .avatar-uploader > div img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+#profile-page-mobile .ant-form-item {
+  width: 100%;
+  margin-bottom: 4px;
+}
+#profile-page-mobile .delete-btn {
+  margin-bottom: 15px;
+}
+#profile-page-mobile .save-btn {
+  margin-top: 10px;
+}
+
 /*
  * Login
  */
@@ -331,20 +432,37 @@ body {
 #login-page-desktop .card {
   max-width: 21.875rem;
 }
-#login-page-desktop .form .item-forgot {
-  float: right;
+#login-page-desktop .form .ant-row {
+  margin-bottom: 15px;
 }
 #login-page-desktop .form .button-submit {
   width: 100%;
 }
-#login-page-desktop .form .item-remember {
-  float: left;
-}
 #login-page-mobile {
   height: 100%;
   min-height: 100%;
-  background: linear-gradient(#00c4ff, #2073d9);
+  background: linear-gradient(#2073d9, #00c4ff);
   padding: 1.25rem;
+}
+#login-page-mobile .spin {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+#login-page-mobile .spin .ant-spin-text {
+  margin-top: 15px;
+  font-size: 1rem;
+}
+#login-page-mobile .alert {
+  margin-bottom: 15px;
+  text-align: left;
 }
 #login-page-mobile > .content {
   width: 100%;
@@ -365,20 +483,66 @@ body {
   max-width: 25rem;
   padding: 0 1.875rem;
 }
-#login-page-mobile > .content > .form {
-  text-align: center;
-}
 #login-page-mobile > .content > .form .button-submit {
   width: 100%;
 }
 #login-page-mobile > .content > .form .item-forgot {
   margin: 20px;
+  text-align: center;
 }
 #login-page-mobile > .content > .form .item-forgot a {
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  color: white;
 }
 #login-page-mobile > .content > .form .item-forgot a:active {
-  color: white;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper {
+  top: 0;
+  bottom: 0;
+  height: unset !important;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body {
+  padding: 0;
+  overflow: auto;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div {
+  height: 100%;
+  padding: 24px;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: unset !important;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin .ant-spin-text {
+  margin-top: 15px;
+  font-size: 1rem;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin-container {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin-container .send-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin-container .buttons {
+  margin-top: 24px;
+}
+.drawer-mobile-forgot-password .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .ant-spin-container .buttons button:nth-child(2) {
+  margin-top: 24px;
 }
 
 /*
@@ -546,6 +710,16 @@ body {
 #attendance-page-desktop .new-attendance .ant-row {
   margin-bottom: 0;
 }
+#attendance-page-mobile {
+  padding: 20px;
+}
+#attendance-page-mobile .ant-form-item {
+  width: 100%;
+  margin-bottom: 4px;
+}
+#attendance-page-mobile .save-btn {
+  margin-top: 10px;
+}
 
 #document-attendance-page-desktop .filter,
 #document-attendance-page-desktop .options {
@@ -557,6 +731,37 @@ body {
 #document-attendance-page-desktop .filter .ant-row,
 #document-attendance-page-desktop .options .ant-row {
   margin-bottom: 0;
+}
+
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper {
+  top: 0;
+  bottom: 0;
+  height: unset !important;
+}
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body {
+  padding: 0;
+  overflow: auto;
+}
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div {
+  height: 100%;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto auto auto;
+  align-items: flex-start;
+}
+.drawer-mobile-confirm-add-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .btn,
+.drawer-mobile-confirm-edit-attendance .ant-drawer-content-wrapper .ant-drawer-wrapper-body .ant-drawer-body > div .btn {
+  margin: 5px 0;
 }
 
 /*# sourceMappingURL=app.css.map */

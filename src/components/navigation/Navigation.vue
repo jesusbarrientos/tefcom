@@ -1,6 +1,12 @@
 <template>
-    <a-menu id="navigation-component" mode="inline" :default-selected-keys="menu.defaultSelectedKeys">
-        <a-menu-item v-for="item in menu.menu" v-if="item.responsive.includes($mq) && item.menu.length <= 0" :key="item.key">
+    <a-menu
+        id="navigation-component"
+        v-model="defaultSelectedKeys"
+        :open-keys="defaultOpenKeys"
+        mode="inline"
+        @openChange="onClick"
+    >
+        <a-menu-item v-for="item in nav.menu" v-if="item.responsive.includes($mq) && item.menu.length <= 0" :key="item.key">
             <nuxt-link :to="item.url">
                 <a-icon v-if="item.icon" :type="item.icon" /><span>{{ item.label }}</span>
             </nuxt-link>
@@ -19,6 +25,7 @@
 </template>
 
 <script>
+    import { mapState } from 'vuex'
     import navigation from '@/static/navigation/navigation.json'
 
     export default {
@@ -29,13 +36,31 @@
             }
         },
         computed: {
-            menu: function () {
+            ...mapState(['menu']),
+            nav: function () {
                 return this.navigation
+            },
+            defaultSelectedKeys: {
+                set(selectedKeys) {
+                    this.$store.commit('menu/setSelectedKeys', selectedKeys)
+                },
+                get() {
+                    return this.menu.defaultSelectedKeys
+                }
+            },
+            defaultOpenKeys: {
+                get() {
+                    return this.menu.defaultOpenKeys
+                }
             }
         },
+        created() {
+            this.$store.commit('menu/setSelectedKeys', navigation.defaultSelectedKeys)
+            this.$store.commit('menu/setOpenKeys', navigation.defaultOpenKeys)
+        },
         methods: {
-            handleClick(e) {
-                console.log('click', e)
+            onClick(openKeys) {
+                this.$store.commit('menu/setOpenKeys', openKeys)
             }
         }
     }

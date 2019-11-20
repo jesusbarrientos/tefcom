@@ -19,12 +19,24 @@
                 </div>
             </div>
         </mq-layout>
+
+        <div v-if="showSaveScreen" id="layout-save-screen"></div>
     </div>
 </template>
 
 <script>
     export default {
-        name: 'Authentication'
+        name: 'Authentication',
+        data() {
+            return {
+                showSaveScreen: true
+            }
+        },
+        mounted() {
+            setTimeout(() => {
+                this.showSaveScreen = false
+            }, 100)
+        }
     }
 </script>
 

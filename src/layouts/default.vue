@@ -25,6 +25,8 @@
         </mq-layout>
 
         <mq-layout :mq="['mobile', 'tablet']">
+            <a-spin v-if="loadingData" class="spin-loading" :tip="tip" size="large" />
+
             <div id="mobile">
 
                 <div id="header-mobile">
@@ -41,6 +43,8 @@
 
             </div>
         </mq-layout>
+
+        <div v-if="showSaveScreen" id="layout-save-screen" />
     </div>
 </template>
 
@@ -48,11 +52,29 @@
     import HeaderDesktop from '../components/header/HeaderDesktop'
     import Navigation from '../components/navigation/Navigation'
     import HeaderMobile from '../components/header/HeaderMobile'
-    import FooterNavbar from '../components/footer_navbar/FooterNavbar'
+    import FooterNavbar from '../components/footer-navbar/FooterNavbar'
 
     export default {
         name: 'Default',
-        components: { FooterNavbar, HeaderMobile, Navigation, HeaderDesktop }
+        components: { FooterNavbar, HeaderMobile, Navigation, HeaderDesktop },
+        data() {
+            return {
+                showSaveScreen: true
+            }
+        },
+        computed: {
+            loadingData() {
+                return this.$store.state.spin.show
+            },
+            tip() {
+                return this.$store.state.spin.tip
+            }
+        },
+        mounted() {
+            setTimeout(() => {
+                this.showSaveScreen = false
+            }, 100)
+        }
     }
 </script>
 

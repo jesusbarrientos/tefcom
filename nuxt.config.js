@@ -1,4 +1,6 @@
 const pkg = require('./package')
+const aws = require('./src/static/aws')
+const app = require('./src/static/app')
 
 module.exports = {
     mode: 'spa',
@@ -11,11 +13,12 @@ module.exports = {
         meta: [
             { charset: 'utf-8' },
             { name: 'viewport', content: 'user-scalable=no, width=device-width, initial-scale=1' },
-            { name: 'theme-color', content: '#00cdff' },
+            { name: 'theme-color', content: '#fff' },
             { hid: 'description', name: 'description', content: pkg.description }
         ],
         link: [
-            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+            { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css' }
         ],
         htmlAttrs: {
             lang: 'es'
@@ -34,14 +37,10 @@ module.exports = {
         start_url: '/',
         orientation: 'portrait-primary',
         background_color: '#1e1e1e',
-        display: 'fullscreen'
+        display: 'standalone'
     },
 
     workbox: {
-        dev: true,
-        config: {
-            debug: true
-        }
     },
 
     /*
@@ -59,6 +58,7 @@ module.exports = {
         '@@/plugins/antd-ui',
         '@@/plugins/scroll',
         '@@/plugins/mask',
+        '@@/plugins/aws',
         { src: '@@/plugins/mq', ssr: true }
     ],
 
@@ -66,24 +66,22 @@ module.exports = {
     ** Nuxt.js modules
     */
     modules: [
-        // Doc: https://axios.nuxtjs.org/usage
         '@nuxtjs/axios',
         '@nuxtjs/pwa'
-        // '@nuxtjs/eslint-module'
     ],
     /*
     ** Axios module configuration
     */
     axios: {
-        // See https://github.com/nuxt-community/axios-module#options
     },
 
     /*
     ** Environment variables
     */
     env: {
-        apiBaseUrl: 'https://pzgpr1vjzg.execute-api.us-east-2.amazonaws.com/beta',
-        apiChileCitiesUrl: 'https://apis.digital.gob.cl/dpa/comunas'
+        app,
+        aws,
+        apiBaseUrl: 'https://pzgpr1vjzg.execute-api.us-east-2.amazonaws.com/beta'
     },
 
     /*
@@ -115,6 +113,7 @@ module.exports = {
     ** Router options
     */
     router: {
+        middleware: 'auth',
         extendRoutes(routes, resolve) {
             routes.push({
                 name: 'custom',
