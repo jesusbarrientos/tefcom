@@ -54,6 +54,12 @@
                             Guardar Cambios
                         </a-button>
                     </a-row>
+
+                    <a-row type="flex" justify="end" :gutter="10">
+                        <a-button class="save-btn" type="danger" size="large" block @click="logOut()">
+                            Cerrar Sesión
+                        </a-button>
+                    </a-row>
                 </a-form>
             </a-collapse-panel>
 
@@ -85,6 +91,8 @@
 </template>
 
 <script>
+    import { Auth } from 'aws-amplify'
+
     let formPassword
 
     function passwordValidator(rule, value, callback) {
@@ -304,6 +312,23 @@
                             }
                         })
                     }
+                })
+            },
+
+            /**
+             * Cierra la sesión actual.
+             */
+            logOut() {
+                this.$confirm({
+                    title: 'Cerrar Sesión',
+                    content: 'Está a punto de cerrar la sesión. ¿Desea continuar?',
+                    okText: 'Continuar',
+                    cancelText: 'Cancelar',
+                    centered: true,
+                    onOk() {
+                        Auth.signOut()
+                    },
+                    onCancel() {}
                 })
             }
         }
