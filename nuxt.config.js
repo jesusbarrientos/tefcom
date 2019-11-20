@@ -121,5 +121,9 @@ module.exports = {
                 redirect: 'authentication/login'
             })
         }
+    },
+
+    generate: {
+        subFolders: false
     }
 }
