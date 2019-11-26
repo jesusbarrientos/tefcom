@@ -134,7 +134,7 @@
             calculateTotalOfMaterial(e) {
                 let total = 0
 
-                if (e.material.include_iva)
+                if (e.supplier.include_iva)
                     total = (e.count * e.supplier.price)
                 else
                     total = (e.count * (e.supplier.price * 1.19))
@@ -227,6 +227,7 @@
             onSelectMaterial(e) {
                 e.material = JSON.parse(JSON.stringify(this.getMaterial(e.material.id))) // Genera clon
                 e.supplier = this.getFirstSupplierOfMaterial(e)
+                console.log('onSelectMaterial', e)
             },
             /**
              * Obtiene el primer proveedor del material.
