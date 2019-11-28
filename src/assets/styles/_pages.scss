@@ -447,6 +447,29 @@
     }
 }
 
+.modal-material {
+    .ant-modal {
+        position: static;
+        .ant-modal-content {
+            position: absolute;
+            top: 50px;
+            bottom: 50px;
+            left: 20px;
+            right: 20px;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+
+            .ant-modal-body {
+                overflow: auto;
+
+                .ant-table-small {
+                    border: none;
+                }
+            }
+        }
+    }
+}
+
 /*
  * Attendance
  */
