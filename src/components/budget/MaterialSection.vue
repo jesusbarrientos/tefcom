@@ -1,9 +1,30 @@
 <template>
     <div class="job-content">
         <a-row v-for="(e, index) of job.materials" type="flex" justify="space-between" align="bottom">
-            <a-col :span="20">
+            <a-col :span="24">
                 <a-row type="flex" :gutter="10" align="bottom">
-                    <a-col :span="12">
+                    <a-col :span="24">
+                        <label for="material">Material</label>
+                        <a-select
+                            id="material"
+                            v-model="e.material.id"
+                            show-search
+                            placeholder="Seleccione un material"
+                            option-filter-prop="children"
+                            :filter-option="filterOption"
+                            style="width: 100%; color: black"
+                            disabled
+                            @change="onSelectMaterial(e)"
+                        >
+                            <a-select-option v-for="material of data" :value="material.id">
+                                {{ material.description }} | {{ material.category }}
+                            </a-select-option>
+                        </a-select>
+                    </a-col>
+                </a-row>
+
+                <a-row type="flex" :gutter="10" align="bottom">
+                    <!--<a-col :span="12">
                         <label for="material">Material</label>
                         <a-input-group id="material" compact>
                             <a-select
@@ -34,7 +55,7 @@
                                 </a-select-option>
                             </a-select>
                         </a-input-group>
-                    </a-col>
+                    </a-col>-->
 
                     <a-col :span="8">
                         <label for="price-count">Precio y Cantidad</label>
@@ -51,7 +72,7 @@
                         </a-input-group>
                     </a-col>
 
-                    <a-col :span="4">
+                    <a-col :span="5">
                         <label for="mat-total">Total</label>
                         <a-input-number
                             id="mat-total"
@@ -63,14 +84,17 @@
                             disabled
                         />
                     </a-col>
-                </a-row>
-            </a-col>
 
-            <a-col :span="4">
-                <a-row type="flex" justify="end">
-                    <a-button type="danger" @click="removeElement(index, job.materials)">
-                        Eliminar
-                    </a-button>
+                    <a-col :span="11">
+                        <a-row type="flex" justify="end" align="bottom" style="margin: 0">
+                            <a-button type="primary" style="margin-right: 5px" @click="openModalSelectMaterial(e)">
+                                Seleccionar
+                            </a-button>
+                            <a-button type="danger" @click="removeElement(index, job.materials)">
+                                Eliminar
+                            </a-button>
+                        </a-row>
+                    </a-col>
                 </a-row>
             </a-col>
 
@@ -82,10 +106,113 @@
                 Agregar Material
             </a-button>
         </a-row>
+
+        <a-modal
+            :visible="showModal"
+            :centered="true"
+            :footer="null"
+            title="Selección de Material"
+            wrap-class-name="modal-material"
+            @cancel="closeModal()"
+        >
+            <a-table
+                :columns="table.columns"
+                :data-source="dataSource"
+                :bordered="table.bordered"
+                :loading="loadingData"
+                :scroll="table.scroll"
+                :pagination="table.pagination"
+                :size="table.size"
+                row-key="id"
+            >
+                <a-table
+                    slot="expandedRowRender"
+                    slot-scope="recordMaterial"
+                    :columns="innerTable.columns"
+                    :data-source="recordMaterial.suppliers"
+                    :bordered="innerTable.bordered"
+                    :pagination="innerTable.pagination"
+                    :loading="innerTable.loading"
+                    :size="innerTable.size"
+                    row-key="id"
+                >
+                    <template slot="quality" slot-scope="record">
+                        <label>{{ getQualityLabel(record) }}</label>
+                    </template>
+
+                    <template slot="price" slot-scope="record">
+                        <label>${{ record.price }}</label>
+                    </template>
+
+                    <template slot="utility" slot-scope="record">
+                        <label>{{ record.utility_percentaje }}%</label>
+                    </template>
+
+                    <template slot="total" slot-scope="record">
+                        <label>${{ calculateTotal(record) }}</label>
+                    </template>
+
+                    <span slot="action" slot-scope="record">
+                        <a @click="onSelectSupplierInDetail(record, recordMaterial)">Seleccionar</a>
+                    </span>
+                </a-table>
+            </a-table>
+        </a-modal>
     </div>
 </template>
 
 <script>
+
+    const table = {
+        bordered: false,
+        loading: false,
+        scroll: { x: '100%' },
+        pagination: {
+            defaultPageSize: 10,
+            showSizeChanger: true,
+            position: 'top'
+        },
+        size: 'default',
+        columns: [
+            {
+                title: 'Descripción',
+                key: 'description',
+                dataIndex: 'description',
+                sorter: (a, b) => a.description.localeCompare(b.description)
+            },
+            {
+                title: 'Categoría',
+                key: 'category',
+                dataIndex: 'category',
+                filters: [],
+                onFilter: (value, record) => record.category.indexOf(value) === 0,
+                sorter: (a, b) => a.category.localeCompare(b.category)
+            }
+        ],
+        innerColumns: [
+            {
+                title: 'Proveedor',
+                key: 'supplier',
+                dataIndex: 'description',
+                sorter: (a, b) => a.description.localeCompare(b.description)
+            },
+            {
+                title: 'Categoría',
+                key: 'category',
+                dataIndex: 'category',
+                sorter: (a, b) => a.category.localeCompare(b.category)
+            }
+        ]
+    }
+
+    const options = [
+        { key: 1, value: 'ECONÓMICO', label: 'Económico' },
+        { key: 2, value: 'BAJA', label: 'Baja' },
+        { key: 3, value: 'REGULAR', label: 'Regular' },
+        { key: 4, value: 'BUENA', label: 'Buena' },
+        { key: 5, value: 'RESISTENTE', label: 'Resistente' }
+    ]
+
     export default {
         name: 'MaterialSection',
         props: {
@@ -96,7 +223,95 @@
                 required: true
             }
         },
+        data() {
+            return {
+                table,
+                innerTable: {},
+                showModal: false,
+                loadingData: false,
+                currentMaterial: undefined,
+                dataSource: []
+            }
+        },
+        created() {
+            this.innerTable = {
+                bordered: false,
+                loading: false,
+                scroll: { x: '100%' },
+                pagination: false,
+                size: 'default',
+                columns: [
+                    {
+                        title: 'Nombre',
+                        key: 'name',
+                        dataIndex: 'name',
+                        sorter: (a, b) => a.name.localeCompare(b.name),
+                        width: '60%'
+                    },
+                    {
+                        title: 'Calidad',
+                        key: 'quality',
+                        sorter: (a, b) => a.quality.localeCompare(b.quality),
+                        filters: this.getQualityFilters(),
+                        onFilter: (value, record) => record.quality.indexOf(value) === 0,
+                        scopedSlots: { customRender: 'quality' }
+                    },
+                    {
+                        title: 'Precio',
+                        key: 'price',
+                        sorter: (a, b) => a.price - b.price,
+                        scopedSlots: { customRender: 'price' }
+                    },
+                    {
+                        title: 'Acción',
+                        key: 'action',
+                        fixed: 'right',
+                        width: 120,
+                        align: 'center',
+                        scopedSlots: { customRender: 'action' }
+                    }
+                ],
+                record: {}
+            }
+        },
         methods: {
+            onSelectSupplierInDetail(record, recordMaterial) {
+                this.currentMaterial.material = JSON.parse(JSON.stringify(recordMaterial)) // Genera clon
+                this.currentMaterial.supplier = JSON.parse(JSON.stringify(record)) // Genera clon
+                this.showModal = false
+            },
+            /**
+             * Obtiene el nombre correspondiente al valor de la calidad (tema estético)
+             * @param supplier proveedor
+             * @returns {*} nombre de la calidad
+             */
+            getQualityLabel(supplier) {
+                return options.find(option => option.value === supplier.quality).label
+            },
+            /**
+             * Sirve para filtrar en la tabla de materiales por calidad
+             * @returns {Array}
+             */
+            getQualityFilters() {
+                const filters = []
+
+                options.forEach((option) => {
+                    filters.push({ text: option.label, value: option.value })
+                })
+
+                return filters
+            },
+            /**
+             * Calcula el total del proveedor
+             * @param supplier proveedor
+             * @returns {number|*} precio final
+             */
+            calculateTotal(supplier) {
+                if (supplier.include_iva)
+                    return supplier.price.toFixed(2)
+                else
+                    return (supplier.price * 1.19).toFixed(2)
+            },
             /**
              * Agrega una fila de material para poder exportar con la cotización.
              */
@@ -226,8 +441,7 @@
              */
             onSelectMaterial(e) {
                 e.material = JSON.parse(JSON.stringify(this.getMaterial(e.material.id))) // Genera clon
-                e.supplier = this.getFirstSupplierOfMaterial(e)
-                console.log('onSelectMaterial', e)
+                // e.supplier = this.getFirstSupplierOfMaterial(e)
             },
             /**
              * Obtiene el primer proveedor del material.
@@ -280,6 +494,32 @@
                         break
                     }
                 }
+            },
+            openModalSelectMaterial(e) {
+                this.dataSource = this.getAllMaterialFilteredList(e)
+                this.setOptionsCategory()
+                this.currentMaterial = e
+                this.showModal = true
+            },
+            closeModal() {
+                this.showModal = false
+            },
+            setOptionsCategory() {
+                let options = []
+
+                this.dataSource.forEach((e, key) => {
+                    let exists = options.find((o) => { return o.value === e.category })
+
+                    if (!exists) {
+                        options.push({
+                            key,
+                            value: e.category,
+                            text: e.category
+                        })
+                    }
+                })
+
+                table.columns[1].filters = options
             }
         }
     }

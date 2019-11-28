@@ -468,6 +468,7 @@
              * @param record material seleccionado en la tabla
              */
             onShowMore(record) {
+                console.log(record)
                 this.infoDrawer.record = record
                 this.infoDrawer.visible = true
             },

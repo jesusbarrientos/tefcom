@@ -698,6 +698,25 @@ body {
   margin-bottom: 0 !important;
 }
 
+.modal-material .ant-modal {
+  position: static;
+}
+.modal-material .ant-modal .ant-modal-content {
+  position: absolute;
+  top: 50px;
+  bottom: 50px;
+  left: 20px;
+  right: 20px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+.modal-material .ant-modal .ant-modal-content .ant-modal-body {
+  overflow: auto;
+}
+.modal-material .ant-modal .ant-modal-content .ant-modal-body .ant-table-small {
+  border: none;
+}
+
 /*
  * Attendance
  */
