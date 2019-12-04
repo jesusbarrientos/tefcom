@@ -166,6 +166,8 @@
                                     })
 
                                     viewData.data.attendances = []
+                                    delete this.attendanceDataRequest.LastEvaluatedKey
+                                    this.attendanceDataRequest.Limit = 20
                                     this.loadAttendances()
                                 } else {
                                     viewData.modal.confirmAdd.data = {
@@ -233,6 +235,8 @@
                                 })
 
                                 viewData.data.attendances = []
+                                delete this.attendanceDataRequest.LastEvaluatedKey
+                                this.attendanceDataRequest.Limit = 20
                                 this.loadAttendances()
                             } else {
                                 reject({
@@ -283,6 +287,8 @@
                                 })
 
                                 viewData.data.attendances = []
+                                delete this.attendanceDataRequest.LastEvaluatedKey
+                                this.attendanceDataRequest.Limit = 20
                                 this.loadAttendances()
                             } else {
                                 reject({

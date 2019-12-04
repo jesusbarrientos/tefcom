@@ -88,20 +88,21 @@
     &-desktop {
         // Logotype
         .logo {
-            max-width: 21.875rem;
+            max-width: 350px;
             margin-top: 3.125rem;
             margin-bottom: 1.875rem;
         }
 
         // Card
         .card {
-            max-width: 21.875rem;
+            width: 350px;
+            padding: 15px;
         }
 
         // Form
         .form {
             .ant-row {
-                margin-bottom: 15px;
+                margin-bottom: 30px;
             }
 
             .button-submit {

@@ -56,14 +56,33 @@
 
                         <!--OPTIONS-->
                         <div class="options">
-                            <a-row type="flex" justify="start" :gutter="50">
-                                <a-col :span="3">
+                            <a-row>
+                                <a-col>
                                     <h3>Opciones</h3>
                                 </a-col>
+                            </a-row>
 
-                                <a-col :span="5" style="padding-left: 0; padding-right: 0">
-                                    <label for="normal-hours">Horas Normales</label>
-                                    <a-input-number id="normal-hours" v-model="normalHours" :min="0" :precision="0" />
+                            <a-row type="flex" justify="start" :gutter="10" style="margin-bottom: 10px">
+                                <a-col :span="4">
+                                    <label for="normal-hours">Hora Entrada</label>
+                                    <a-time-picker id="normal-hours" v-model="normalHours" />
+                                </a-col>
+
+                                <a-col :span="4">
+                                    <label for="normal-hours-end">Hora Salida</label>
+                                    <a-time-picker id="normal-hours-end" v-model="normalHoursEnd" />
+                                </a-col>
+
+                                <a-col :span="4">
+                                    <label for="total-hours">Horas Normales</label>
+                                    <a-input-number id="total-hours" v-model="totalHours" disabled style="color: rgba(0, 0, 0, 0.65);" />
+                                </a-col>
+                            </a-row>
+
+                            <a-row>
+                                <a-col>
+                                    <label for="sw-weekend">Considerar fines de semana como valor hora hombre extra</label>
+                                    <a-switch id="sw-weekend" v-model="swWeekend" default-checked />
                                 </a-col>
                             </a-row>
                         </div>
@@ -281,10 +300,16 @@
                 table,
                 tableResume,
                 lastPage: 1,
-                normalHours: 8
+                normalHours: moment('09:00:00', 'HH:mm:ss'),
+                normalHoursEnd: moment('17:00:00', 'HH:mm:ss'),
+                swWeekend: true,
+                moment
             }
         },
         computed: {
+            totalHours: function () {
+                return this.normalHoursEnd.diff(this.normalHours, 'hours')
+            },
             dataSource: function () {
                 let newDataSource = []
 
@@ -306,6 +331,7 @@
                 return newDataSource
             },
             dataSourceResume: function () {
+                let self = this
                 let employeeObject = {}
                 let newDataSource = []
 
@@ -323,13 +349,88 @@
                         }
                     }
 
-                    let normalHours = (e.hours_count > this.normalHours) ? this.normalHours : e.hours_count
-                    let extraHours = (e.hours_count > this.normalHours) ? (e.hours_count - this.normalHours) : 0
+                    let normalHours = 0
+                    let extraHours = 0
 
-                    employeeObject[e.rut] = {
-                        ...employeeObject[e.rut],
-                        normal_hour: employeeObject[e.rut]['normal_hour'] + normalHours,
-                        extra_hour: employeeObject[e.rut]['extra_hour'] + extraHours
+                    let entryInsideRange
+                    let exitInsideRange
+                    let entryHour = moment(e.entry_hour, 'HH:mm:ss')
+                    let exitHour = moment(e.exit_hour, 'HH:mm:ss')
+
+                    // Calcula las horas
+                    function calculateHours(self) {
+                        let normalHours = 0
+                        let extraHours = 0
+
+                        // Posibles casos donde la entrada esta dentro del rango
+                        if (entryInsideRange) {
+                            if (exitInsideRange) {
+                                // Quiere decir que la jornada de trabajo fue dentro del rango y no paso a 24hrs.
+                                if (e.hours_count <= self.totalHours) {
+                                    normalHours = e.hours_count
+                                    extraHours = 0
+                                } else {
+                                    normalHours = self.normalHoursEnd.diff(entryHour, 'hours')
+                                    extraHours = e.hours_count - normalHours
+                                }
+                            } else {
+                                normalHours = self.normalHoursEnd.diff(entryHour, 'hours')
+                                extraHours = e.hours_count - normalHours
+                            }
+                        } else if (entryHour < self.normalHours) { // Posibles casos donde la entrada esta fuera del rango. Verifica si la hora de entrada esta antes o despues de la entrada del rango.
+                            if (exitInsideRange) {
+                                extraHours = self.normalHours.diff(entryHour, 'hours')
+                                normalHours = exitHour.diff(self.normalHours, 'hours')
+                            } else {
+                                normalHours = self.totalHours
+                                extraHours = self.normalHours.diff(entryHour, 'hours') + exitHour.diff(self.normalHoursEnd, 'hours')
+                            }
+                        } else {
+                            extraHours = e.hours_count
+                            normalHours = 0
+                        }
+
+                        return {
+                            normalHours,
+                            extraHours
+                        }
+                    }
+
+                    if (e.exit_date) {
+                        // Verifico si está dentro o fuera del rango la hora de entrada
+                        if (this.normalHours <= entryHour && entryHour <= (this.normalHoursEnd - 1))
+                            entryInsideRange = true
+                        else
+                            entryInsideRange = false
+
+                        // Verifico si está dentro o fuera del rango la hora de salida
+                        if ((this.normalHours + 1) <= exitHour && exitHour <= this.normalHoursEnd)
+                            exitInsideRange = true
+                        else
+                            exitInsideRange = false
+
+                        if (this.swWeekend) {
+                            // Esta fuera de la semana
+                            let day = moment(e.entry_date, 'DD-MM-YYYY').day()
+                            if (day === 0 || day === 6) {
+                                normalHours = 0
+                                extraHours = e.hours_count
+                            } else {
+                                let hours = calculateHours(self)
+                                normalHours = hours.normalHours
+                                extraHours = hours.extraHours
+                            }
+                        } else {
+                            let hours = calculateHours(self)
+                            normalHours = hours.normalHours
+                            extraHours = hours.extraHours
+                        }
+
+                        employeeObject[e.rut] = {
+                            ...employeeObject[e.rut],
+                            normal_hour: employeeObject[e.rut]['normal_hour'] + normalHours,
+                            extra_hour: employeeObject[e.rut]['extra_hour'] + extraHours
+                        }
                     }
                 })
 
