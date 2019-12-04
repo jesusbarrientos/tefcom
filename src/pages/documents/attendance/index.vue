@@ -115,6 +115,8 @@
                     }
 
                     case this.event.FILTER: {
+                        delete this.attendanceDataRequest.LastEvaluatedKey
+                        this.attendanceDataRequest.Limit = 20
                         this.data.attendances = []
                         this.loadAttendances()
                         break
