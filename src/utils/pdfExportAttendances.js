@@ -248,7 +248,7 @@ function setAttendances(attendances, doc) {
         style: 'table',
         table: {
             headerRows: 1,
-            widths: [ 'auto', '*', 130, 130, 'auto' ],
+            widths: [ 'auto', '*', 130, 130, 'auto', 'auto', 'auto' ],
             heights: [15],
             body: [
                 [
@@ -256,6 +256,8 @@ function setAttendances(attendances, doc) {
                     { text: 'Trabajador', style: 'tableHeader', border: [false, false, false, true] },
                     { text: 'Entrada', style: 'tableHeader', border: [false, false, false, true] },
                     { text: 'Salida', style: 'tableHeader', border: [false, false, false, true] },
+                    { text: 'Horas N.', style: 'tableHeader', border: [false, false, false, true] },
+                    { text: 'Horas E.', style: 'tableHeader', border: [false, false, false, true] },
                     { text: 'Horas', style: 'tableHeader', border: [false, false, false, true] }
                 ]
             ]
@@ -278,6 +280,8 @@ function setAttendances(attendances, doc) {
                 { text: j.employee, style: 'tableValue', border: [false, false, false, true] },
                 { text: j.entry, style: ['tableValue', 'center'], border: [false, false, false, true] },
                 { text: j.exit, style: ['tableValue', 'center'], border: [false, false, false, true] },
+                { text: j.normal_hour, style: ['tableValue', 'center'], border: [false, false, false, true] },
+                { text: j.extra_hour, style: ['tableValue', 'center'], border: [false, false, false, true] },
                 { text: j.hours_count, style: ['tableValue', 'center'], border: [false, false, false, true] }
             ])
         })

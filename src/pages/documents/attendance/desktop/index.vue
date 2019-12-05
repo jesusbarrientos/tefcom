@@ -8,7 +8,7 @@
                         <!--EXTRA-->
                         <div slot="extra">
                             <no-ssr>
-                                <a-button size="small" type="primary" @click="exportAttendancesPDF(data.resume, dataSource, dataSourceResume)">
+                                <a-button size="small" type="primary" @click="exportAttendancesPDF(data.resume, dataSourceForPDF, dataSourceResume)">
                                     Generar PDF
                                 </a-button>
                             </no-ssr>
@@ -303,6 +303,7 @@
                 normalHours: moment('09:00:00', 'HH:mm:ss'),
                 normalHoursEnd: moment('17:00:00', 'HH:mm:ss'),
                 swWeekend: true,
+                dataSourceForPDF: [],
                 moment
             }
         },
@@ -336,9 +337,9 @@
                 let newDataSource = []
 
                 this.dataSource.forEach((e) => {
-                    if (!employeeObject[e.rut]) {
-                        let employee = this.getEmployeeData(e.rut)
+                    let employee = this.getEmployeeData(e.rut)
 
+                    if (!employeeObject[e.rut]) {
                         employeeObject[e.rut] = {
                             key: e.key,
                             employee: e.employee,
@@ -432,6 +433,18 @@
                             extra_hour: employeeObject[e.rut]['extra_hour'] + extraHours
                         }
                     }
+
+                    self.dataSourceForPDF.push({
+                        key: e.key,
+                        employee: e.employee,
+                        normal_price: employee.price,
+                        extra_price: employee.price_extra,
+                        normal_hour: normalHours,
+                        extra_hour: extraHours,
+                        entry: e.entry,
+                        exit: e.exit,
+                        hours_count: e.hours_count
+                    })
                 })
 
                 Object.keys(employeeObject).forEach((key) => {
