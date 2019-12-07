@@ -8,7 +8,7 @@
                         <!--EXTRA-->
                         <div slot="extra">
                             <no-ssr>
-                                <a-button size="small" type="primary" @click="exportAttendancesPDF(data.resume, dataSourceForPDF, dataSourceResume)">
+                                <a-button size="small" type="primary" @click="generatePDF">
                                     Generar PDF
                                 </a-button>
                             </no-ssr>
@@ -293,7 +293,6 @@
         },
         data() {
             return {
-                exportAttendancesPDF,
                 startDate: moment().startOf('month'),
                 endDate: moment().endOf('day'),
                 employee: undefined,
@@ -301,9 +300,10 @@
                 tableResume,
                 lastPage: 1,
                 normalHours: moment('09:00:00', 'HH:mm:ss'),
-                normalHoursEnd: moment('17:00:00', 'HH:mm:ss'),
+                normalHoursEnd: moment('18:00:00', 'HH:mm:ss'),
                 swWeekend: true,
                 dataSourceForPDF: [],
+                dataSourceResumeForPDF: [],
                 moment
             }
         },
@@ -335,9 +335,12 @@
                 let self = this
                 let employeeObject = {}
                 let newDataSource = []
+                let totalHours = 0
+                self.dataSourceForPDF = []
 
                 this.dataSource.forEach((e) => {
                     let employee = this.getEmployeeData(e.rut)
+                    totalHours = 0
 
                     if (!employeeObject[e.rut]) {
                         employeeObject[e.rut] = {
@@ -357,6 +360,7 @@
                     let exitInsideRange
                     let entryHour = moment(e.entry_hour, 'HH:mm:ss')
                     let exitHour = moment(e.exit_hour, 'HH:mm:ss')
+                    totalHours = self.roundHours(entryHour, exitHour)
 
                     // Calcula las horas
                     function calculateHours(self) {
@@ -366,28 +370,28 @@
                         // Posibles casos donde la entrada esta dentro del rango
                         if (entryInsideRange) {
                             if (exitInsideRange) {
-                                // Quiere decir que la jornada de trabajo fue dentro del rango y no paso a 24hrs.
-                                if (e.hours_count <= self.totalHours) {
-                                    normalHours = e.hours_count
+                                // Quiere decir que la jornada de trabajo fue dentro del rango y no paso de las 24hrs.
+                                if (totalHours <= self.totalHours) {
+                                    normalHours = totalHours
                                     extraHours = 0
                                 } else {
-                                    normalHours = self.normalHoursEnd.diff(entryHour, 'hours')
-                                    extraHours = e.hours_count - normalHours
+                                    normalHours = self.roundHours(entryHour, self.normalHoursEnd)
+                                    extraHours = totalHours - normalHours
                                 }
                             } else {
-                                normalHours = self.normalHoursEnd.diff(entryHour, 'hours')
-                                extraHours = e.hours_count - normalHours
+                                normalHours = self.roundHours(entryHour, self.normalHoursEnd)
+                                extraHours = totalHours - normalHours
                             }
                         } else if (entryHour < self.normalHours) { // Posibles casos donde la entrada esta fuera del rango. Verifica si la hora de entrada esta antes o despues de la entrada del rango.
                             if (exitInsideRange) {
-                                extraHours = self.normalHours.diff(entryHour, 'hours')
-                                normalHours = exitHour.diff(self.normalHours, 'hours')
+                                normalHours = self.roundHours(self.normalHours, exitHour)
+                                extraHours = self.roundHours(entryHour, self.normalHours)
                             } else {
                                 normalHours = self.totalHours
-                                extraHours = self.normalHours.diff(entryHour, 'hours') + exitHour.diff(self.normalHoursEnd, 'hours')
+                                extraHours = self.roundHours(entryHour, self.normalHours) + self.roundHours(self.normalHoursEnd, exitHour)
                             }
                         } else {
-                            extraHours = e.hours_count
+                            extraHours = totalHours
                             normalHours = 0
                         }
 
@@ -415,7 +419,7 @@
                             let day = moment(e.entry_date, 'DD-MM-YYYY').day()
                             if (day === 0 || day === 6) {
                                 normalHours = 0
-                                extraHours = e.hours_count
+                                extraHours = totalHours
                             } else {
                                 let hours = calculateHours(self)
                                 normalHours = hours.normalHours
@@ -443,7 +447,7 @@
                         extra_hour: extraHours,
                         entry: e.entry,
                         exit: e.exit,
-                        hours_count: e.hours_count
+                        hours_count: totalHours
                     })
                 })
 
@@ -454,6 +458,7 @@
                     })
                 })
 
+                self.dataSourceResumeForPDF = newDataSource
                 return newDataSource
             }
         },
@@ -461,6 +466,16 @@
             this.onChange()
         },
         methods: {
+            generatePDF() {
+                if (this.dataSourceForPDF.length > 0)
+                    exportAttendancesPDF(this.data.resume, this.dataSourceForPDF, this.dataSourceResumeForPDF)
+                else {
+                    this.$notification.warn({
+                        message: 'Alerta!',
+                        description: 'No se han cargado registros de asistencia.'
+                    })
+                }
+            },
             onChange() {
                 this.data.resume.start = this.startDate
                 this.data.resume.end = this.endDate
@@ -518,12 +533,19 @@
             },
             getHoursCount(attendance) {
                 if (attendance.exit_date)
-                    return moment(attendance.exit_date).diff(moment(attendance.entry_date), 'hours')
+                    return this.roundHours(moment(attendance.entry_date), moment(attendance.exit_date))
                 else
                     return 0
             },
             getFullDate(date) {
                 return date ? moment(date).format('DD-MM-YYYY HH:mm:ss') : 'Sin Fecha'
+            },
+            roundHours(time, timeEnd) {
+                let hours = timeEnd.diff(time, 'hours')
+                let minutes = timeEnd.diff(time, 'minutes')
+                let extraMinutes = minutes - hours * 60
+
+                return extraMinutes > 44 ? hours + 1 : hours
             }
         }
     }
