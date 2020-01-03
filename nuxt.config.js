@@ -81,7 +81,7 @@ module.exports = {
     env: {
         app,
         aws,
-        apiBaseUrl: 'https://pzgpr1vjzg.execute-api.us-east-2.amazonaws.com/prod'
+        apiBaseUrl: 'https://pzgpr1vjzg.execute-api.us-east-2.amazonaws.com/dev'
     },
 
     /*
