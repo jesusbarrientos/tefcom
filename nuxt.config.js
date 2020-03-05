@@ -35,7 +35,7 @@ module.exports = {
         name: 'Tefcom',
         short_name: 'Tefcom',
         start_url: '/',
-        orientation: 'portrait-primary',
+        orientation: 'any',
         background_color: '#1e1e1e',
         display: 'standalone'
     },
