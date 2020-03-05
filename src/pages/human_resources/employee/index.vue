@@ -5,7 +5,7 @@
         </mq-layout>
 
         <mq-layout :mq="['mobile', 'tablet']">
-            <employee-mobile />
+            <employee-desktop :data="data" :loading-data="loadingStatus" :events="event" @emit="onEmit($event)" />
         </mq-layout>
     </div>
 </template>
