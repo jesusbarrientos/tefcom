@@ -12,7 +12,14 @@
         </mq-layout>
 
         <mq-layout :mq="['mobile', 'tablet']">
-            <budget-mobile />
+            <budget-desktop
+                :data="data"
+                :budget="budget"
+                :parsed-budget="getParseBudget"
+                :loading-status="loading"
+                :methods="methods"
+                @loadBudget="loadBudget"
+            />
         </mq-layout>
     </div>
 </template>
