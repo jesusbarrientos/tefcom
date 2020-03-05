@@ -4,6 +4,7 @@
         <!--        <navbar-icon title="Módulos" icon="appstore" url="/modules" />-->
         <navbar-icon title="Cuenta" icon="user" url="/profile" />
         <navbar-icon title="Asistencia" icon="calendar" url="/human_resources/attendance" />
+        <navbar-icon title="Cotizaciones" icon="file-text" url="/documents/budget" />
     </div>
 </template>
 
