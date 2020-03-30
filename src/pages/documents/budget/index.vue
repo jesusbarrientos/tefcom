@@ -105,16 +105,16 @@
             total += j.total
         })
 
-        b.pdf.subtotal = numberWithCommas(total.toFixed(2))
-        b.pdf.discount = numberWithCommas((total * (b.client.discount / 100)).toFixed(2))
-        b.pdf.neto = numberWithCommas((total * (1 - (b.client.discount / 100))).toFixed(2))
-        b.pdf.iva = numberWithCommas(((total * (1 - (b.client.discount / 100))) * 0.19).toFixed(2))
+        b.pdf.subtotal = numberWithCommas(total.toFixed(0))
+        b.pdf.discount = numberWithCommas((total * (b.client.discount / 100)).toFixed(0))
+        b.pdf.neto = numberWithCommas((total * (1 - (b.client.discount / 100))).toFixed(0))
+        b.pdf.iva = numberWithCommas(((total * (1 - (b.client.discount / 100))) * 0.19).toFixed(0))
 
         total = total * (1 - (b.client.discount / 100))
 
-        b.pdf.total = numberWithCommas((total + ((total * 0.19))).toFixed(2))
+        b.pdf.total = numberWithCommas((total + ((total * 0.19))).toFixed(0))
 
-        return parseFloat(total.toFixed(2))
+        return parseFloat(total.toFixed(0))
     }
     initialBudget.total.subtotal = budget.total.subtotal
 
@@ -123,7 +123,7 @@
      * @returns {number}
      */
     budget.total.iva = (b) => {
-        return b.total.subtotal(b) * 0.19
+        return (b.total.subtotal(b) * 0.19).toFixed(0)
     }
     initialBudget.total.iva = budget.total.iva
 
@@ -132,7 +132,7 @@
      * @returns {number}
      */
     budget.total.total = (b) => {
-        return b.total.subtotal(b) + b.total.iva(b)
+        return b.total.subtotal(b) + Number(b.total.iva(b))
     }
     initialBudget.total.total = budget.total.total
 
