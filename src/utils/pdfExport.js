@@ -257,9 +257,9 @@ function setJobs(budget, doc) {
             content.table.body.push([
                 { text: index + 1, style: 'tableValue', border: [false, false, false, true] },
                 { text: j.name, style: 'tableValue', border: [false, false, false, true] },
-                { text: '$ ' + numberWithCommas((j.subtotal.employees + j.subtotal.materials + j.subtotal.others).toFixed(2)), style: 'tableValue', border: [false, false, false, true] },
+                { text: '$ ' + numberWithCommas((j.subtotal.employees + j.subtotal.materials + j.subtotal.others).toFixed(0)), style: 'tableValue', border: [false, false, false, true] },
                 { text: j.count, style: ['tableValue', 'center'], border: [false, false, false, true] },
-                { text: '$ ' + numberWithCommas((j.total).toFixed(2)), style: ['tableValue', 'right'], border: [false, false, false, true] }
+                { text: '$ ' + numberWithCommas((j.total).toFixed(0)), style: ['tableValue', 'right'], border: [false, false, false, true] }
             ])
 
             content.table.body.push([
