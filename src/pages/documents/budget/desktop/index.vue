@@ -68,7 +68,7 @@
                                     :value="budget.total.subtotal(budget)"
                                     :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                                    :precision="2"
+                                    :precision="0"
                                     style="width: 100%; color: black"
                                     disabled
                                 />
@@ -81,7 +81,7 @@
                                     :value="budget.total.iva(budget)"
                                     :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                                    :precision="2"
+                                    :precision="0"
                                     style="width: 100%; color: black"
                                     disabled
                                 />
@@ -94,7 +94,7 @@
                                     :value="budget.total.total(budget)"
                                     :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                                    :precision="2"
+                                    :precision="0"
                                     style="width: 100%; color: black"
                                     disabled
                                 />
