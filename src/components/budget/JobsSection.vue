@@ -51,7 +51,6 @@
                                 :value="calculateTotalJob(job)"
                                 :formatter="value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                 :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                                :precision="2"
                                 style="width: 100%; color: black"
                                 disabled
                             />
@@ -100,7 +99,7 @@
              * Calcula el total del trabajo.
              */
             calculateTotalJob(job) {
-                job.total = parseFloat(((job.subtotal.employees + job.subtotal.materials + job.subtotal.others) * job.count).toFixed(2))
+                job.total = parseFloat(((job.subtotal.employees + job.subtotal.materials + job.subtotal.others) * job.count).toFixed(0))
                 return job.total
             },
             /**
@@ -111,7 +110,7 @@
                 job.employees.forEach((e) => {
                     total += e.total * job.days_est
                 })
-                job.subtotal.employees = parseFloat(total.toFixed(2))
+                job.subtotal.employees = parseFloat(total.toFixed(0))
                 return job.subtotal.employees
             },
             /**
@@ -122,7 +121,7 @@
                 job.materials.forEach((e) => {
                     total += e.total
                 })
-                job.subtotal.materials = parseFloat(total.toFixed(2))
+                job.subtotal.materials = parseFloat(total.toFixed(0))
                 return job.subtotal.materials
             },
             /**
@@ -133,7 +132,7 @@
                 job.others.forEach((e) => {
                     total += e.total
                 })
-                job.subtotal.others = parseFloat(total.toFixed(2))
+                job.subtotal.others = parseFloat(total.toFixed(0))
                 return job.subtotal.others
             }
         }
