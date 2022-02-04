@@ -122,7 +122,6 @@
                                 :pagination="table.pagination"
                                 row-key="key"
                                 position="bottom"
-                                @change="onPaginate"
                             >
                                 <template slot="title">
                                     <h3>Asistencias</h3>
@@ -358,9 +357,16 @@
 
                     let entryInsideRange
                     let exitInsideRange
-                    let entryHour = moment(e.entry_hour, 'HH:mm:ss')
-                    let exitHour = moment(e.exit_hour, 'HH:mm:ss')
+
+                    let entryHour = moment(e.entry, 'DD-MM-YYYY HH:mm:ss')
+                    let exitHour = moment(e.exit, 'DD-MM-YYYY HH:mm:ss')
                     totalHours = self.roundHours(entryHour, exitHour)
+
+                    const parsedNormalHours = moment(this.normalHours.toISOString())
+                    const parsedNormalHoursEnd = moment(this.normalHoursEnd.toISOString())
+
+                    parsedNormalHours.set({ year: entryHour.get('year'), month: entryHour.get('month'), date: entryHour.get('date') })
+                    parsedNormalHoursEnd.set({ year: entryHour.get('year'), month: entryHour.get('month'), date: entryHour.get('date') })
 
                     // Calcula las horas
                     function calculateHours(self) {
@@ -375,20 +381,20 @@
                                     normalHours = totalHours
                                     extraHours = 0
                                 } else {
-                                    normalHours = self.roundHours(entryHour, self.normalHoursEnd)
+                                    normalHours = self.roundHours(entryHour, parsedNormalHoursEnd)
                                     extraHours = totalHours - normalHours
                                 }
                             } else {
-                                normalHours = self.roundHours(entryHour, self.normalHoursEnd)
+                                normalHours = self.roundHours(entryHour, parsedNormalHoursEnd)
                                 extraHours = totalHours - normalHours
                             }
-                        } else if (entryHour < self.normalHours) { // Posibles casos donde la entrada esta fuera del rango. Verifica si la hora de entrada esta antes o despues de la entrada del rango.
+                        } else if (entryHour < parsedNormalHours) { // Posibles casos donde la entrada esta fuera del rango. Verifica si la hora de entrada esta antes o despues de la entrada del rango.
                             if (exitInsideRange) {
-                                normalHours = self.roundHours(self.normalHours, exitHour)
-                                extraHours = self.roundHours(entryHour, self.normalHours)
+                                normalHours = self.roundHours(parsedNormalHours, exitHour)
+                                extraHours = self.roundHours(entryHour, parsedNormalHours)
                             } else {
                                 normalHours = self.totalHours
-                                extraHours = self.roundHours(entryHour, self.normalHours) + self.roundHours(self.normalHoursEnd, exitHour)
+                                extraHours = self.roundHours(entryHour, parsedNormalHours) + self.roundHours(parsedNormalHoursEnd, exitHour)
                             }
                         } else {
                             extraHours = totalHours
@@ -403,20 +409,20 @@
 
                     if (e.exit_date) {
                         // Verifico si está dentro o fuera del rango la hora de entrada
-                        if (this.normalHours <= entryHour && entryHour <= (this.normalHoursEnd - 1))
+                        if (parsedNormalHours <= entryHour && entryHour <= (parsedNormalHoursEnd - 1))
                             entryInsideRange = true
                         else
                             entryInsideRange = false
 
                         // Verifico si está dentro o fuera del rango la hora de salida
-                        if ((this.normalHours + 1) <= exitHour && exitHour <= this.normalHoursEnd)
+                        if ((parsedNormalHours + 1) <= exitHour && exitHour <= parsedNormalHoursEnd)
                             exitInsideRange = true
                         else
                             exitInsideRange = false
 
                         if (this.swWeekend) {
                             // Esta fuera de la semana
-                            let day = moment(e.entry_date, 'DD-MM-YYYY').day()
+                            let day = moment(e.entry, 'DD-MM-YYYY HH:mm:ss').day()
                             if (day === 0 || day === 6) {
                                 normalHours = 0
                                 extraHours = totalHours
