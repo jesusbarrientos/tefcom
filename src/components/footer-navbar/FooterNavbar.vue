@@ -7,6 +7,7 @@
         <navbar-icon title="Cotizaciones" icon="file-text" url="/documents/budget" />
         <navbar-icon title="Materiales" icon="experiment" url="/material" />
         <navbar-icon title="Empleados" icon="team" url="/human_resources/employee" />
+        <navbar-icon title="Asistencias" icon="file-text" url="/documents/attendance" />
     </div>
 </template>
 

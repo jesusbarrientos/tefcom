@@ -34,7 +34,7 @@
                         <header-mobile />
                     </div>
 
-                    <div id="content-mobile">
+                    <div id="content-mobile" style="padding-bottom: 100px">
                         <nuxt />
                     </div>
 
