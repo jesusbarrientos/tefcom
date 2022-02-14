@@ -4,7 +4,9 @@
             <document-attendance-desktop :loading="loading" :data="data" :data-request="attendanceDataRequest" :event="event" @emit="onEmit($event)" />
         </mq-layout>
 
-        <mq-layout :mq="['mobile', 'tablet']" />
+        <mq-layout :mq="['mobile', 'tablet']">
+            <document-attendance-desktop :loading="loading" :data="data" :data-request="attendanceDataRequest" :event="event" @emit="onEmit($event)" />
+        </mq-layout>
     </div>
 </template>
 
